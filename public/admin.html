@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>SPOOA-PM Africa Safe Anesthesia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/script.js"></script>
+  <script>src="/admin.js"</script>
+</head>
+
+<body>
+
+  <!-- Header -->
+
+  
+  <!-- Header -->
+<header class="header">
+  <a href="/" class="logo">
+    <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
+  </a>
+  <h3 class="title">SPOOA-PM Africa Safe Anesthesia</h3>
+
+  <!-- Bouton menu mobile -->
+  <button class="menu-btn" id="menu-btn">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Menu -->
+  <nav id="menu" class="menu">
+    <ul>
+      <li><a href="/">Accueil</a></li>
+      <li><a href="formations.html">Formations</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { text-align: center; color: #333; }
+    .form-container {
+      max-width: 600px; margin: 20px auto; background: #fff;
+      padding: 20px; border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .form-container input, .form-container textarea {
+      width: 100%; padding: 10px; margin: 8px 0;
+      border: 1px solid #ccc; border-radius: 6px;
+    }
+    .form-container button {
+      background: #0078d7; color: #fff; border: none;
+      padding: 12px 20px; border-radius: 6px;
+      cursor: pointer; font-size: 15px;
+    }
+    .form-container button:hover { background: #005a9e; }
+    #formations {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px; margin-top: 30px;
+    }
+    .card {
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px; text-align: center;
+    }
+    .card img { max-width: 100%; border-radius: 6px; margin-bottom: 10px; }
+    .card h3 { margin: 10px 0; }
+    .actions { margin-top: 15px; display: flex; gap: 10px; }
+    .btn-edit { background: #ffc107; border: none; padding: 8px; border-radius: 6px; }
+    .btn-delete { background: #dc3545; color: #fff; border: none; padding: 8px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Gestion des Formations</h1>
+
+  <!-- Formulaire d'ajout -->
+  <div class="form-container">
+    <form id="addForm" enctype="multipart/form-data">
+      <input type="text" id="titre" name="titre" placeholder="Titre de la formation" required>
+      <textarea id="contenu" name="contenu" placeholder="Contenu de la formation" rows="4" required></textarea>
+      <input type="file" id="image" name="image" accept="image/*">
+      <button type="submit">Ajouter la formation</button>
+    </form>
+  </div>
+
+  <!-- Liste des formations -->
+  <div id="formations"></div>
+
+  <script>
+    const API_BASE = "http://localhost:3000";
+    const token = localStorage.getItem("token");
+
+    async function chargerFormations() {
+      const res = await fetch(`${API_BASE}/formations`);
+      const formations = await res.json();
+      const container = document.querySelector("#formations");
+      container.innerHTML = "";
+
+      formations.forEach(f => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          ${f.image ? `<img src="http://localhost:3000${f.image}" alt="${f.titre}">` : ""}
+          <h3>${f.titre}</h3>
+          <p>${f.contenu.substring(0, 100)}...</p>
+          <div class="actions">
+            <button class="btn-edit">Modifier</button>
+            <button class="btn-delete">Supprimer</button>
+          </div>
+        `;
+        card.querySelector(".btn-delete").addEventListener("click", async () => {
+          await fetch(`${API_BASE}/admin/formations/${f.id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          alert("✅ Formation supprimée !");
+          chargerFormations();
+        });
+        card.querySelector(".btn-edit").addEventListener("click", async () => {
+          const nouveauTitre = prompt("Nouveau titre :", f.titre);
+          const nouveauContenu = prompt("Nouveau contenu :", f.contenu);
+          if (nouveauTitre && nouveauContenu) {
+            await fetch(`${API_BASE}/admin/formations/${f.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+              body: JSON.stringify({ titre: nouveauTitre, contenu: nouveauContenu })
+            });
+            alert("✅ Formation mise à jour !");
+            chargerFormations();
+          }
+        });
+        container.appendChild(card);
+      });
+    }
+    document.querySelector("#addForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(document.querySelector("#addForm"));
+      await fetch(`${API_BASE}/admin/formations`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+        body: formData
+      });
+      alert("✅ Formation ajoutée !");
+      e.target.reset();
+      chargerFormations();
+    });
+
+  
+    document.addEventListener("DOMContentLoaded", chargerFormations);
+  </script>
+</body>
+</html>

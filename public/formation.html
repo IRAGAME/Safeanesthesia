@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Formations — SPOOA-PM Africa Safe Anesthesia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+<body>
+ 
+   <header class="header">
+  <a href="/" class="logo">
+    <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
+  </a>
+  <h3 class="title">SPOOA-PM Africa Safe Anesthesia</h3>
+
+  <!-- Bouton menu mobile -->
+  <button class="menu-btn" id="menu-btn">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Menu -->
+  <nav id="menu" class="menu">
+    <ul>
+      <li><a href="/">Accueil</a></li>
+      <li><a href="formations.html">Formations</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+  <!-- Contenu principal -->
+ <main class="content">
+  <div class="formation-card">
+    <img id="image" alt="Image de la formation" class="formation-img">
+    <h1 id="titre"></h1>
+    <p id="duree"></p>
+    <p id="resume"></p>
+    <p id="contenu"></p>
+  </div>
+
+  <!-- Formulaire de réservation -->
+  <section class="reservation">
+    <h2>Réservez votre place</h2>
+    <form id="reservationForm">
+      <input type="text" id="nom" placeholder="Nom complet" required />
+      <input type="email" id="email" placeholder="Adresse email" required />
+      <input type="text" id="numero" placeholder="Numéro de téléphone" required />
+      <input type="text" id="pays" placeholder="Pays" required />
+      <button type="submit">Réserver</button>
+    </form>
+    <div id="status"></div>
+  </section>
+</main>
+
+ <!-- Footer -->
+  <footer>
+    © SPOOA-PM Africa Safe Anesthesia — Tous droits réservés
+  </footer>
+
+  <script src="/formation.js"></script>
+</body>
+</html>
