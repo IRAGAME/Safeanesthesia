@@ -18,12 +18,19 @@
   box-sizing: border-box;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 body {
   background: var(--background);
   color: var(--text);
   font-family: 'Poppins', sans-serif;
   line-height: 1.6;
   background: linear-gradient(to bottom, #f9f9f9, #e6f0f9);
+  border-top: 5px solid #2E7D32; /* Bande verte visible en haut */
 }
 
 /* Header global */
@@ -114,11 +121,14 @@ body {
   .menu-btn { display: flex; }
   .menu {
     position: fixed;
-    top: -300px; left: 0;
+    top: -100vh; left: 0;
     width: 100%;
-    background: var(--primary);
+    height: 100vh;
+    background: rgba(46, 125, 50, 0.95);
+    backdrop-filter: blur(10px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: top 0.5s ease;
+    transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
   }
   .logo img{
    height : 70px;
@@ -132,54 +142,95 @@ body {
   .menu ul {
     flex-direction: column;
     align-items: center;
-    padding: 2rem 0;
-    gap: 1.5rem;
+    justify-content: center;
+    height: 100%;
+    padding: 0;
+    gap: 2rem;
+    margin: 0;
   }
-  .menu.open { top: 60px; }
+  .menu ul li {
+    width: 100%;
+    text-align: center;
+  }
+  .menu ul li a {
+    display: block;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 0 1rem;
+  }
+  .menu ul li a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+  }
+  .menu.open { top: 0; }
 }
 
 /* hero */
 .hero {
   text-align: center;
-  margin: 100px 0px 100px 0px;
-  padding:100px 20px 0px 0px;
+  margin: 0 0px 100px 0px;
+  padding:200px 0px;
   background: url("/images/spooa/back.jpg") no-repeat center center;
   background-size: cover;
   position: relative;
   color: #fff;
+  width: 100vw;
+  margin-left: -50vw;
+  left: 50%;
 
-  
+}
+
+section.hero {
+  padding: 0;
 }
 .heroAbout {
   text-align: center;
-  margin: 100px 0px 0px 0px;
-  padding: 200px 20px;
-  background: url("/images/back1.png") no-repeat center;
+  margin: 0 0px 100px 0px;
+  padding: 200px 0px;
+  background: url("/images/back1.png") no-repeat;
   background-size: cover;
   position: relative;
-  color :white;
-  margin-top : 100px;
+  color: #fff;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
 .heroForm {
   text-align: center;
-  margin: 100px 0px 0px 0px;
-  padding: 200px 20px;
-  background: url("/images/spooa/back1.jpg") no-repeat center center;
+  margin: 0 0px 100px 0px;
+  padding: 200px 0px;
+  background: url("/images/spooa/back1.jpg") no-repeat;
   background-size: cover;
   position: relative;
-  color :white;
-  margin-top : 100px;
+  color: #fff;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
 .heroCont{
   text-align: center;
+  margin: 0 0px 100px 0px;
   padding: 200px 20px;
-  background: url("/images/spooa/work.jpg") no-repeat center;
+  background: url("/images/spooa/work.jpg") no-repeat;
   background-size: cover;
   position: relative;
-  color :white;
-  margin-top : 100px;
+  color: #fff;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
 .hero::before {
@@ -227,14 +278,24 @@ body {
   background: var(--primary);
   color: #fff;
   padding: 12px 24px;
-  border-radius: 6px;
+  border-radius: 25px;
   text-decoration: none;
   font-weight: 600;
-  transition: background .3s;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+  animation: pulse 2s infinite;
 }
 
 .btn:hover {
   background: var(--secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3); }
+  50% { box-shadow: 0 4px 20px rgba(46, 125, 50, 0.5); }
+  100% { box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3); }
 }
 
 /* =========================
@@ -270,15 +331,17 @@ p {
 }
 
 .post-card {
-  background: #fff;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #fff 0%, #f9f9f9 100%);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  transition: transform .3s;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: all 0.4s ease;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .post-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.15);
 }
 
 .post-img {
@@ -570,7 +633,7 @@ section h3 {
 }
 .post-card h3 {
   margin: 10px 0;
-  color: varv(--primary);
+  color: var(--primary);
   font-size: 18px;
   text-align: center;
 }
@@ -685,13 +748,20 @@ label {
 */
 
 .formation-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #fff 0%, #f9f9f9 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   padding: 100px 20px;
   max-width: 800px;
   margin: 20px auto;
   text-align: center;
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.4s ease;
+}
+
+.formation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
 .formation-img {

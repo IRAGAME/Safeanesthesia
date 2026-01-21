@@ -8,13 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
 document.querySelector(".menu-btn").addEventListener("click", () => {
   document.querySelector(".menu").classList.toggle("open");
 });
-  // Animation simple au scroll (fade-in)
+  // Animation améliorée au scroll (fade-in avec stagger)
   const animatedEls = document.querySelectorAll(".fade-in, .fade-in-delay, .slide-up");
   const onScrollAnimate = () => {
-    const triggerBottom = window.innerHeight * 0.9;
-    animatedEls.forEach((el) => {
+    const triggerBottom = window.innerHeight * 0.85;
+    animatedEls.forEach((el, index) => {
       const rect = el.getBoundingClientRect();
-      if (rect.top < triggerBottom) el.classList.add("in-view");
+      if (rect.top < triggerBottom) {
+        setTimeout(() => el.classList.add("in-view"), index * 100);
+      }
     });
   };
   onScrollAnimate();

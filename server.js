@@ -79,7 +79,7 @@ app.use(express.urlencoded({ extended: true }));
 // Fichiers statiques
 //app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("public"));
-app.use(express.static( "public/images"));
+
 // Routes HTML
 app.get('/', (_, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 app.get('/about', (_, res) => res.sendFile(path.join(__dirname, 'public/about.html')));
@@ -88,7 +88,7 @@ app.get('/contact', (_, res) => res.sendFile(path.join(__dirname, 'public/contac
 
 // Config stockage des images
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "public/images"),
+  destination: (req, file, cb) => cb(null, "/public/images"),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
@@ -118,8 +118,10 @@ let db;
   }
 })();
 
+//  Ajoute cette ligne pour servir les images
+//app.use("public/images", express.static(path.join(__dirname, "public/images")));
 
-//  Ajouter une formation
+// ➕ Ajouter une formation
 app.post("/formations", (req, res) => {
   const { titre, contenu, image } = req.body;
   db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, image]);
@@ -130,7 +132,7 @@ app.post("/formations", (req, res) => {
 // Route admin pour ajouter une formation avec image
 app.post("/admin/formations", upload.single("image"), (req, res) => {
   const { titre, contenu } = req.body;
-  const imagePath = req.file ? `/images/${req.file.filename}` : null;
+  const imagePath = req.file ? `/public/images/${req.file.filename}` : null;
 
   db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, imagePath]);
   saveDB();
