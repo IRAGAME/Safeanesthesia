@@ -1,4 +1,4 @@
-import multer from "multer"; // pour upload les fichier
+import multer from "multer"; 
 import path from "path";
 import express from "express";
 import dotenv from "dotenv";
@@ -6,24 +6,32 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
 import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
+import initSqlJs from "sql.js";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 app.use(express.json());
-app.use(bodyParser.json()); // important pour fetch JSON
+app.use(bodyParser.json());
 
+// ------------------- Nodemailer -------------------
 app.post("/send", async (req, res) => {
   const { name, email, message } = req.body;
   console.log("Données reçues :", name, email, message);
-  // Transporteur SMTP (Mailtrap pour dev)
-// Looking to send emails in production? Check out our Email API/SMTP product!
-let transporter = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
-  auth: {
-    user: "f1bc2894373bd7",
-    pass: "023970508c182d"
-  }
-});
+
+  let transporter = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: "f1bc2894373bd7",
+      pass: "023970508c182d"
+    }
+  });
 
   let mailOptions = {
     from: `"Safe Anesthesia" <${email}>`,
@@ -41,11 +49,7 @@ let transporter = nodemailer.createTransport({
   }
 });
 
-import jwt from "jsonwebtoken";
-
-//app.use(express.json());
-//app.use(express.urlencoded({ extended: true }));
-// Middleware d’authentification
+// ------------------- Auth Middleware -------------------
 function auth(req, res, next) {
   const header = req.headers["authorization"];
   if (!header) return res.status(401).json({ message: "Token manquant" });
@@ -59,46 +63,36 @@ function auth(req, res, next) {
   }
 }
 
-// Sécurité de base
-app.use(helmet({
-  contentSecurityPolicy: false, // à activer après CSP détaillée
-}));
-app.disable('x-powered-by');
+// ------------------- Sécurité -------------------
+app.use(helmet({ contentSecurityPolicy: false }));
+app.disable("x-powered-by");
 
-// Limiter le spam sur les endpoints sensibles
 const contactLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
-  message: { ok: false, error: 'Trop de tentatives, réessayez dans un instant.' },
+  message: { ok: false, error: "Trop de tentatives, réessayez dans un instant." },
 });
 
-// Parser JSON et formulaire
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Fichiers statiques
-//app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("public"));
 
-// Routes HTML
-app.get('/', (_, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
-app.get('/about', (_, res) => res.sendFile(path.join(__dirname, 'public/about.html')));
-app.get('/contact', (_, res) => res.sendFile(path.join(__dirname, 'public/contact.html')));
+// ------------------- Routes HTML -------------------
+app.get("/", (_, res) => res.sendFile(path.join(__dirname, "public/index.html")));
+app.get("/about", (_, res) => res.sendFile(path.join(__dirname, "public/about.html")));
+app.get("/contact", (_, res) => res.sendFile(path.join(__dirname, "public/contact.html")));
 
-
-// Config stockage des images
+// ------------------- Multer Config -------------------
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "/public/images"),
+  destination: (req, file, cb) => cb(null, path.join(__dirname, "public/images/ImageFormation")),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
-//db sql.js
-import initSqlJs from "sql.js";
-import fs from "fs";
 
+// Servir les images
+app.use("/images/ImageFormation", express.static(path.join(__dirname, "public/images/ImageFormation")));
 
+// ------------------- DB SQLite -------------------
 let db;
-
 (async () => {
   const SQL = await initSqlJs();
   if (fs.existsSync("formations.sqlite")) {
@@ -118,10 +112,13 @@ let db;
   }
 })();
 
-//  Ajoute cette ligne pour servir les images
-//app.use("public/images", express.static(path.join(__dirname, "public/images")));
+function saveDB() {
+  const data = db.export();
+  fs.writeFileSync("formations.sqlite", Buffer.from(data));
+}
 
-// ➕ Ajouter une formation
+// ------------------- Routes Formations -------------------
+// ➕ Ajouter une formation (sans image)
 app.post("/formations", (req, res) => {
   const { titre, contenu, image } = req.body;
   db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, image]);
@@ -129,15 +126,16 @@ app.post("/formations", (req, res) => {
   res.send("✅ Formation ajoutée !");
 });
 
-// Route admin pour ajouter une formation avec image
+// ➕ Ajouter une formation avec image
 app.post("/admin/formations", upload.single("image"), (req, res) => {
   const { titre, contenu } = req.body;
-  const imagePath = req.file ? `/public/images/${req.file.filename}` : null;
+  const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
 
   db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, imagePath]);
   saveDB();
   res.send("✅ Formation ajoutée !");
 });
+
 // 📖 Afficher toutes les formations
 app.get("/formations", (req, res) => {
   const result = db.exec("SELECT * FROM formations");
@@ -176,15 +174,8 @@ app.delete("/formations/:id", (req, res) => {
   res.send("✅ Formation supprimée !");
 });
 
-function saveDB() {
-  const data = db.export();
-  fs.writeFileSync("formations.sqlite", Buffer.from(data));
-}
-
-
-
-// Port
+// ------------------- Port -------------------
 const PORT = process.env.PORT || 3000;
-app.listen(PORT,'0.0.0.0', () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
