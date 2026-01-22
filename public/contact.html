@@ -39,74 +39,73 @@
     <h1 class="fade-in">Contactez-nous</h1>
     <p class="fade-in-delay">Merci de l'intérêt que vous portez à SPOOA-PM Africa Safe Anesthesia. Nous vous répondrons au plus vite !</p>
   </section>
-    <section id="contact">
-  <h2>Contactez-nous</h2>
-  <p>Retrouvez SPOOA-PM AFRICA – Safe Anesthesia sur nos réseaux :</p>
+<section id="contact">
+  <div class="container">
+    <h2>Contactez-nous</h2>
+    <p>Retrouvez SPOOA-PM AFRICA – Safe Anesthesia sur nos réseaux :</p>
 
-  <div class="social-cards">
+    <div class="social-cards">
+      <!-- Carte Email -->
+      <a href="mailto:spooapmafricadocs@gmail.com" target="_blank" class="card email">
+        <i class="fas fa-envelope"></i>
+        <h3>Email</h3>
+        <p>spooapmafricadocs@gmail.com</p>
+      </a>
 
-     
-    <!-- Carte Email -->
-    <a href="mailto:spooapmafricadocs@gmail.com" target="_blank" class="card email">
-      <i class="fas fa-envelope"></i>
-      <h3>Email</h3>
-      <p>spooapmafricadocs@gmail.com</p>
-    </a>
+      <!-- Carte Facebook -->
+      <a href="https://www.facebook.com/profile.php?id=61557996513124" target="_blank" class="card facebook">
+        <i class="fab fa-facebook"></i>
+        <h3>Facebook</h3>
+        <p>spooa pm africa safe anesthesia</p>
+      </a>
 
-    <!-- Carte Facebook -->
-    <a href="https://www.facebook.com/profile.php?id=61557996513124" target="_blank" class="card facebook">
-      <i class="fab fa-facebook"></i>
-      <h3>Facebook</h3>
-      <p>spooa pm africa safe anesthesia</p>
-    </a>
+      <!-- Carte Twitter -->
+      <a href="https://twitter.com/toncompte" target="_blank" class="card twitter">
+        <i class="fab fa-twitter"></i>
+        <h3>Twitter</h3>
+        <p>Suivez-nous sur Twitter</p>
+      </a>
 
-    <!-- Carte Twitter -->
-    <a href="https://twitter.com/toncompte" target="_blank" class="card twitter">
-      <i class="fab fa-twitter"></i>
-      <h3>Twitter</h3>
-      <p>Suivez-nous sur Twitter</p>
-    </a>
+      <!-- Carte LinkedIn -->
+      <a href="https://www.linkedin.com/in/toncompte" target="_blank" class="card linkedin">
+        <i class="fab fa-linkedin"></i>
+        <h3>LinkedIn</h3>
+        <p>Connectez-vous sur LinkedIn</p>
+      </a>
 
-    <!-- Carte LinkedIn -->
-    <a href="https://www.linkedin.com/in/toncompte" target="_blank" class="card linkedin">
-      <i class="fab fa-linkedin"></i>
-      <h3>LinkedIn</h3>
-      <p>Connectez-vous sur LinkedIn</p>
-    </a>
+      <!-- Carte WhatsApp -->
+      <a href="https://whatsapp.com/channel/0029ValAhWLIiRp2y2D8sh2Y" target="_blank" class="card whatsapp">
+        <i class="fab fa-whatsapp"></i>
+        <h3>WhatsApp</h3>
+        <p>Cliquez ou écrivez-nous sur<br>
+          +243 992 772 022<br>
+          +221 77 25 20 500<br>
+          +257 65 59 13 42</p>
+      </a>
+    </div>
 
-    <!-- Carte WhatsApp -->
-    <a href="https://whatsapp.com/channel/0029ValAhWLIiRp2y2D8sh2Y" target="_blank" class="card whatsapp">
-      <i class="fab fa-whatsapp"></i>
-      <h3>WhatsApp</h3>
-      <p> cliquer ou Écrivez-nous sur 
-        +243 992 772 022 <br>
-        +221 77 25 20 500 <br>
-        +257 65 59 13 42 </p>
-    </a>
-
+    <!-- Formulaire -->
+    <div class="contact-form-section">
+      <h2>Envoyer un message</h2>
+      <form id="contactForm" action="/send" method="post">
+        <div class="form-group">
+          <label for="name">Nom complet</label>
+          <input id="name" name="name" class="input" type="text" required />
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input id="email" name="email" class="input" type="email" required />
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" class="input" required></textarea>
+        </div>
+        <button class="btn" type="submit">Envoyer</button>
+        <div id="form-status" class="form-status"></div>
+      </form>
+    </div>
   </div>
 </section>
-
-  <!-- Formulaire -->
-  <section class="container" style="max-width:720px;">
-    <h2>Envoyer un message</h2>
-    <form id="contactForm" action="/send" method="post">
-      <div class="form-group">
-        <label for="name">Nom complet</label>
-        <input id="name" name="name" class="input" type="text" required />
-      </div>
-      <div class="form-group">
-        <label for="email">E-mail</label>
-        <input id="email" name="email" class="input" type="email" required />
-      </div>
-      <div class="form-group">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="5" class="input" required></textarea>
-      </div>
-      <button class="btn" type="submit">Envoyer</button>
-      <div id="form-status" class="form-status"></div>
-    </form>
-  </section>
 
   <!-- Footer -->
   <footer>
