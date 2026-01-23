@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" href="images/spooa/logo.png" type="image/png">
   <link rel="stylesheet" href="style.css">
   <script src="script.js"></script>
 </head>
@@ -52,9 +53,8 @@
   </p>
 
   <div class="parcours">
-    <article class="card">
-      <i class="fas fa-syringe"></i>
-      <h3>I. Anesthésie clinique spécialisée</h3>
+    <details class="category">
+      <summary><i class="fas fa-syringe"></i> I. Anesthésie clinique spécialisée</summary>
       <ul>
         <li>Anesthésie obstétricale sécurisée en Afrique</li>
         <li>Anesthésie pédiatrique, y compris pour la chirurgie lourde</li>
@@ -62,11 +62,10 @@
         <li>Anesthésie locorégionale</li>
         <li>Sécurité en anesthésie-réanimation</li>
       </ul>
-    </article>
+    </details>
 
-    <article class="card">
-      <i class="fas fa-stethoscope"></i>
-      <h3>II. Médecine périopératoire et sécurité chirurgicale</h3>
+    <details class="category">
+      <summary><i class="fas fa-stethoscope"></i> II. Médecine périopératoire et sécurité chirurgicale</summary>
       <ul>
         <li>Soins périopératoires essentiels en Afrique</li>
         <li>Prévention et gestion des complications per- et postopératoires</li>
@@ -75,56 +74,67 @@
         <li>Prévention et contrôle des infections en chirurgie</li>
         <li>Échographie en périopératoire</li>
       </ul>
-    </article>
+    </details>
 
-    <article class="card">
-      <i class="fas fa-heartbeat"></i>
-      <h3>III. Médecine de la douleur</h3>
+    <details class="category">
+      <summary><i class="fas fa-heartbeat"></i> III. Médecine de la douleur</summary>
       <ul>
         <li>Médecine de la douleur</li>
         <li>Prise en charge de la douleur en périopératoire</li>
       </ul>
-    </article>
+    </details>
 
-    <article class="card">
-      <i class="fas fa-procedures"></i>
-      <h3>IV. Réanimation et soins critiques</h3>
+    <details class="category">
+      <summary><i class="fas fa-procedures"></i> IV. Réanimation et soins critiques</summary>
       <ul>
         <li>Réanimation du nouveau-né</li>
         <li>Urgences et réanimation de base</li>
       </ul>
-    </article>
+    </details>
 
-    <article class="card">
-      <i class="fas fa-ambulance"></i>
-      <h3>V. Urgences, traumatologie et préhospitalier</h3>
+    <details class="category">
+      <summary><i class="fas fa-ambulance"></i> V. Urgences, traumatologie et préhospitalier</summary>
       <ul>
         <li>Gestion des hémorragies en préhospitalier</li>
         <li>Traumatologie d’urgence et gestion des catastrophes</li>
         <li>Gestion des afflux massifs de blessés</li>
         <li>Échographie FAST</li>
       </ul>
-    </article>
+    </details>
 
-    <article class="card">
-      <i class="fas fa-users"></i>
-      <h3>VI. Compétences transversales en périopératoire</h3>
+    <details class="category">
+      <summary><i class="fas fa-users"></i> VI. Compétences transversales en périopératoire</summary>
       <ul>
         <li>Gestion du stress en périopératoire</li>
         <li>Compétences non techniques (communication, leadership, travail en équipe, prise de décision)</li>
       </ul>
-    </article>
+    </details>
   </div>
 
   <div class="pedagogie">
     <h2>Approche pédagogique</h2>
-    <ul>
-      <li>Basées sur les données scientifiques actuelles</li>
-      <li>Contextualisées aux ressources disponibles en Afrique</li>
-      <li>Orientées vers la sécurité du patient et la pratique clinique</li>
-      <li>Dispensées par des experts africains et internationaux</li>
-      <li>Proposées en formats en ligne, hybride ou présentiel</li>
-    </ul>
+    <div class="pedagogie-grid">
+      <div class="pedagogie-item">
+        <i class="fas fa-microscope"></i>
+        <p>Basées sur les données scientifiques actuelles</p>
+      </div>
+      <div class="pedagogie-item">
+        <i class="fas fa-globe-africa"></i>
+        <p>Contextualisées aux ressources disponibles en Afrique</p>
+      </div>
+      <div class="pedagogie-item">
+        <i class="fas fa-shield-alt"></i>
+        <p>Orientées vers la sécurité du patient et la pratique clinique</p>
+      </div>
+      <div class="pedagogie-item">
+        <i class="fas fa-users"></i>
+        <p>Dispensées par des experts africains et internationaux</p>
+      </div>
+      <div class="pedagogie-item">
+        <i class="fas fa-laptop"></i>
+        <p>Proposées en formats en ligne, hybride ou présentiel</p>
+      </div>
+    </div>
   </div>
 </section>
   <!-- Formations -->

@@ -105,9 +105,22 @@ let db;
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         titre TEXT,
         contenu TEXT,
-        image TEXT
+        image TEXT,
+        vues INTEGER DEFAULT 0,
+        likes INTEGER DEFAULT 0,
+        commentaires INTEGER DEFAULT 0
       )
     `);
+    // Add columns if upgrading from old schema
+    try {
+      db.run("ALTER TABLE formations ADD COLUMN vues INTEGER DEFAULT 0");
+    } catch (e) {}
+    try {
+      db.run("ALTER TABLE formations ADD COLUMN likes INTEGER DEFAULT 0");
+    } catch (e) {}
+    try {
+      db.run("ALTER TABLE formations ADD COLUMN commentaires INTEGER DEFAULT 0");
+    } catch (e) {}
     saveDB();
   }
 })();
