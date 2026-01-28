@@ -34,6 +34,7 @@
 
   <!-- Menu -->
   <nav id="menu" class="menu">
+    <button class="close-menu">&times;</button>
     <ul>
       <li><a href="/">Accueil</a></li>
       <li><a href="formations.html">Formations</a></li>
@@ -334,12 +335,57 @@
       }
     }
   </style>
+
+  <style>
+    /* Modal styles */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: var(--shadow);
+    }
+
+    .close {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: var(--accent);
+    }
+  </style>
 </head>
 <body>
   <h1>Gestion des Formations</h1>
 
+  <!-- Login Form -->
+  <div id="loginForm" class="form-container" style="display: none;">
+    <h2>Connexion Admin</h2>
+    <form id="login">
+      <input type="password" id="password" placeholder="Mot de passe" required>
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+
   <!-- Formulaire d'ajout -->
-  <div class="form-container">
+  <div class="form-container" id="addFormContainer">
     <form id="addForm" enctype="multipart/form-data">
       <input type="text" id="titre" name="titre" placeholder="Titre de la formation" required>
       <textarea id="contenu" name="contenu" placeholder="Contenu de la formation" rows="4" required></textarea>
@@ -348,12 +394,65 @@
     </form>
   </div>
 
+  <!-- Modal de modification -->
+  <div id="editModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2>Modifier la formation</h2>
+      <form id="editForm" enctype="multipart/form-data">
+        <input type="text" id="editTitre" name="titre" placeholder="Titre" required>
+        <textarea id="editContenu" name="contenu" placeholder="Contenu" rows="4" required></textarea>
+        <div id="currentImage"></div>
+        <input type="file" id="editImage" name="image" accept="image/*">
+        <button type="submit">Mettre à jour</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Liste des formations -->
   <div id="formations"></div>
 
   <script>
     const API_BASE = "http://localhost:3000";
     const token = localStorage.getItem("token");
+
+    // Fonction pour afficher un toast moderne
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type}`;
+      toast.classList.add('show');
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000); // Disparaît après 3 secondes
+    }
+
+    // Vérifier si connecté
+    if (!token) {
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('addFormContainer').style.display = 'none';
+      document.querySelector('#formations').style.display = 'none';
+    }
+
+    // Login
+    document.querySelector("#login").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const password = document.querySelector("#password").value;
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password })
+        });
+        if (!res.ok) throw new Error("Mot de passe incorrect");
+        const data = await res.json();
+        localStorage.setItem("token", data.token);
+        location.reload(); // Recharger pour afficher l'admin
+      } catch (error) {
+        showToast(`Erreur: ${error.message}`, 'error');
+      }
+    });
 
     async function chargerFormations() {
       const res = await fetch(`${API_BASE}/formations`);
@@ -370,7 +469,7 @@
             <h3 class="formation-title">${f.titre}</h3>
             <p class="formation-description">${f.contenu.substring(0, 150)}...</p>
             <div class="formation-actions">
-              <button class="btn-edit" onclick="modifierFormation(${f.id}, '${f.titre}', '${f.contenu.replace(/'/g, "\\'")}')">
+              <button class="btn-edit" onclick="openEditModal(${f.id}, '${f.titre.replace(/'/g, "\\'")}', '${f.contenu.replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "")}', '${f.image || ''}')">
                 <i class="fas fa-edit"></i> Modifier
               </button>
               <button class="btn-delete" onclick="supprimerFormation(${f.id})">
@@ -385,43 +484,79 @@
 
     async function supprimerFormation(id) {
       if (confirm("Êtes-vous sûr de vouloir supprimer cette formation ?")) {
-        await fetch(`${API_BASE}/admin/formations/${id}`, {
-          method: "DELETE",
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        alert("✅ Formation supprimée !");
-        chargerFormations();
+        try {
+          const res = await fetch(`${API_BASE}/admin/formations/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+          showToast("Formation supprimée avec succès ! 🗑️");
+          chargerFormations();
+        } catch (error) {
+          showToast(`Erreur lors de la suppression: ${error.message}`, 'error');
+        }
       }
     }
 
-    async function modifierFormation(id, titreActuel, contenuActuel) {
-      const nouveauTitre = prompt("Nouveau titre :", titreActuel);
-      const nouveauContenu = prompt("Nouveau contenu :", contenuActuel);
-      if (nouveauTitre && nouveauContenu) {
-        await fetch(`${API_BASE}/admin/formations/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-          body: JSON.stringify({ titre: nouveauTitre, contenu: nouveauContenu })
-        });
-        alert("✅ Formation mise à jour !");
-        chargerFormations();
+    let currentEditId = null;
+
+    function openEditModal(id, titre, contenu, image) {
+      currentEditId = id;
+      document.getElementById('editTitre').value = titre;
+      document.getElementById('editContenu').value = contenu.replace(/\\n/g, '\n');
+      const currentImageDiv = document.getElementById('currentImage');
+      if (image) {
+        currentImageDiv.innerHTML = `<p>Image actuelle:</p><img src="http://localhost:3000${image}" alt="Image actuelle" style="max-width: 100px; max-height: 100px;">`;
+      } else {
+        currentImageDiv.innerHTML = '<p>Aucune image</p>';
       }
+      document.getElementById('editModal').style.display = 'flex';
     }
+
+    document.getElementById('closeModal').onclick = function() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    document.querySelector("#editForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(document.querySelector("#editForm"));
+      try {
+        const res = await fetch(`${API_BASE}/admin/formations/${currentEditId}`, {
+          method: "PUT",
+          headers: { "Authorization": `Bearer ${token}` },
+          body: formData
+        });
+        if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        showToast("Formation mise à jour avec succès ! ✏️");
+        document.getElementById('editModal').style.display = 'none';
+        chargerFormations();
+      } catch (error) {
+        showToast(`Erreur lors de la modification: ${error.message}`, 'error');
+      }
+    });
 
     document.querySelector("#addForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = new FormData(document.querySelector("#addForm"));
-      await fetch(`${API_BASE}/admin/formations`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
-        body: formData
-      });
-      alert("✅ Formation ajoutée !");
-      e.target.reset();
-      chargerFormations();
+      try {
+        const res = await fetch(`${API_BASE}/admin/formations`, {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${token}` },
+          body: formData
+        });
+        if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        showToast("Formation ajoutée avec succès ! 🎉");
+        e.target.reset();
+        chargerFormations();
+      } catch (error) {
+        showToast(`Erreur lors de l'ajout: ${error.message}`, 'error');
+      }
     });
 
     document.addEventListener("DOMContentLoaded", chargerFormations);
   </script>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
 </body>
 </html>

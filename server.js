@@ -49,6 +49,20 @@ app.post("/send", async (req, res) => {
   }
 });
 
+// ------------------- Login Route -------------------
+app.post("/login", (req, res) => {
+  const { password } = req.body;
+  console.log("Tentative de connexion avec mot de passe:", password);
+  if (password === "admin") { // Mot de passe simple pour test
+    const token = jwt.sign({ user: "admin" }, process.env.JWT_SECRET || "secretkey");
+    console.log("Connexion réussie, token généré");
+    res.json({ token });
+  } else {
+    console.log("Mot de passe incorrect");
+    res.status(401).json({ message: "Mot de passe incorrect" });
+  }
+});
+
 // ------------------- Auth Middleware -------------------
 function auth(req, res, next) {
   const header = req.headers["authorization"];
@@ -131,7 +145,7 @@ function saveDB() {
 }
 
 // ------------------- Routes Formations -------------------
-// ➕ Ajouter une formation (sans image)
+//  Ajouter une formation (sans image)
 app.post("/formations", (req, res) => {
   const { titre, contenu, image } = req.body;
   db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, image]);
@@ -139,8 +153,8 @@ app.post("/formations", (req, res) => {
   res.send("✅ Formation ajoutée !");
 });
 
-// ➕ Ajouter une formation avec image
-app.post("/admin/formations", upload.single("image"), (req, res) => {
+//  Ajouter une formation avec image
+app.post("/admin/formations", auth, upload.single("image"), (req, res) => {
   const { titre, contenu } = req.body;
   const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
 
@@ -149,7 +163,7 @@ app.post("/admin/formations", upload.single("image"), (req, res) => {
   res.send("✅ Formation ajoutée !");
 });
 
-// 📖 Afficher toutes les formations
+//  Afficher toutes les formations
 app.get("/formations", (req, res) => {
   const result = db.exec("SELECT * FROM formations");
   const rows = result.length ? result[0].values : [];
@@ -161,7 +175,7 @@ app.get("/formations", (req, res) => {
   })));
 });
 
-// 📖 Afficher une formation par ID
+//  Afficher une formation par ID
 app.get("/formations/:id", (req, res) => {
   const { id } = req.params;
   const result = db.exec("SELECT * FROM formations WHERE id = ?", [id]);
@@ -170,17 +184,24 @@ app.get("/formations/:id", (req, res) => {
   res.json({ id: r[0], titre: r[1], contenu: r[2], image: r[3] });
 });
 
-// ✏️ Modifier une formation
-app.put("/formations/:id", (req, res) => {
+//  Modifier une formation
+app.put("/admin/formations/:id", auth, upload.single("image"), (req, res) => {
   const { id } = req.params;
-  const { titre, contenu, image } = req.body;
-  db.run("UPDATE formations SET titre = ?, contenu = ?, image = ? WHERE id = ?", [titre, contenu, image, id]);
+  const { titre, contenu } = req.body;
+  const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
+
+  // If image provided, update it, else keep old
+  if (imagePath) {
+    db.run("UPDATE formations SET titre = ?, contenu = ?, image = ? WHERE id = ?", [titre, contenu, imagePath, id]);
+  } else {
+    db.run("UPDATE formations SET titre = ?, contenu = ? WHERE id = ?", [titre, contenu, id]);
+  }
   saveDB();
   res.send("✅ Formation mise à jour !");
 });
 
-// ❌ Supprimer une formation
-app.delete("/formations/:id", (req, res) => {
+//  Supprimer une formation
+app.delete("/admin/formations/:id", auth, (req, res) => {
   const { id } = req.params;
   db.run("DELETE FROM formations WHERE id = ?", [id]);
   saveDB();

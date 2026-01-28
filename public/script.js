@@ -8,7 +8,21 @@ document.addEventListener("DOMContentLoaded", () => {
 document.querySelector(".menu-btn").addEventListener("click", () => {
   document.querySelector(".menu").classList.toggle("open");
 });
-  // Animation améliorée au scroll (fade-in avec stagger)
+
+// Fermer le menu en cliquant en dehors
+document.addEventListener("click", (e) => {
+  const menu = document.querySelector(".menu");
+  const menuBtn = document.querySelector(".menu-btn");
+  if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
+    menu.classList.remove("open");
+  }
+});
+
+// Fermer avec le bouton close
+document.querySelector(".close-menu")?.addEventListener("click", () => {
+  document.querySelector(".menu").classList.remove("open");
+});
+  // Animation 
   const animatedEls = document.querySelectorAll(".fade-in, .fade-in-delay, .slide-up");
   const onScrollAnimate = () => {
     const triggerBottom = window.innerHeight * 0.85;
@@ -22,7 +36,7 @@ document.querySelector(".menu-btn").addEventListener("click", () => {
   onScrollAnimate();
   document.addEventListener("scroll", onScrollAnimate);
 
-  // Bouton "retour en haut" (optionnel)
+  // Bouton "retour en haut"
   const backTopBtn = document.createElement("button");
   backTopBtn.className = "back-to-top";
   backTopBtn.innerHTML = "↑";

@@ -15,9 +15,14 @@ async function chargerFormations() {
       card.setAttribute("data-id", f.id);
 
       card.innerHTML = `
-        ${f.image ? `<img src="http://localhost:3000${f.image}" alt="${f.titre}" class="post-img">` : ""}
-        <h3>${f.titre}</h3>
-        <p>${f.contenu.substring(0, 100)}...</p> <!-- résumé automatique -->
+        <div class="card-image">
+          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : ""}
+        </div>
+        <div class="card-content">
+          <h3>${f.titre}</h3>
+          <p>${f.contenu.substring(0, 120)}...</p>
+          <span class="read-more">Découvrir le programme</span>
+        </div>
       `;
 
       // Lorsqu’on clique sur une carte, on ouvre la page détail
