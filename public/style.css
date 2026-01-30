@@ -62,7 +62,7 @@ header {
 
 /* Logo */
 .logo img {
-  height: 80px; /* Ajusté pour le header */
+  height: 90px; /* Ajusté pour le header */
   width: auto;
 }
 
@@ -71,7 +71,7 @@ header {
   font-size: 1.8rem;
   font-weight: 600;
   color: white;
-  margin-left: 15px;
+  margin-left: 0px;
 }
 
 /* Menu desktop */
@@ -167,7 +167,7 @@ header {
   }
   
   .title { font-size: 1.1rem; margin-left: 10px; }
-  .logo img { height: 50px; }
+  .logo img { height: 80px; }
 }
 
 /* =========================

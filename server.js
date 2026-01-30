@@ -123,7 +123,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // ------------------- Routes HTML -------------------
-app.get("/", (_, res) => res.sendFile(path.join(__dirname, "public/index.html")));
+app.get("/", (_, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/about", (_, res) => res.sendFile(path.join(__dirname, "public/about.html")));
 app.get("/contact", (_, res) => res.sendFile(path.join(__dirname, "public/contact.html")));
 

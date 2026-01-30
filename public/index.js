@@ -4,7 +4,7 @@ const id = params.get("id");
 
 async function chargerFormation() {
   try {
-    const res = await fetch(`${API_BASE}/formations/${id}`); // ✅ route corrigée
+    const res = await fetch(`${API_BASE}/formations/${id}`); //
     if (!res.ok) throw new Error("Formation introuvable");
     const formation = await res.json();
 
@@ -19,25 +19,35 @@ async function chargerFormation() {
     document.querySelector("#titre").textContent = "Erreur : " + err.message;
   }
 }
-
 async function chargerFormationsHome() {
   try {
     const res = await fetch(`${API_BASE}/formations`);
     if (!res.ok) throw new Error("Impossible de charger les formations");
     const formations = await res.json();
 
-    const container = document.querySelector("#formations-home");
+    const container = document.querySelector("#formations");
     container.innerHTML = "";
 
     formations.forEach(f => {
       const card = document.createElement("div");
       card.className = "post-card";
+      card.setAttribute("data-id", f.id);
 
       card.innerHTML = `
-        ${f.image ? `<img src="http://localhost:3000${f.image}" alt="${f.titre}" class="post-img">` : ""}
-        <h3>${f.titre}</h3>
-        <p>${f.contenu.substring(0, 100)}...</p>
+        <div class="card-image">
+          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : ""}
+        </div>
+        <div class="card-content">
+          <h3>${f.titre}</h3>
+          <p>${f.contenu.substring(0, 120)}...</p>
+          <span class="read-more">Découvrir le programme</span>
+        </div>
       `;
+
+      // Lorsqu’on clique sur une carte, on ouvre la page détail
+      card.addEventListener("click", () => {
+        window.location.href = `formation.html?id=${f.id}`;
+      });
 
       container.appendChild(card);
     });
