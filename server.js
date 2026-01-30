@@ -19,35 +19,67 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 
-// ------------------- Nodemailer -------------------
+//Configurer le transporteur SMTP
+// Pour Gmail
+let transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",   // serveur SMTP
+  port: 465,                // port sécurisé
+  secure: true,             // true pour SSL
+  auth: {
+    user: "tonadresse@gmail.com",        // ton adresse Gmail
+    pass: "ton-app-password-16caractères" // mot de passe d’application
+  }
+});
+
+// 📩 Route pour envoyer un email
 app.post("/send", async (req, res) => {
-  const { name, email, message } = req.body;
-  console.log("Données reçues :", name, email, message);
+  const { name, email, message, messageDeReponse } = req.body;
 
-  let transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
-    auth: {
-      user: "f1bc2894373bd7",
-      pass: "023970508c182d"
-    }
-  });
-
+  // Notification interne (vers toi)
   let mailOptions = {
-    from: `"Safe Anesthesia" <${email}>`,
+    from: '"Safe Anesthesia" <no-reply@safeanesthesia.com>',
     to: "iragimargos@gmail.com",
-    subject: "Nouveau message depuis le site",
-    text: `Nom: ${name}\nEmail: ${email}\nMessage:\n${message}`
+    subject: `📩 Nouveau message de ${name}`,
+    replyTo: email,
+    html: `
+      <h2 style="color:#3498db;">Safe Anesthesia</h2>
+      <p><strong>Nom :</strong> ${name}</p>
+      <p><strong>Email :</strong> ${email}</p>
+      <p><strong>Message :</strong></p>
+      <blockquote style="border-left:4px solid #3498db; padding-left:10px;">${message}</blockquote>
+    `
+  };
+
+  // Réponse vers l’utilisateur
+  let replyOptions = {
+    from: '"Safe Anesthesia" <support@safeanesthesia.com>',
+    to: email,
+    subject: "✅ Réponse de Safe Anesthesia",
+    html: `
+      <h2 style="color:#2c3e50;">Safe Anesthesia</h2>
+      <p>Bonjour <strong>${name}</strong>,</p>
+      <p>Merci de nous avoir contactés. Voici notre réponse :</p>
+      <blockquote style="border-left:4px solid #2c3e50; padding-left:10px;">
+        ${messageDeReponse || "Nous avons bien reçu votre demande et nous vous répondrons sous peu."}
+      </blockquote>
+      <p style="margin-top:20px;">Nous restons disponibles pour toute autre question.</p>
+      <hr>
+      <p style="font-size:12px; color:#888;">Safe Anesthesia © 2026 — support@safeanesthesia.com</p>
+    `
   };
 
   try {
-    await transporter.sendMail(mailOptions);
-    res.send("✅ Message envoyé avec succès !");
+    await transporter.sendMail(mailOptions);   // vers toi
+    await transporter.sendMail(replyOptions);  // vers l’utilisateur
+    res.send("✅ Message et réponse envoyés avec succès !");
   } catch (error) {
-    console.error("Erreur Nodemailer :", error);
-    res.status(500).send("❌ Erreur lors de l'envoi du message.");
+    console.error("❌ Erreur SMTP :", error);
+    res.status(500).send("Erreur lors de l'envoi des emails.");
   }
 });
+
+
+
 
 // ------------------- Login Route -------------------
 app.post("/login", (req, res) => {

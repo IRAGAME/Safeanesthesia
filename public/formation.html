@@ -2,71 +2,78 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Formations — SPOOA-PM Africa Safe Anesthesia</title>
+  <title>Détails Formation - SPOOA-PM Africa</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" href="images/spooa/logo.png" type="image/png">
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/script.js" defer></script>
+  <script src="/formation.js" defer></script>
 </head>
 <body>
- 
-   <header class="header">
-  <a href="/" class="logo">
-    <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
-  </a>
-  <h3 class="title">SPOOA-PM Africa Safe Anesthesia</h3>
 
-  <!-- Bouton menu mobile -->
-  <button class="menu-btn" id="menu-btn">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+  <!-- Header -->
+  <header class="header">
+    <a href="/" class="logo">
+      <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
+    </a>
+    <h3 class="title">SPOOA-PM Africa Safe Anesthesia</h3>
+    <button class="menu-btn" id="menu-btn">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="menu" class="menu">
+      <button class="close-menu">&times;</button>
+      <ul>
+        <li><a href="/">Accueil</a></li>
+        <li><a href="formations.html">Formations</a></li>
+        <li><a href="about.html">A Propos</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <!-- Menu -->
-  <nav id="menu" class="menu">
-    <ul>
-      <li><a href="/">Accueil</a></li>
-      <li><a href="formations.html">Formations</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-  </nav>
-</header>
+  <!-- Contenu Principal -->
+  <div class="formation-wrapper">
+    <div class="container">
+      
+      <!-- Bouton Retour -->
+      <a href="formations.html" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Retour aux formations
+      </a>
 
-  <!-- Contenu principal -->
- <main class="content">
-  <div class="formation-card">
-    <img id="image" alt="Image de la formation" class="formation-img">
-    <h1 id="titre"></h1>
-    <p id="duree"></p>
-    <p id="resume"></p>
-    <p id="contenu"></p>
+      <div class="formation-container">
+        <!-- Image Header -->
+        <div class="formation-header-img">
+          <img id="image" src="" alt="Image de formation" onerror="this.style.display='none'">
+        </div>
+
+        <!-- Corps du texte -->
+        <div class="formation-content-body">
+          <h1 id="titre">Chargement...</h1>
+          
+          <div class="formation-meta">
+            <span><i class="far fa-clock"></i> Durée variable</span>
+            <span><i class="fas fa-user-md"></i> Certifiant</span>
+            <span><i class="fas fa-globe-africa"></i> Disponible en ligne</span>
+          </div>
+
+          <div id="contenu">
+            <!-- Le contenu sera injecté ici -->
+          </div>
+
+          <div style="margin-top: 40px; text-align: center;">
+            <a href="contact.html" class="btn">S'inscrire à cette formation</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- Formulaire de réservation -->
-  <section class="reservation">
-    <h2>Réservez votre place</h2>
-    <form id="reservationForm">
-      <input type="text" id="nom" placeholder="Nom complet" required />
-      <input type="email" id="email" placeholder="Adresse email" required />
-      <input type="text" id="numero" placeholder="Numéro de téléphone" required />
-      <input type="text" id="pays" placeholder="Pays" required />
-      <button type="submit">Réserver</button>
-    </form>
-    <div id="status"></div>
-  </section>
-</main>
-
- <!-- Footer -->
+  <!-- Footer -->
   <footer>
-    © SPOOA-PM Africa Safe Anesthesia — Tous droits réservés
+    <p>&copy; 2025 SPOOA-PM Africa Safe Anesthesia. Tous droits réservés.</p>
   </footer>
 
-  <script src="/formation.js"></script>
 </body>
 </html>

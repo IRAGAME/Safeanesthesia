@@ -10,16 +10,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/style.css">
   <script src="/script.js"></script>
-  <script>src="/admin.js"</script>
 </head>
 
 <body>
-
   <!-- Header -->
-
-  
-  <!-- Header -->
-<header class="header">
+  <header class="header">
   <a href="/" class="logo">
     <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
   </a>
@@ -34,7 +29,6 @@
 
   <!-- Menu -->
   <nav id="menu" class="menu">
-    <button class="close-menu">&times;</button>
     <ul>
       <li><a href="/">Accueil</a></li>
       <li><a href="formations.html">Formations</a></li>
@@ -43,374 +37,83 @@
     </ul>
   </nav>
 </header>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--background);
-      margin: 0;
-      padding: 0;
-      color: var(--text);
-    }
 
-    .heroAdmin {
-      text-align: center;
-      padding: 200px 20px;
-      background: url("/images/spooa/back.jpg") no-repeat center center;
-      background-size: cover;
-      background-attachment: scroll;
-      position: relative;
-      color: #fff;
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Tableau de Bord</h1>
+    </div>
 
-    .heroAdmin::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1;
-    }
+    <!-- Login Form -->
+    <div id="loginForm" class="login-card" style="display: none;">
+      <h2>Connexion Admin</h2>
+      <form id="login">
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="password" class="input" required>
+        </div>
+        <button type="submit" class="btn">Se connecter</button>
+      </form>
+    </div>
 
-    .heroAdmin h1, .heroAdmin p {
-      position: relative;
-      z-index: 2;
-    }
+    <!-- Dashboard Content -->
+    <div id="dashboardContent" style="display: none; width: 100%; flex-direction: column; align-items: center;">
+      
+      <!-- Formulaire d'ajout -->
+      <div class="form-card" id="addFormContainer">
+        <h2>Ajouter une formation</h2>
+        <form id="addForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" name="titre" class="input" required>
+          </div>
+          <div class="form-group">
+            <label>Contenu</label>
+            <textarea name="contenu" rows="4" class="input" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Image</label>
+            <input type="file" name="image" accept="image/*">
+          </div>
+          <button type="submit" class="btn-add-new">Publier</button>
+        </form>
+      </div>
 
-    .heroAdmin h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      color: white;
-    }
-
-    .heroAdmin p {
-      font-size: 1.2rem;
-      max-width: 600px;
-      margin: 0 auto 30px;
-      color: white;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 60px 20px;
-    }
-
-    .admin-section {
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 40px;
-      box-shadow: var(--shadow);
-      margin-bottom: 40px;
-      backdrop-filter: blur(10px);
-    }
-
-    .admin-section h2 {
-      color: var(--primary);
-      margin-bottom: 30px;
-      text-align: center;
-      font-size: 2.5rem;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      margin-bottom: 30px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-group label {
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--primary);
-      font-size: 1rem;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      padding: 15px;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 168, 107, 0.1);
-    }
-
-    .form-group textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .file-input-wrapper {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-    }
-
-    .file-input-wrapper input[type="file"] {
-      position: absolute;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-
-    .file-input-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-      border: 2px dashed #cbd5e0;
-      border-radius: 12px;
-      background: #f8fafc;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 1rem;
-      color: #718096;
-    }
-
-    .file-input-label:hover {
-      border-color: var(--primary);
-      background: #f0f8ff;
-    }
-
-    .file-input-label i {
-      margin-right: 10px;
-      color: var(--primary);
-    }
-
-    .btn-submit {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 25px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: var(--shadow);
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    }
-
-    .formations-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 30px;
-      margin-top: 40px;
-    }
-
-    .formation-card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: all 0.4s ease;
-      border: 1px solid rgba(0,0,0,0.05);
-      backdrop-filter: blur(10px);
-    }
-
-    .formation-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    }
-
-    .formation-img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-
-    .formation-content {
-      padding: 25px;
-    }
-
-    .formation-title {
-      font-size: 1.3rem;
-      color: var(--primary);
-      margin-bottom: 15px;
-      font-weight: 600;
-    }
-
-    .formation-description {
-      color: var(--text-light);
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
-    .formation-actions {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-    }
-
-    .btn-edit,
-    .btn-delete {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 25px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .btn-edit {
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-      color: white;
-    }
-
-    .btn-edit:hover {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      transform: translateY(-2px);
-    }
-
-    .btn-delete {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      color: white;
-    }
-
-    .btn-delete:hover {
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-      transform: translateY(-2px);
-    }
-
-    @media (max-width: 768px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-
-      .heroAdmin h1 {
-        font-size: 2.5rem;
-      }
-
-      .heroAdmin p {
-        font-size: 1rem;
-      }
-
-      .admin-section {
-        padding: 30px 20px;
-      }
-
-      .formations-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-
-      .formation-actions {
-        flex-direction: column;
-      }
-
-      .btn-edit,
-      .btn-delete {
-        width: 100%;
-      }
-    }
-  </style>
-
-  <style>
-    /* Modal styles */
-    .modal {
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: var(--shadow);
-    }
-
-    .close {
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      color: var(--accent);
-    }
-  </style>
-</head>
-<body>
-  <h1>Gestion des Formations</h1>
-
-  <!-- Login Form -->
-  <div id="loginForm" class="form-container" style="display: none;">
-    <h2>Connexion Admin</h2>
-    <form id="login">
-      <input type="password" id="password" placeholder="Mot de passe" required>
-      <button type="submit">Se connecter</button>
-    </form>
-  </div>
-
-  <!-- Formulaire d'ajout -->
-  <div class="form-container" id="addFormContainer">
-    <form id="addForm" enctype="multipart/form-data">
-      <input type="text" id="titre" name="titre" placeholder="Titre de la formation" required>
-      <textarea id="contenu" name="contenu" placeholder="Contenu de la formation" rows="4" required></textarea>
-      <input type="file" id="image" name="image" accept="image/*">
-      <button type="submit">Ajouter la formation</button>
-    </form>
+      <!-- Liste des formations (Grille) -->
+      <div id="formations" class="admin-grid"></div>
+    </div>
   </div>
 
   <!-- Modal de modification -->
-  <div id="editModal" class="modal" style="display: none;">
+  <div id="editModal" class="modal-overlay">
     <div class="modal-content">
-      <span class="close" id="closeModal">&times;</span>
-      <h2>Modifier la formation</h2>
+      <div class="modal-header">
+        <h2>Modifier</h2>
+        <button class="close-modal" id="closeModal">&times;</button>
+      </div>
       <form id="editForm" enctype="multipart/form-data">
-        <input type="text" id="editTitre" name="titre" placeholder="Titre" required>
-        <textarea id="editContenu" name="contenu" placeholder="Contenu" rows="4" required></textarea>
-        <div id="currentImage"></div>
-        <input type="file" id="editImage" name="image" accept="image/*">
-        <button type="submit">Mettre à jour</button>
+        <div class="form-group">
+          <label>Titre</label>
+          <input type="text" id="editTitre" name="titre" class="input" required>
+        </div>
+        <div class="form-group">
+          <label>Contenu</label>
+          <textarea id="editContenu" name="contenu" rows="6" class="input" required></textarea>
+        </div>
+        <div class="form-group">
+          <div id="currentImage"></div>
+          <input type="file" id="editImage" name="image" accept="image/*">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="document.getElementById('editModal').classList.remove('open')">Annuler</button>
+          <button type="submit" class="btn-save">Enregistrer</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- Liste des formations -->
-  <div id="formations"></div>
+  <div id="toast" class="toast"></div>
+
+  <footer>© SPOOA-PM Africa Safe Anesthesia — Tous droits réservés</footer>
 
   <script>
     const API_BASE = "http://localhost:3000";
@@ -428,11 +131,15 @@
       }, 3000); // Disparaît après 3 secondes
     }
 
-    // Vérifier si connecté
-    if (!token) {
-      document.getElementById('loginForm').style.display = 'block';
-      document.getElementById('addFormContainer').style.display = 'none';
-      document.querySelector('#formations').style.display = 'none';
+    function updateUI() {
+      if (!token) {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('dashboardContent').style.display = 'none';
+      } else {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('dashboardContent').style.display = 'flex';
+        chargerFormations();
+      }
     }
 
     // Login
@@ -462,17 +169,17 @@
 
       formations.forEach(f => {
         const card = document.createElement("div");
-        card.className = "formation-card";
+        card.className = "admin-card";
         card.innerHTML = `
-          ${f.image ? `<img src="http://localhost:3000${f.image}" alt="${f.titre}" class="formation-img">` : ""}
-          <div class="formation-content">
-            <h3 class="formation-title">${f.titre}</h3>
-            <p class="formation-description">${f.contenu.substring(0, 150)}...</p>
-            <div class="formation-actions">
-              <button class="btn-edit" onclick="openEditModal(${f.id}, '${f.titre.replace(/'/g, "\\'")}', '${f.contenu.replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "")}', '${f.image || ''}')">
-                <i class="fas fa-edit"></i> Modifier
+          ${f.image ? `<img src="http://localhost:3000${f.image}" alt="${f.titre}" class="admin-card-img">` : '<div style="height:200px;background:#eee;"></div>'}
+          <div class="admin-card-content">
+            <h3>${f.titre}</h3>
+            <p>${f.contenu.substring(0, 100)}...</p>
+            <div class="admin-actions">
+              <button class="action-btn btn-edit" onclick="openEditModal(${f.id}, '${f.titre.replace(/'/g, "\\'")}', '${f.contenu.replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "")}', '${f.image || ''}')">
+                <i class="fas fa-pen"></i>
               </button>
-              <button class="btn-delete" onclick="supprimerFormation(${f.id})">
+              <button class="action-btn btn-delete" onclick="supprimerFormation(${f.id})">
                 <i class="fas fa-trash"></i> Supprimer
               </button>
             </div>
@@ -510,11 +217,11 @@
       } else {
         currentImageDiv.innerHTML = '<p>Aucune image</p>';
       }
-      document.getElementById('editModal').style.display = 'flex';
+      document.getElementById('editModal').classList.add('open');
     }
 
     document.getElementById('closeModal').onclick = function() {
-      document.getElementById('editModal').style.display = 'none';
+      document.getElementById('editModal').classList.remove('open');
     }
 
     document.querySelector("#editForm").addEventListener("submit", async (e) => {
@@ -528,7 +235,7 @@
         });
         if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
         showToast("Formation mise à jour avec succès ! ✏️");
-        document.getElementById('editModal').style.display = 'none';
+        document.getElementById('editModal').classList.remove('open');
         chargerFormations();
       } catch (error) {
         showToast(`Erreur lors de la modification: ${error.message}`, 'error');
@@ -553,10 +260,7 @@
       }
     });
 
-    document.addEventListener("DOMContentLoaded", chargerFormations);
+    document.addEventListener("DOMContentLoaded", updateUI);
   </script>
-
-  <!-- Toast Notification -->
-  <div id="toast" class="toast"></div>
 </body>
 </html>

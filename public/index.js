@@ -37,11 +37,6 @@ async function chargerFormationsHome() {
         ${f.image ? `<img src="http://localhost:3000${f.image}" alt="${f.titre}" class="post-img">` : ""}
         <h3>${f.titre}</h3>
         <p>${f.contenu.substring(0, 100)}...</p>
-        <div class="post-meta">
-          <span><i class="fas fa-eye"></i> ${f.vues || 0} vues</span>
-          <span><i class="fas fa-heart"></i> ${f.likes || 0} j'aime</span>
-          <span><i class="fas fa-comment"></i> ${f.commentaires || 0} commentaire</span>
-        </div>
       `;
 
       container.appendChild(card);
