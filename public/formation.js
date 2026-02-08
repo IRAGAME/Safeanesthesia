@@ -4,7 +4,7 @@ const id = params.get("id");
 
 async function chargerFormation() {
   try {
-    const res = await fetch(`${API_BASE}/formations/${id}`); 
+    const res = await fetch(`${API_BASE}/api/formations/${id}`);
     if (!res.ok) throw new Error("Formation introuvable");
     const formation = await res.json();
 
@@ -12,7 +12,7 @@ async function chargerFormation() {
     document.querySelector("#contenu").textContent = formation.contenu;
     
     if (formation.image) {
-      document.querySelector("#image").src = formation.image;
+      document.querySelector("#image").src = `${API_BASE}${formation.image}`;
     }
   } catch (err) {
     document.querySelector("#titre").textContent = "Erreur : " + err.message;

@@ -18,6 +18,10 @@ const __dirname = dirname(__filename);
 const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(express.static("public"));
+app.use(express.static("images"));
+
+
 
 //Configurer le transporteur SMTP
 // Pour Gmail
@@ -120,12 +124,15 @@ const contactLimiter = rateLimit({
 });
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
+
 
 // ------------------- Routes HTML -------------------
 app.get("/", (_, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/about", (_, res) => res.sendFile(path.join(__dirname, "public/about.html")));
 app.get("/contact", (_, res) => res.sendFile(path.join(__dirname, "public/contact.html")));
+app.get("/formations", (_, res) => res.sendFile(path.join(__dirname, "public/formations.html")));
+app.get("/formation", (_, res) => res.sendFile(path.join(__dirname, "public/formation.html")));
+app.get("/admin", (_, res) => res.sendFile(path.join(__dirname, "public/admin.html")));
 
 // ------------------- Multer Config -------------------
 const storage = multer.diskStorage({
@@ -169,16 +176,10 @@ let db;
     } catch (e) {}
     saveDB();
   }
-})();
 
-function saveDB() {
-  const data = db.export();
-  fs.writeFileSync("formations.sqlite", Buffer.from(data));
-}
-
-// ------------------- Routes Formations -------------------
+  // ------------------- Routes Formations -------------------
 //  Ajouter une formation (sans image)
-app.post("/formations", (req, res) => {
+app.post("/api/formations", (req, res) => {
   const { titre, contenu, image } = req.body;
   db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, image]);
   saveDB();
@@ -186,7 +187,7 @@ app.post("/formations", (req, res) => {
 });
 
 //  Ajouter une formation avec image
-app.post("/admin/formations", auth, upload.single("image"), (req, res) => {
+app.post("/admin/api/formations", auth, upload.single("image"), (req, res) => {
   const { titre, contenu } = req.body;
   const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
 
@@ -196,7 +197,7 @@ app.post("/admin/formations", auth, upload.single("image"), (req, res) => {
 });
 
 //  Afficher toutes les formations
-app.get("/formations", (req, res) => {
+app.get("/api/formations", (req, res) => {
   const result = db.exec("SELECT * FROM formations");
   const rows = result.length ? result[0].values : [];
   res.json(rows.map(r => ({
@@ -208,7 +209,7 @@ app.get("/formations", (req, res) => {
 });
 
 //  Afficher une formation par ID
-app.get("/formations/:id", (req, res) => {
+app.get("/api/formations/:id", (req, res) => {
   const { id } = req.params;
   const result = db.exec("SELECT * FROM formations WHERE id = ?", [id]);
   if (!result.length) return res.status(404).json({ error: "Formation introuvable" });
@@ -217,7 +218,7 @@ app.get("/formations/:id", (req, res) => {
 });
 
 //  Modifier une formation
-app.put("/admin/formations/:id", auth, upload.single("image"), (req, res) => {
+app.put("/admin/api/formations/:id", auth, upload.single("image"), (req, res) => {
   const { id } = req.params;
   const { titre, contenu } = req.body;
   const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
@@ -233,7 +234,7 @@ app.put("/admin/formations/:id", auth, upload.single("image"), (req, res) => {
 });
 
 //  Supprimer une formation
-app.delete("/admin/formations/:id", auth, (req, res) => {
+app.delete("/admin/api/formations/:id", auth, (req, res) => {
   const { id } = req.params;
   db.run("DELETE FROM formations WHERE id = ?", [id]);
   saveDB();
@@ -245,3 +246,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
+})();

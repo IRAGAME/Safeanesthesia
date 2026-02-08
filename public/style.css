@@ -915,68 +915,94 @@ p {
    Contact
    ========================= */
 .contact-layout {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   gap: 40px;
-  justify-content: center;
-  align-items: flex-start;
   margin-top: 20px;
+  align-items: start;
 }
 
-.contact-card {
+.social-section {
+  /* Section pour les cartes sociales */
+}
+
+.social-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.card {
   background: #fff;
-  padding: 40px 30px;
-  border-radius: 20px;
+  padding: 35px 25px;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  flex: 1;
-  min-width: 280px;
+  box-shadow: 0 8px 25px rgba(0, 168, 107, 0.08);
   transition: all 0.3s ease;
-  border: 1px solid rgba(0,0,0,0.03);
+  border: 1px solid rgba(0, 168, 107, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.contact-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 168, 107, 0.2);
   border-color: var(--primary);
 }
 
-.contact-card i {
-  font-size: 2.5rem;
+.card i {
+  font-size: 2.2rem;
   color: var(--primary);
-  margin-bottom: 20px;
-  background: rgba(0, 168, 107, 0.1);
-  width: 80px;
-  height: 80px;
+  margin-bottom: 15px;
+  width: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(0, 168, 107, 0.1);
   border-radius: 50%;
   transition: all 0.3s ease;
 }
 
-.contact-card:hover i {
+.card:hover i {
   background: var(--primary);
   color: #fff;
+  transform: scale(1.1);
 }
 
-.contact-card h3 {
-  font-size: 1.25rem;
-  margin-bottom: 10px;
+.card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
   color: var(--text);
-  font-weight: 700;
+  font-weight: 600;
 }
 
-.contact-card p {
+.card p {
   color: var(--text-light);
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.5;
   margin: 0;
 }
+
+/* Couleurs spécifiques par réseau social pour les icônes */
+.card.email i { background: rgba(255, 107, 107, 0.1); }
+.card.email:hover i { background: #ff6b6b; }
+
+.card.facebook i { background: rgba(59, 89, 152, 0.1); }
+.card.facebook:hover i { background: #3b5998; }
+
+.card.twitter i { background: rgba(29, 161, 242, 0.1); }
+.card.twitter:hover i { background: #1da1f2; }
+
+.card.linkedin i { background: rgba(0, 123, 181, 0.1); }
+.card.linkedin:hover i { background: #007bb5; }
+
+.card.whatsapp i { background: rgba(37, 211, 102, 0.1); }
+.card.whatsapp:hover i { background: #25d366; }
 
 .contact-form-section {
   background: #fff;
@@ -1022,7 +1048,7 @@ p {
 
 @media (max-width: 768px) {
   .contact-layout {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
   .contact-form-section {
     padding: 30px;

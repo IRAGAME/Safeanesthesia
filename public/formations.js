@@ -2,7 +2,7 @@ const API_BASE = "http://localhost:3000";
 
 async function chargerFormations() {
   try {
-    const res = await fetch(`${API_BASE}/formations`); // ✅ route corrigée
+    const res = await fetch(`${API_BASE}/api/formations`); // ✅ route corrigée
     if (!res.ok) throw new Error("Impossible de charger les formations");
     const formations = await res.json();
 
