@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600;700;800&display=swap');
+
 /* =========================
    Palette Santé Moderne
    ========================= */
@@ -10,7 +12,7 @@
   --text-light: #718096; /* Texte secondaire */
   --card-bg: rgba(255, 255, 255, 0.95); /* Fond carte avec transparence */
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  --font-main: 'Poppins', sans-serif;
+  --font-main: 'Urbanist', sans-serif;
 }
 
 /* =========================
@@ -68,7 +70,7 @@ header {
 
 /* Titre */
 .title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 600;
   color: white;
   margin-left: 0px;
@@ -84,7 +86,7 @@ header {
 .menu a {
   color: white;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 900;
   position: relative;
   transition: color 0.3s;
 }
@@ -171,13 +173,13 @@ header {
 }
 
 /* =========================
-   HERO SECTIONS (Modernisé & Unifié)
+   HERO SECTIONS
    ========================= */
-/* Base commune pour toutes les sections Hero */
+
 .hero, .heroAbout, .heroForm, .heroCont {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 150vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -186,7 +188,7 @@ header {
   color: #fff;
   padding: 120px 20px 60px; /* Padding haut pour compenser le header fixe */
   background-size: cover;
-  background-position: center;
+  background-position: top center;
   background-repeat: no-repeat;
   margin: 0;
   max-width: none;
@@ -196,14 +198,14 @@ header {
 .hero { background-image: url("/images/spooa/back.jpg"); }
 .heroAbout { background-image: url("/images/back1.png"); }
 .heroForm { background-image: url("/images/back3.jpg"); }
-.heroCont { background-image: url("/images/spooa/back1.jpg"); background-position: center top; }
+.heroCont { background-image: url("/images/spooa/back1.jpg");}
 
 /* Overlay Dégradé Moderne */
 .hero::before, .heroAbout::before, .heroForm::before, .heroCont::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   z-index: 1;
 }
 
@@ -225,13 +227,14 @@ header {
 }
 
 .hero p, .heroAbout p, .heroForm p, .heroCont p {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   max-width: 700px;
   margin: 0 auto 2.5rem;
   line-height: 1.6;
   opacity: 0.95;
   color: #f0f0f0;
   opacity: 1;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.9);
 }
 
 /* Parallaxe sur Desktop uniquement (pour fluidité) */
@@ -313,6 +316,7 @@ h2::after {
 p {
   margin-bottom: 1.5rem;
   color: var(--text-light);
+  font-size: 1.5rem;
 }
 
 /* =========================
