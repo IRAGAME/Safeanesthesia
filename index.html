@@ -10,16 +10,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" href="/images/spooa/logo.png" type="image/png">
   <link rel="stylesheet" href="/style.css">
-  <script src="/script.js"></script>
 </head>
 <body>
   <!-- Header -->
  
   <header class="header">
-  <a href="/" class="logo">
-    <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
-  </a>
-  <h3 class="title">SPOOA-PM Africa Safe Anesthesia</h3>
+    <div class="header-left">
+      <a href="/" class="logo">
+        <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
+      </a>
+      <div class="header-titles">
+        <h1 class="main-title">SPOOA-PM Africa</h1>
+        <p class="sub-title">Safe Anesthesia</p>
+      </div>
+    </div>
 
   <!-- Bouton menu mobile -->
   <button class="menu-btn" id="menu-btn">
@@ -40,7 +44,6 @@
 
   
 </header>
-  
 <main>
 <!-- Hero -->
   <section class="hero">
@@ -61,6 +64,26 @@
     </div>
   </section>
 
+  <!-- Stats Impact -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number">22+</span>
+          <span class="stat-label">Pays Membres</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">12</span>
+          <span class="stat-label">Modules Certifiés</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">100%</span>
+          <span class="stat-label">Impact Panafricain</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Pourquoi choisir -->
   <section class="section">
     <div class="container">
@@ -78,33 +101,73 @@
     </div>
   </section>
 
+  <!-- Domaines d'expertise -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header-pro">
+        <span class="section-tag">Expertise Spécialisée</span>
+        <h2>Nos Domaines d'Intervention</h2>
+      </div>
+      <div class="specialties-grid">
+        <div class="specialty-card">
+          <div class="specialty-icon"><i class="fas fa-baby"></i></div>
+          <h3>Anesthésie Pédiatrique</h3>
+          <p>Sécuriser les interventions pour les enfants en milieu à ressources limitées.</p>
+        </div>
+        <div class="specialty-card">
+          <div class="specialty-icon"><i class="fas fa-female"></i></div>
+          <h3>Anesthésie Obstétricale</h3>
+          <p>Réduire la mortalité maternelle par une prise en charge périopératoire d'excellence.</p>
+        </div>
+        <div class="specialty-card">
+          <div class="specialty-icon"><i class="fas fa-hand-holding-medical"></i></div>
+          <h3>Médecine de la Douleur</h3>
+          <p>Promouvoir une prise en charge éthique et efficace de la douleur aiguë et chronique.</p>
+        </div>
+        <div class="specialty-card">
+          <div class="specialty-icon"><i class="fas fa-microscope"></i></div>
+          <h3>Oncologie</h3>
+          <p>Soutenir le parcours chirurgical complexe des patients atteints de cancer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
  <section class="section carousel-section">
   <div class="container">
     <div class="carousel-container">
-  <div class="carousel">
-    <div class="slide active">
-      <img src="images/spooa/car1.jpg" alt="Objectifs">
-      <div class="caption">
-        <h3>Nos Objectifs</h3>
-        <p class="white">Assurer la sécurité chirurgicale et améliorer les résultats pédiatriques et obstétricaux.</p>
+      <div class="carousel">
+        <div class="slide active">
+          <img src="images/spooa/car1.jpg" alt="Objectifs">
+          <div class="caption">
+            <span class="caption-tag">Impact</span>
+            <h3>Nos Objectifs</h3>
+            <p>Assurer la sécurité chirurgicale et améliorer les résultats pédiatriques et obstétricaux.</p>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="images/spooa/car3.jpg" alt="Partenaires">
+          <div class="caption">
+            <span class="caption-tag">Réseau</span>
+            <h3>Nos Partenaires</h3>
+            <p>Collaboration avec institutions universitaires et établissements de santé d'excellence.</p>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="images/spooa/car2.jpg" alt="Approche">
+          <div class="caption">
+            <span class="caption-tag">Formation</span>
+            <h3>Notre Approche</h3>
+            <p>Former, éduquer et soutenir le personnel soignant pour renforcer les capacités médicales locales.</p>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="slide">
-      <img src="images/spooa/car3.jpg" alt="Partenaires">
-      <div class="caption">
-        <h3>Nos Partenaires</h3>
-        <p class="white">Collaboration avec institutions universitaires et établissements de santé.</p>
-      </div>
-    </div>
-    <div class="slide">
-      <img src="images/spooa/car2.jpg" alt="Approche">
-      <div class="caption">
-        <h3>Notre Approche</h3>
-        <p class="white">Former, éduquer et soutenir le personnel soignant pour renforcer les capacités médicales.</p>
-      </div>
+      <button class="prev" aria-label="Précédent"><i class="fas fa-chevron-left"></i></button>
+      <button class="next" aria-label="Suivant"><i class="fas fa-chevron-right"></i></button>
+      <div class="carousel-dots"></div>
     </div>
   </div>
-</div></section>
+</section>
 
   <!-- Citation -->
   <section class="section quote">
@@ -125,6 +188,18 @@
      </div>
       </div>
     </section>
+
+  <!-- Call to Action Final -->
+  <section class="section cta-final">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Prêt à transformer votre pratique ?</h2>
+        <p>Rejoignez une communauté panafricaine dédiée à l'excellence clinique.</p>
+        <a href="/contact" class="btn btn-primary">Devenir Membre</a>
+      </div>
+    </div>
+  </section>
+
    <a href="/admin">Admin</a>
 </main>
 
@@ -133,7 +208,6 @@
   © SPOOA-PM Africa Safe Anesthesia — Tous droits réservés
 </footer>
 
-  <script src="/script.js"></script>
   <script src="/formations.js"></script>
 </body>
 </html>

@@ -5,22 +5,24 @@ document.addEventListener("DOMContentLoaded", () => {
  
   // menu
 
-document.querySelector(".menu-btn").addEventListener("click", () => {
-  document.querySelector(".menu").classList.toggle("open");
-});
+const menuBtn = document.querySelector(".menu-btn");
+const menu = document.querySelector(".menu");
+if (menuBtn && menu) {
+  menuBtn.addEventListener("click", () => {
+    menu.classList.toggle("open");
+  });
+}
 
 // Fermer le menu en cliquant en dehors
 document.addEventListener("click", (e) => {
-  const menu = document.querySelector(".menu");
-  const menuBtn = document.querySelector(".menu-btn");
-  if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
+  if (menu && menuBtn && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
     menu.classList.remove("open");
   }
 });
 
 // Fermer avec le bouton close
 document.querySelector(".close-menu")?.addEventListener("click", () => {
-  document.querySelector(".menu").classList.remove("open");
+  menu?.classList.remove("open");
 });
   // Animation 
   const animatedEls = document.querySelectorAll(".fade-in, .fade-in-delay, .slide-up");
@@ -65,36 +67,54 @@ document.querySelector(".close-menu")?.addEventListener("click", () => {
   const carousel = document.querySelector(".carousel");
   if (carousel) {
     const slides = carousel.querySelectorAll(".slide");
+    const dotsContainer = document.querySelector(".carousel-dots");
     const prevBtn = document.querySelector(".prev");
     const nextBtn = document.querySelector(".next");
     let currentSlide = 0;
     let autoTimer;
 
+    // Générer les points indicateurs
+    if (dotsContainer) {
+      slides.forEach((_, i) => {
+        const dot = document.createElement("div");
+        dot.className = `dot ${i === 0 ? "active" : ""}`;
+        dot.addEventListener("click", () => moveSlideTo(i));
+        dotsContainer.appendChild(dot);
+      });
+    }
+
     const showSlide = (index) => {
       slides.forEach((s, i) => s.classList.toggle("active", i === index));
+      if (dotsContainer) {
+        const dots = dotsContainer.querySelectorAll(".dot");
+        dots.forEach((d, i) => d.classList.toggle("active", i === index));
+      }
     };
 
     const moveSlide = (step) => {
+      if (slides.length === 0) return;
       currentSlide = (currentSlide + step + slides.length) % slides.length;
       showSlide(currentSlide);
-      resetAuto();
     };
 
-    const startAuto = () => {
-      autoTimer = setInterval(() => moveSlide(1), 5000);
+    const moveSlideTo = (index) => {
+      currentSlide = index;
+      showSlide(currentSlide);
+      resetAuto(); // On réinitialise le timer seulement lors d'une action manuelle
     };
+
     const resetAuto = () => {
       clearInterval(autoTimer);
-      startAuto();
+      autoTimer = setInterval(() => moveSlide(1), 5000);
     };
 
     // Init
     showSlide(currentSlide);
-    startAuto();
+    resetAuto();
 
     // Controls
-    if (prevBtn) prevBtn.addEventListener("click", () => moveSlide(-1));
-    if (nextBtn) nextBtn.addEventListener("click", () => moveSlide(1));
+    if (prevBtn) prevBtn.addEventListener("click", () => { moveSlide(-1); resetAuto(); });
+    if (nextBtn) nextBtn.addEventListener("click", () => { moveSlide(1); resetAuto(); });
 
     // Swipe mobile
     let startX = null;
@@ -104,7 +124,10 @@ document.querySelector(".close-menu")?.addEventListener("click", () => {
     carousel.addEventListener("touchend", (e) => {
       if (startX === null) return;
       const diff = e.changedTouches[0].clientX - startX;
-      if (Math.abs(diff) > 50) moveSlide(diff > 0 ? -1 : 1);
+      if (Math.abs(diff) > 50) {
+        moveSlide(diff > 0 ? -1 : 1);
+        resetAuto();
+      }
       startX = null;
     });
   }
