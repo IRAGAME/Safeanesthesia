@@ -1,0 +1,19 @@
+{
+  "buildCommand": "npm install",
+  "devCommand": "node server.js",
+  "public": "public",
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "3000"
+  },
+  "routes": [
+    {
+      "src": "/public/(.*)",
+      "dest": "public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ]
+}

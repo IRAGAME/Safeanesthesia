@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:3000";
+const API_BASE = window.location.origin;
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
