@@ -19,7 +19,6 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.static("public"));
-app.use(express.static("images"));
 
 
 
@@ -128,11 +127,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // ------------------- Routes HTML -------------------
 app.get("/", (_, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.get("/about", (_, res) => res.sendFile(path.join(__dirname, "public/about.html")));
-app.get("/contact", (_, res) => res.sendFile(path.join(__dirname, "public/contact.html")));
-app.get("/formations", (_, res) => res.sendFile(path.join(__dirname, "public/formations.html")));
-app.get("/formation", (_, res) => res.sendFile(path.join(__dirname, "public/formation.html")));
-app.get("/admin", (_, res) => res.sendFile(path.join(__dirname, "public/admin.html")));
+app.get("/about", (_, res) => res.sendFile(path.join(__dirname, "public/pages/about.html")));
+app.get("/contact", (_, res) => res.sendFile(path.join(__dirname, "public/pages/contact.html")));
+app.get("/formations", (_, res) => res.sendFile(path.join(__dirname, "public/pages/formations.html")));
+app.get("/formation", (_, res) => res.sendFile(path.join(__dirname, "public/pages/formation.html")));
+app.get("/admin", (_, res) => res.sendFile(path.join(__dirname, "public/pages/admin.html")));
 
 // ------------------- Multer Config -------------------
 const storage = multer.diskStorage({
@@ -146,6 +145,18 @@ app.use("/images/ImageFormation", express.static(path.join(__dirname, "public/im
 
 // ------------------- DB SQLite -------------------
 let db;
+
+// Fonction pour sauvegarder la DB en fichier
+const saveDB = () => {
+  try {
+    const data = db.export();
+    const buffer = Buffer.from(data);
+    fs.writeFileSync("formations.sqlite", buffer);
+  } catch (error) {
+    console.error("❌ Erreur lors de la sauvegarde BD:", error);
+  }
+};
+
 (async () => {
   const SQL = await initSqlJs();
   if (fs.existsSync("formations.sqlite")) {
@@ -180,65 +191,108 @@ let db;
   // ------------------- Routes Formations -------------------
 //  Ajouter une formation (sans image)
 app.post("/api/formations", (req, res) => {
-  const { titre, contenu, image } = req.body;
-  db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, image]);
-  saveDB();
-  res.send("✅ Formation ajoutée !");
+  try {
+    const { titre, contenu, image } = req.body;
+    if (!titre || !contenu) {
+      return res.status(400).json({ error: "Titre et contenu requis" });
+    }
+    db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, image || null]);
+    saveDB();
+    res.json({ ok: true, message: "✅ Formation ajoutée !" });
+  } catch (error) {
+    console.error("❌ Erreur ajout formation:", error);
+    res.status(500).json({ error: "Erreur lors de l'ajout de la formation" });
+  }
 });
 
 //  Ajouter une formation avec image
-app.post("/admin/api/formations", auth, upload.single("image"), (req, res) => {
-  const { titre, contenu } = req.body;
-  const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
-
-  db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, imagePath]);
-  saveDB();
-  res.send("✅ Formation ajoutée !");
+app.post("/admin/formations", auth, upload.single("image"), (req, res) => {
+  try {
+    const { titre, contenu } = req.body;
+    if (!titre || !contenu) {
+      return res.status(400).json({ error: "Titre et contenu requis" });
+    }
+    const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
+    db.run("INSERT INTO formations (titre, contenu, image) VALUES (?, ?, ?)", [titre, contenu, imagePath]);
+    saveDB();
+    res.json({ ok: true, message: "✅ Formation ajoutée !" });
+  } catch (error) {
+    console.error("❌ Erreur ajout formation:", error);
+    res.status(500).json({ error: "Erreur lors de l'ajout de la formation" });
+  }
 });
 
 //  Afficher toutes les formations
 app.get("/api/formations", (req, res) => {
-  const result = db.exec("SELECT * FROM formations");
-  const rows = result.length ? result[0].values : [];
-  res.json(rows.map(r => ({
-    id: r[0],
-    titre: r[1],
-    contenu: r[2],
-    image: r[3]
-  })));
+  try {
+    const result = db.exec("SELECT * FROM formations");
+    const rows = result.length ? result[0].values : [];
+    res.json(rows.map(r => ({
+      id: r[0],
+      titre: r[1],
+      contenu: r[2],
+      image: r[3],
+      vues: r[4] || 0,
+      likes: r[5] || 0,
+      commentaires: r[6] || 0
+    })));
+  } catch (error) {
+    console.error("❌ Erreur récupération formations:", error);
+    res.status(500).json({ error: "Erreur lors de la récupération des formations" });
+  }
 });
 
 //  Afficher une formation par ID
 app.get("/api/formations/:id", (req, res) => {
-  const { id } = req.params;
-  const result = db.exec("SELECT * FROM formations WHERE id = ?", [id]);
-  if (!result.length) return res.status(404).json({ error: "Formation introuvable" });
-  const r = result[0].values[0];
-  res.json({ id: r[0], titre: r[1], contenu: r[2], image: r[3] });
+  try {
+    const { id } = req.params;
+    const result = db.exec("SELECT * FROM formations WHERE id = ?", [id]);
+    if (!result.length || !result[0].values.length) {
+      return res.status(404).json({ error: "Formation introuvable" });
+    }
+    const r = result[0].values[0];
+    res.json({ id: r[0], titre: r[1], contenu: r[2], image: r[3], vues: r[4] || 0, likes: r[5] || 0, commentaires: r[6] || 0 });
+  } catch (error) {
+    console.error("❌ Erreur récupération formation:", error);
+    res.status(500).json({ error: "Erreur lors de la récupération de la formation" });
+  }
 });
 
 //  Modifier une formation
-app.put("/admin/api/formations/:id", auth, upload.single("image"), (req, res) => {
-  const { id } = req.params;
-  const { titre, contenu } = req.body;
-  const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
+app.put("/admin/formations/:id", auth, upload.single("image"), (req, res) => {
+  try {
+    const { id } = req.params;
+    const { titre, contenu } = req.body;
+    if (!titre || !contenu) {
+      return res.status(400).json({ error: "Titre et contenu requis" });
+    }
+    const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
 
-  // If image provided, update it, else keep old
-  if (imagePath) {
-    db.run("UPDATE formations SET titre = ?, contenu = ?, image = ? WHERE id = ?", [titre, contenu, imagePath, id]);
-  } else {
-    db.run("UPDATE formations SET titre = ?, contenu = ? WHERE id = ?", [titre, contenu, id]);
+    // If image provided, update it, else keep old
+    if (imagePath) {
+      db.run("UPDATE formations SET titre = ?, contenu = ?, image = ? WHERE id = ?", [titre, contenu, imagePath, id]);
+    } else {
+      db.run("UPDATE formations SET titre = ?, contenu = ? WHERE id = ?", [titre, contenu, id]);
+    }
+    saveDB();
+    res.json({ ok: true, message: "✅ Formation mise à jour !" });
+  } catch (error) {
+    console.error("❌ Erreur modification formation:", error);
+    res.status(500).json({ error: "Erreur lors de la modification" });
   }
-  saveDB();
-  res.send("✅ Formation mise à jour !");
 });
 
 //  Supprimer une formation
-app.delete("/admin/api/formations/:id", auth, (req, res) => {
-  const { id } = req.params;
-  db.run("DELETE FROM formations WHERE id = ?", [id]);
-  saveDB();
-  res.send("✅ Formation supprimée !");
+app.delete("/admin/formations/:id", auth, (req, res) => {
+  try {
+    const { id } = req.params;
+    db.run("DELETE FROM formations WHERE id = ?", [id]);
+    saveDB();
+    res.json({ ok: true, message: "✅ Formation supprimée !" });
+  } catch (error) {
+    console.error("❌ Erreur suppression formation:", error);
+    res.status(500).json({ error: "Erreur lors de la suppression" });
+  }
 });
 
 // ------------------- Port -------------------

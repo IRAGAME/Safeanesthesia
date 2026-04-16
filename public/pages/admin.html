@@ -9,7 +9,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/style.css">
-  <script src="/script.js"></script>
+  <script src="/scripts/script.js"></script>
 </head>
 
 <body>
@@ -17,7 +17,7 @@
   <header class="header">
     <div class="header-left">
       <a href="/" class="logo">
-        <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
+        <img src="/images/spooa/logo.png" alt="SafeAnesthesia Logo">
       </a>
       <div class="header-titles">
         <h1 class="main-title">SPOOA-PM Africa</h1>
@@ -36,9 +36,9 @@
   <nav id="menu" class="menu">
     <ul>
       <li><a href="/">Accueil</a></li>
-      <li><a href="formations.html">Formations</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
+      <li><a href="/formations">Formations</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
   </nav>
 </header>
@@ -167,10 +167,12 @@
     });
 
     async function chargerFormations() {
-      const res = await fetch(`${API_BASE}/formations`);
-      const formations = await res.json();
-      const container = document.querySelector("#formations");
-      container.innerHTML = "";
+      try {
+        const res = await fetch(`${API_BASE}/api/formations`);
+        if (!res.ok) throw new Error(`Erreur ${res.status}`);
+        const formations = await res.json();
+        const container = document.querySelector("#formations");
+        container.innerHTML = "";
 
       formations.forEach(f => {
         const card = document.createElement("div");
@@ -192,6 +194,9 @@
         `;
         container.appendChild(card);
       });
+      } catch (error) {
+        showToast(`Erreur lors du chargement: ${error.message}`, 'error');
+      }
     }
 
     async function supprimerFormation(id) {

@@ -1907,35 +1907,49 @@ footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  padding: 10px 16px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: all 0.3s;
-  margin: 0 5px;
-  color: #fff;
-  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 600;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .btn-edit {
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+  color: #fff;
+  padding: 10px 18px;
 }
 
 .btn-edit:hover { 
-  transform: rotate(15deg);
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.btn-edit:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .btn-delete {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+  color: #fff;
+  padding: 10px 18px;
 }
 
 .btn-delete:hover { 
-  transform: rotate(-15deg);
-  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.btn-delete:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 /* =========================
@@ -2131,9 +2145,10 @@ input[type="file"]:hover {
 
 .admin-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-top: auto;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .form-card {

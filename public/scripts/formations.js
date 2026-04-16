@@ -27,7 +27,7 @@ async function chargerFormations() {
 
       // Lorsqu’on clique sur une carte, on ouvre la page détail
       card.addEventListener("click", () => {
-        window.location.href = `formation.html?id=${f.id}`;
+        window.location.href = `/formation?id=${f.id}`;
       });
 
       container.appendChild(card);
