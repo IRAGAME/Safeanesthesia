@@ -1,0 +1,10 @@
+.git
+.gitignore
+node_modules
+.env.local
+.env
+*.log
+.DS_Store
+formations.sqlite
+test-auth.sh
+CORRECTIONS_LIENS.md

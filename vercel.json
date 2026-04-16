@@ -1,19 +1,26 @@
 {
+  "version": 2,
   "buildCommand": "npm install",
   "devCommand": "node server.js",
-  "public": true,
-  "env": {
-    "NODE_ENV": "production",
-    "PORT": "3000"
+  "installCommand": "npm install",
+  "public": "public",
+  "functions": {
+    "api/handler.js": {
+      "runtime": "nodejs18.x",
+      "memory": 1024
+    }
   },
   "routes": [
     {
-      "src": "/public/(.*)",
-      "dest": "public/$1"
+      "src": "/(.*)",
+      "dest": "api/handler.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "server.js"
+      "src": "/public/(.*)",
+      "dest": "public/$1"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }

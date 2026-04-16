@@ -1,3 +1,6 @@
 .vercel
 .env
 node_modules
+formations.sqlite
+*.sqlite
+*.db
