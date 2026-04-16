@@ -1833,6 +1833,32 @@ footer {
   box-shadow: 0 15px 30px rgba(0, 168, 107, 0.3);
 }
 
+.logout-btn {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 20px rgba(255, 107, 107, 0.2);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-family: var(--font-accent);
+}
+
+.logout-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(255, 107, 107, 0.3);
+}
+
+.logout-btn:active {
+  transform: translateY(-1px);
+}
+
 /* Tableau des formations */
 .table-responsive {
   width: 100%;

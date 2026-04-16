@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion Admin - Safe Anesthesia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 420px;
+      padding: 40px;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header img {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 15px;
+    }
+
+    .login-header h1 {
+      color: #2c3e50;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .login-header p {
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #2c3e50;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ecf0f1;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-btn.loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      background: #ffe6e6;
+      color: #c0392b;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+      border-left: 4px solid #c0392b;
+    }
+
+    .error-message.show {
+      display: block;
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+      border-left: 4px solid #155724;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #95a5a6;
+      font-size: 12px;
+    }
+
+    .login-footer a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <img src="/images/spooa/logo.png" alt="Safe Anesthesia">
+      <h1>Safe Anesthesia</h1>
+      <p>Tableau de bord administrateur</p>
+    </div>
+
+    <div id="successMessage" class="success-message"></div>
+    <div id="errorMessage" class="error-message"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="password">Mot de passe administrateur</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          placeholder="Entrez votre mot de passe"
+          required
+          autocomplete="off"
+        >
+      </div>
+      
+      <button type="submit" class="login-btn" id="loginBtn">
+        Se connecter
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Accès réservé aux administrateurs autorisés</p>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+
+    // Vérifier si l'utilisateur est déjà connecté
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem('adminToken');
+      if (token) {
+        // Vérifier si le token est valide
+        try {
+          const res = await fetch(`${API_BASE}/api/auth/verify`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            // Token valide, rediriger vers le dashboard
+            window.location.href = '/admin';
+          }
+        } catch (error) {
+          localStorage.removeItem('adminToken');
+        }
+      }
+    });
+
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorMsg = document.getElementById('errorMessage');
+    const successMsg = document.getElementById('successMessage');
+    const passwordInput = document.getElementById('password');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      errorMsg.classList.remove('show');
+      successMsg.classList.remove('show');
+      loginBtn.classList.add('loading');
+      loginBtn.disabled = true;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: passwordInput.value })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Mot de passe incorrect');
+        }
+
+        // Stocker le token
+        localStorage.setItem('adminToken', data.token);
+        
+        successMsg.textContent = '✅ Connexion réussie!';
+        successMsg.classList.add('show');
+
+        // Rediriger vers le dashboard
+        setTimeout(() => {
+          window.location.href = '/admin';
+        }, 1000);
+
+      } catch (error) {
+        errorMsg.textContent = `❌ Erreur: ${error.message}`;
+        errorMsg.classList.add('show');
+        loginBtn.classList.remove('loading');
+        loginBtn.disabled = false;
+        passwordInput.focus();
+      }
+    });
+  </script>
+</body>
+</html>

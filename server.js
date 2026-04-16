@@ -12,6 +12,9 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
+// Charger les variables d'environnement dès le début
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -20,28 +23,66 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
+// ------------------- Sécurité -------------------
+app.use(helmet({ contentSecurityPolicy: false }));
+app.disable("x-powered-by");
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 tentatives max
+  message: { error: "Trop de tentatives, réessayez dans 15 minutes." },
+});
+
+const contactLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  message: { ok: false, error: "Trop de tentatives, réessayez dans un instant." },
+});
+
+app.use(express.urlencoded({ extended: true }));
+
+// ================= AUTHENTIFICATION MIDDLEWARE =================
+
+/**
+ * Middleware pour vérifier le token JWT admin
+ */
+function authAdmin(req, res, next) {
+  const header = req.headers["authorization"];
+  
+  if (!header) {
+    return res.status(401).json({ message: "Token manquant" });
+  }
+
+  const token = header.split(" ")[1];
+  
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = verified;
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: "Token invalide ou expiré" });
+  }
+}
 
 //Configurer le transporteur SMTP
-// Pour Gmail
 let transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",   // serveur SMTP
-  port: 465,                // port sécurisé
-  secure: true,             // true pour SSL
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: process.env.SMTP_PORT || 465,
+  secure: true,
   auth: {
-    user: "tonadresse@gmail.com",        // ton adresse Gmail
-    pass: "ton-app-password-16caractères" // mot de passe d’application
+    user: process.env.SMTP_USER || "votre_email@gmail.com",
+    pass: process.env.SMTP_PASS || "votre_password"
   }
 });
 
-// 📩 Route pour envoyer un email
-app.post("/send", async (req, res) => {
+// 📩 Route pour envoyer un email (contact public)
+app.post("/send", contactLimiter, async (req, res) => {
   const { name, email, message, messageDeReponse } = req.body;
 
-  // Notification interne (vers toi)
+  // Notification interne (vers l'admin)
   let mailOptions = {
-    from: '"Safe Anesthesia" <no-reply@safeanesthesia.com>',
-    to: "iragimargos@gmail.com",
+    from: process.env.SMTP_FROM || '"Safe Anesthesia" <no-reply@safeanesthesia.com>',
+    to: process.env.ADMIN_EMAIL || "admin@safeanesthesia.com",
     subject: `📩 Nouveau message de ${name}`,
     replyTo: email,
     html: `
@@ -85,45 +126,32 @@ app.post("/send", async (req, res) => {
 
 
 // ------------------- Login Route -------------------
-app.post("/login", (req, res) => {
+app.post("/api/auth/login", loginLimiter, (req, res) => {
   const { password } = req.body;
-  console.log("Tentative de connexion avec mot de passe:", password);
-  if (password === "admin") { // Mot de passe simple pour test
-    const token = jwt.sign({ user: "admin" }, process.env.JWT_SECRET || "secretkey");
-    console.log("Connexion réussie, token généré");
-    res.json({ token });
-  } else {
-    console.log("Mot de passe incorrect");
-    res.status(401).json({ message: "Mot de passe incorrect" });
+
+  if (!password || password !== process.env.ADMIN_PASSWORD) {
+    console.warn("Tentative de connexion avec mot de passe incorrect");
+    return res.status(401).json({ message: "Mot de passe incorrect" });
   }
-});
 
-// ------------------- Auth Middleware -------------------
-function auth(req, res, next) {
-  const header = req.headers["authorization"];
-  if (!header) return res.status(401).json({ message: "Token manquant" });
-
-  const token = header.split(" ")[1];
   try {
-    jwt.verify(token, process.env.JWT_SECRET || "secretkey");
-    next();
-  } catch (err) {
-    return res.status(403).json({ message: "Token invalide" });
+    const token = jwt.sign({ user: "admin", iat: Date.now() }, process.env.JWT_SECRET);
+    console.log("Admin connecté avec succès");
+    res.json({ token });
+  } catch (error) {
+    console.error("Erreur lors de la génération du token:", error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
-}
-
-// ------------------- Sécurité -------------------
-app.use(helmet({ contentSecurityPolicy: false }));
-app.disable("x-powered-by");
-
-const contactLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 5,
-  message: { ok: false, error: "Trop de tentatives, réessayez dans un instant." },
 });
 
-app.use(express.urlencoded({ extended: true }));
+app.get("/api/auth/verify", authAdmin, (req, res) => {
+  res.json({ valid: true, user: req.user });
+});
 
+app.post("/api/auth/logout", authAdmin, (req, res) => {
+  console.log("Admin déconnecté");
+  res.json({ message: "Déconnecté avec succès" });
+});
 
 // ------------------- Routes HTML -------------------
 app.get("/", (_, res) => res.sendFile(path.join(__dirname, "index.html")));
@@ -131,6 +159,11 @@ app.get("/about", (_, res) => res.sendFile(path.join(__dirname, "public/pages/ab
 app.get("/contact", (_, res) => res.sendFile(path.join(__dirname, "public/pages/contact.html")));
 app.get("/formations", (_, res) => res.sendFile(path.join(__dirname, "public/pages/formations.html")));
 app.get("/formation", (_, res) => res.sendFile(path.join(__dirname, "public/pages/formation.html")));
+
+// Route LOGIN (page publique)
+app.get("/login", (_, res) => res.sendFile(path.join(__dirname, "public/pages/login.html")));
+
+// Route ADMIN (protégée côté serveur) - redirection automatique côté client
 app.get("/admin", (_, res) => res.sendFile(path.join(__dirname, "public/pages/admin.html")));
 
 // ------------------- Multer Config -------------------
@@ -206,7 +239,7 @@ app.post("/api/formations", (req, res) => {
 });
 
 //  Ajouter une formation avec image
-app.post("/admin/formations", auth, upload.single("image"), (req, res) => {
+app.post("/api/admin/formations", authAdmin, upload.single("image"), (req, res) => {
   try {
     const { titre, contenu } = req.body;
     if (!titre || !contenu) {
@@ -259,7 +292,7 @@ app.get("/api/formations/:id", (req, res) => {
 });
 
 //  Modifier une formation
-app.put("/admin/formations/:id", auth, upload.single("image"), (req, res) => {
+app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), (req, res) => {
   try {
     const { id } = req.params;
     const { titre, contenu } = req.body;
@@ -283,7 +316,7 @@ app.put("/admin/formations/:id", auth, upload.single("image"), (req, res) => {
 });
 
 //  Supprimer une formation
-app.delete("/admin/formations/:id", auth, (req, res) => {
+app.delete("/api/admin/formations/:id", authAdmin, (req, res) => {
   try {
     const { id } = req.params;
     db.run("DELETE FROM formations WHERE id = ?", [id]);
