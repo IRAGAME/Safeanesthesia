@@ -21,6 +21,7 @@
     "mongoose": "^9.1.3",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12",
+    "serverless-http": "^4.0.0",
     "sql.js": "^1.13.0"
   }
 }
