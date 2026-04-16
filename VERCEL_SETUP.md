@@ -3,109 +3,126 @@
 ## Architecture
 
 ```
-GitHub Pages (Frontend)  ←→  Vercel (Backend API)
-- index.html                - server.js
-- pages/*.html              - API routes
-- style.css                 - Database
-- scripts/
+GitHub Pages (Frontend)  ←→  Vercel (Backend API serverless)
+- index.html                - api/handler.js (Express)
+- pages/*.html              - /api/formations (routes)
+- style.css                 - /api/auth (login)
+- scripts/                  - Database Sqlite
 ```
+
+## 🔧 Changements Récents
+
+**Fix du problème sql.js + Vercel:**
+- ✅ Créé `api/handler.js` compatible serverless
+- ✅ Configuré `vercel.json` pour routes API
+- ✅ Initilisation DB asynchrone côté API
 
 ## Étapes de Déploiement
 
 ### 1️⃣ Préparer GitHub
 
 ```bash
-git add .
-git commit -m "Configuration Vercel"
+git add -A
+git commit -m "Configuration Vercel complète"
 git push origin main
 ```
 
-### 2️⃣ Créer Compte Vercel
+### 2️⃣ Redéployer sur Vercel
 
-1. Allez sur https://vercel.com
-2. Cliquez "Sign Up" → Connectez-vous avec GitHub
-3. Importez ce repo
+**Vercel détecte les changements automatiquement!**
 
-### 3️⃣ Configurer Vercel
+1. Allez sur votre dashboard Vercel
+2. Cliquez sur votre projet "Safeanesthsia"
+3. **Attendez le redéploiement** (5-10 min)
+4. Vérifiez les **Deployments → Logs** pour les erreurs
 
-**Après import du repo, Vercel affiche:**
+### 3️⃣ Vérifier les Environment Variables
 
-- **Root Directory:** ✅ (racine du projet)
-- **Framework Preset:** Node.js
-- **Build Command:** `npm install`
-- **Environment Variables:** Ajouter
-
-### 4️⃣ Ajouter Variables d'Environnement
-
-Dans **Settings → Environment Variables**, ajoutez:
+Allez dans **Settings → Environment Variables**, vérifiez que:
 
 ```
-ADMIN_PASSWORD = VotreMotDePasse
-JWT_SECRET = VotreSecretAleatoire
-SMTP_USER = votre_email@gmail.com
-SMTP_PASS = app_password
-ADMIN_EMAIL = admin@safeanesthesia.com
-NODE_ENV = production
+✅ ADMIN_PASSWORD = présent
+✅ JWT_SECRET = présent
+✅ SMTP_USER = (optionnel, pour email)
+✅ SMTP_PASS = (optionnel, pour email)
+✅ ADMIN_EMAIL = (optionnel)
 ```
 
-### 5️⃣ Configurer GitHub Pages (Frontend)
+### 4️⃣ Configurer GitHub Pages (Frontend)
 
 1. Allez dans **Settings → Pages**
-2. **Source:** Main branch
-3. **Folder:** / (root)
-4. **Save**
+2. **Source:** Deploy from a branch
+3. **Branch:** Main
+4. **Folder:** /(root)
+5. **Save**
 
-Votre site sera à: `https://yourusername.github.io/Safeanesthesia`
+## 🧪 Tester
 
-### 6️⃣ Adapter les URLs Frontend
-
-Si votre GitHub Pages ≠ votre Vercel, mettez à jour:
-
-**public/index.html (script d'accès formations)**
-```javascript
-// ✅ Utilise déjà window.location.origin (bon!)
-const API_BASE = window.location.origin;
-```
-
-Vérifiez tous les scripts utilisent `window.location.origin` ou `${API_BASE}`.
-
-### 7️⃣ Tester
-
-**Local:**
+### Local (Développement)
 ```bash
-npm install
 node server.js
 # http://localhost:3000
 ```
 
-**Production:**
+### Production
 ```
-Frontend: https://yourusername.github.io/Safeanesthesia
-Backend:  https://your-vercel-app.vercel.app
+🌐 Frontend:  https://yourusername.github.io/Safeanesthesia
+🔐 Backend:   https://safeanesthesiasite.vercel.app
 ```
 
-### ⚠️ Problème CORS?
+### Endpoints API
+```
+GET  /api/formations             # Lister formations
+POST /api/admin/formations       # Ajouter (authentifié)
+PUT  /api/admin/formations/:id   # Modifier (authentifié)
+DELETE /api/admin/formations/:id # Supprimer (authentifié)
+POST /api/auth/login             # Login
+GET  /api/auth/verify            # Vérifier token
+POST /send                        # Contact email
+```
 
-Si vous avez des erreurs CORS, ajoutez dans `server.js`:
+## ⚠️ Problèmes Courants
 
+### "500 Error - sql.js WASM not found"
+**Status:** ✅ FIXÉ (version serverless)
+- Créé `api/handler.js` avec init DB asynchrone
+- Si encore erreur: vérifier les Vercel Logs
+
+### "CORS Error"
+**Solution:**
 ```javascript
-const cors = require('cors');
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://yourusername.github.io'
-  ]
-}));
+// Déjà configuré dans api/handler.js
+// Ajouter votre domaine GitHub Pages si besoin:
+allowedOrigins.push('https://yourusername.github.io');
 ```
 
-## Vérification
+### "Authorization denied"
+```bash
+# Vérifier JWT_SECRET en env vars Vercel
+# Vérifier localStorage.token dans browser (F12 → Application)
+```
 
-✅ Frontend accéder au backend API
-✅ Login fonctionne
-✅ Admin affiche formations
-✅ Images chargent
-✅ Contact email marche
+## 📊 Monitoring
+
+Voir les logs:
+1. Vercel Dashboard → votre projet
+2. **Deployments** → Dernier déploiement
+3. **Logs** → Erreurs détaillées
+
+## 🚀 Redéployer Rapidement
+
+Si vous changez le code:
+```bash
+git add -A
+git commit -m "vos changements"
+git push origin main
+# Vercel redéploie automatiquement!
+```
 
 ---
 
-**Questions?** Lisez [README.md](README.md) ou [ADMIN_ACCESS.md](ADMIN_ACCESS.md)
+**Questions?** Vérifiez:
+- [README.md](README.md) — Quickstart
+- [ADMIN_ACCESS.md](ADMIN_ACCESS.md) — Accès admin
+- Vercel Logs → Dashboard
+
