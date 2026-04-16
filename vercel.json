@@ -3,7 +3,7 @@
   "buildCommand": "npm install --legacy-peer-deps",
   "devCommand": "node server.js",
   "installCommand": "npm install --legacy-peer-deps",
-  "public": "public",
+  "public": true,
   "functions": {
     "api/handler.js": {
       "runtime": "nodejs18.x",
