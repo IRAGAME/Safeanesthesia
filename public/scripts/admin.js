@@ -99,12 +99,18 @@ async function chargerFormations() {
 // ➕ Ajouter formation
 async function ajouterFormation(e) {
   e.preventDefault();
-  const formData = new FormData(document.querySelector("#addForm"));
+  const form = document.querySelector("#addForm");
+  const titre = form.querySelector('input[name="titre"]').value;
+  const contenu = form.querySelector('textarea[name="contenu"]').value;
+  
   try {
     const res = await fetch(`${API_BASE}/admin/formations`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}` },
-      body: formData
+      headers: { 
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ titre, contenu, image: null })
     });
     if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
     showToast("Formation ajoutée avec succès ! 🎉");
@@ -152,12 +158,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (editForm) {
     editForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const formData = new FormData(editForm);
+      const titre = document.getElementById('editTitre').value;
+      const contenu = document.getElementById('editContenu').value;
       try {
         const res = await fetch(`${API_BASE}/admin/formations/${currentEditId}`, {
           method: "PUT",
-          headers: { "Authorization": `Bearer ${token}` },
-          body: formData
+          headers: { 
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ titre, contenu, image: null })
         });
         if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
         showToast("Formation mise à jour avec succès ! ✏️");
