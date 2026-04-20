@@ -1077,6 +1077,13 @@ p {
   margin-bottom: 50px;
 }
 
+.section-header-pro .section-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-top: 15px;
+  font-weight: 300;
+}
+
 .parcours-premium {
   max-width: 900px;
   margin: 0 auto;
@@ -1154,6 +1161,7 @@ p {
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
+  font-size: 0.95rem;
 }
 
 .filter-btn.active, .filter-btn:hover {
@@ -1167,6 +1175,27 @@ p {
   position: relative;
   margin-left: auto;
   min-width: 250px;
+}
+
+@media (max-width: 768px) {
+  .filter-bar {
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .filter-btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+
+  .search-box {
+    margin-left: 0;
+    width: 100%;
+    min-width: auto;
+  }
 }
 
 .search-box input {
@@ -1185,43 +1214,148 @@ p {
 
 /* Approche Pédagogique Clean */
 .pedagogie-clean {
-  background: white;
-  padding: 80px 20px;
-  border-top: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(0, 168, 107, 0.03) 0%, rgba(0, 123, 255, 0.03) 100%);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+}
+
+.pedagogie-clean .section-header-pro {
+  margin-bottom: var(--spacing-3xl);
+}
+
+.pedagogie-clean .section-header-pro p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: var(--spacing-lg) auto 0;
 }
 
 .pedagogie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  text-align: center;
-}
-
-.pedagogie-item {
-  padding: 30px;
-  background: var(--background);
-  border-radius: 16px;
-  transition: var(--transition);
-  border: 1px solid transparent;
-}
-
-.pedagogie-item:hover {
-  border-color: var(--primary);
-  background: white;
-  box-shadow: var(--shadow-md);
-}
-
-.pedagogie-item p {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-2xl);
   margin: 0;
-  font-size: 1rem;
-  color: var(--text-secondary);
 }
 
-.pedagogie-item strong {
+.pedagogie-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: var(--spacing-2xl);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.pedagogie-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.pedagogie-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-8px);
+  border-color: var(--primary);
+}
+
+.pedagogie-card:hover::before {
+  transform: scaleX(1);
+}
+
+.card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary) 0%, #008a57 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 168, 107, 0.2);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.pedagogie-card:hover .card-icon {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 8px 25px rgba(0, 168, 107, 0.3);
+}
+
+.card-icon i {
+  font-size: 2.2rem;
+  color: white;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.pedagogie-card:hover .card-icon i {
+  transform: scale(1.15);
+}
+
+.pedagogie-card h3 {
   color: var(--primary);
-  display: block;
-  margin-bottom: 5px;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.pedagogie-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: var(--lh-relaxed);
+  margin: 0;
+}
+
+/* Responsive Pedagogie Section */
+@media (max-width: 768px) {
+  .pedagogie-clean {
+    padding: var(--spacing-2xl) var(--spacing-md);
+  }
+
+  .pedagogie-clean .section-header-pro {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .pedagogie-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+
+  .pedagogie-item {
+    padding: var(--spacing-lg) var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .pedagogie-card {
+    padding: var(--spacing-xl);
+  }
+
+  .card-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .card-icon i {
+    font-size: 1.8rem;
+  }
+
+  .pedagogie-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .pedagogie-card p {
+    font-size: 0.9rem;
+  }
 }
 
 @keyframes slideDown {
@@ -2315,7 +2449,18 @@ label {
 }
 
 @media (max-width: 768px) {
-  .leader-image { height: 300px; }
+  .leader-image { 
+    width: 280px;
+    height: 280px;
+    border-width: 3px;
+  }
+  
+  .leader-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
   .leader-info { padding: 25px; }
   .leadership-grid { gap: 30px; }
 }
@@ -2379,21 +2524,6 @@ label {
   border: 1px solid var(--border);
 }
 
-.partenaire-logo::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-  border-radius: 12px;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.partenaire-logo:hover::before {
-  opacity: 1;
-}
-
 .partenaire-logo:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-lg);
@@ -2439,6 +2569,29 @@ label {
 }
 
 @media (max-width: 480px) {
+  .leader-image { 
+    width: 220px;
+    height: 220px;
+    border-width: 2px;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .leader-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .leader-name {
+    font-size: 1.1rem;
+  }
+  
+  .leader-title {
+    font-size: 0.9rem;
+  }
+  
+  .leader-bio {
+    font-size: 0.8rem;
+  }
+
   .partenaires-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-md);
@@ -2908,7 +3061,19 @@ label {
 
   .history-section h3 {
     font-size: 1.2rem;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    gap: var(--spacing-lg);
+  }
+
+  .history-section p {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .strategic-axes li,
+  .achievements li,
+  .positioning-list li {
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
   }
 
   .strategic-axes li,
