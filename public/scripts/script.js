@@ -10,6 +10,7 @@ const menu = document.querySelector(".menu");
 if (menuBtn && menu) {
   menuBtn.addEventListener("click", () => {
     menu.classList.toggle("open");
+    menuBtn.classList.toggle("open");
   });
 }
 
@@ -17,12 +18,16 @@ if (menuBtn && menu) {
 document.addEventListener("click", (e) => {
   if (menu && menuBtn && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
     menu.classList.remove("open");
+    menuBtn.classList.remove("open");
   }
 });
 
-// Fermer avec le bouton close
-document.querySelector(".close-menu")?.addEventListener("click", () => {
-  menu?.classList.remove("open");
+// Fermer le menu lors du clic sur un lien (utile pour les ancres sur une même page)
+document.querySelectorAll(".menu a").forEach(link => {
+  link.addEventListener("click", () => {
+    menu.classList.remove("open");
+    menuBtn.classList.remove("open");
+  });
 });
   // Animation 
   const animatedEls = document.querySelectorAll(".fade-in, .fade-in-delay, .slide-up");

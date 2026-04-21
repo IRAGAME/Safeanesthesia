@@ -172,8 +172,8 @@ header {
 }
 
 .logo img {
-  height: 55px;
-  width: 55px;
+  height: clamp(35px, 10vw, 55px);
+  width: clamp(35px, 10vw, 55px);
   aspect-ratio: 1;
   border-radius: 50%;
   padding: 4px;
@@ -196,7 +196,7 @@ header {
 }
 
 .main-title {
-    font-size: 1.2rem;
+    font-size: clamp(0.9rem, 4vw, 1.2rem);
     font-weight: 800;
     color: white; /* Conserver la couleur blanche du header */
     margin: 0;
@@ -205,7 +205,7 @@ header {
 }
 
 .sub-title {
-    font-size: 0.85rem;
+    font-size: clamp(0.6rem, 3vw, 0.85rem);
     font-weight: 500;
     color: rgba(255, 255, 255, 0.8); /* Une couleur légèrement plus claire pour le sous-titre */
     margin: 0;
@@ -278,7 +278,7 @@ header {
 
 /* Menu Mobile */
 .menu-btn {
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 28px;
@@ -293,14 +293,13 @@ header {
 .menu-btn span {
   height: 2.5px;
   width: 100%;
-  background: var(--primary);
+  background: white;
   border-radius: 2px;
   transition: all 0.3s ease;
 }
 
 .menu-btn.open span:nth-child(1) {
   transform: rotate(45deg) translateY(9px);
-  background: #e8f5e9;
 }
 
 .menu-btn.open span:nth-child(2) {
@@ -309,97 +308,48 @@ header {
 
 .menu-btn.open span:nth-child(3) {
   transform: rotate(-45deg) translateY(-8px);
-  background: #e8f5e9;
 }
 
-/* Responsive Header */
-@media (max-width: 768px) {
-  header {
-    height: 75px;
-    padding: 0 var(--spacing-md);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.18);
-  }
+/* Menu - Mobile First */
+.menu {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  background: var(--primary);
+  transform: translateY(-120%);
+  transition: transform 0.4s ease-in-out;
+  z-index: 999;
+  padding: var(--spacing-xl) 0;
+  box-shadow: var(--shadow-lg);
+}
 
-  .title {
-    font-size: 0.9rem;
-    margin-left: 0;
-    font-weight: 700;
-    letter-spacing: -0.2px;
-  }
+.menu.open {
+  transform: translateY(0);
+}
 
-  .logo img {
-    height: 40px;
-    width: 40px;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    padding: 3px;
-    background: white;
-    box-sizing: border-box;
-    object-fit: cover;
-  }
+.menu ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
 
-  /* Responsivité mobile pour les nouveaux titres */
-  .main-title { font-size: 1rem; } /* Ajustement pour mobile */
-  .sub-title { font-size: 0.7rem; } /* Ajustement pour mobile */
-  .header-left { gap: 10px; } /* Espacement réduit pour mobile */
-
-  /* Le bouton du menu mobile doit être affiché sur mobile */
-  .menu-btn {
-    display: flex;
-  }
-
+/* Menu Desktop Query */
+@media (min-width: 1024px) {
+  .menu-btn { display: none; }
   .menu {
-    position: fixed;
-    top: 75px;
-    left: 0;
-    width: 100%;
-    height: auto;
-    max-height: calc(100vh - 75px);
-    background: linear-gradient(135deg, var(--primary) 0%, #008a57 100%);
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
-    transform: translateY(-150%);
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    z-index: 990;
-    display: block;
-    padding: var(--spacing-lg) 0;
-    border-top: none;
-    overflow-y: auto;
+    position: static;
+    width: auto;
+    background: transparent;
+    transform: none;
+    box-shadow: none;
+    padding: 0;
   }
-
-  .menu.open {
-    transform: translateY(0);
-  }
-
   .menu ul {
     flex-direction: column;
-    gap: 0;
-    padding: 0;
-    align-items: stretch;
-  }
-
-  .menu ul li {
-    width: 100%;
-    text-align: center;
-  }
-
-  .menu ul li a {
-    font-size: 1.05rem;
-    font-weight: 500;
-    display: block;
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-bottom: none;
-    color: white;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  .menu ul li:last-child a {
-    border-bottom: none;
-  }
-
-  .menu ul li a:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #e8f5e9;
-    transform: translateX(4px);
+    flex-direction: row;
+    gap: var(--spacing-2xl);
   }
 }
 
@@ -409,18 +359,17 @@ header {
 .hero, .heroAbout, .heroForm, .heroCont {
   position: relative;
   width: 100%;
-  min-height: 150vh;
+  min-height: 80vh; /* Réduit de 150vh pour plus de cohérence */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   color: white;
-  padding: 120px 20px 60px;
+  padding: clamp(100px, 15vh, 140px) var(--spacing-md) 60px;
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
   margin: 0;
   max-width: none;
 }
@@ -451,7 +400,7 @@ header {
 /* Hero Typography */
 .hero h1, .heroAbout h1, .heroForm h1, .heroCont h1 {
   font-family: var(--font-heading);
-  font-size: 3.5rem;
+  font-size: clamp(1.8rem, 8vw, 3.5rem);
   font-weight: 800;
   margin-bottom: 1.5rem;
   line-height: 1.2;
@@ -461,7 +410,7 @@ header {
 
 .hero p, .heroAbout p, .heroForm p, .heroCont p {
   font-family: var(--font-body);
-  font-size: 1.5rem;
+  font-size: clamp(1rem, 4vw, 1.3rem);
   max-width: 700px;
   margin: 0 auto 2.5rem;
   line-height: 1.6;
@@ -623,26 +572,23 @@ p {
    ========================= */
 .posts-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: var(--spacing-xl);
   padding: var(--spacing-2xl) 0;
-  max-width: 1000px;
   margin: 0 auto;
 }
 
 .post-card {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   background: var(--surface);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
   transition: var(--transition);
   border: 1px solid var(--border);
-  position: relative;
-  height: 240px;
   cursor: pointer;
-  align-items: stretch;
+  height: 100%;
 }
 
 .post-card::before {
@@ -800,7 +746,7 @@ p {
 
 .about-text-content h2 {
   color: var(--text);
-  font-size: 2.8rem;
+  font-size: clamp(1.8rem, 6vw, 2.8rem);
   margin-bottom: 2rem;
   position: relative;
   text-align: left;
@@ -916,14 +862,14 @@ p {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   text-align: center;
-  gap: 30px;
+  gap: var(--spacing-xl);
 }
 
 .stat-number {
   display: block;
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 8vw, 3.5rem);
   font-weight: 800;
   color: var(--primary);
   line-height: 1;
@@ -1039,7 +985,7 @@ p {
 .specialty-icon {
   width: 70px;
   height: 70px;
-  background: rgba(0, 168, 107, 0.1); /* Fond très doux au lieu d'un dégradé plein */
+  background: rgba(0, 168, 107, 0.1);
   border-radius: 16px; /* Forme plus moderne que le cercle parfait */
   display: flex;
   align-items: center;
