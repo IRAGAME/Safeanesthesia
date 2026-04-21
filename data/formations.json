@@ -1,0 +1,15 @@
+{
+  "formations": [
+    {
+      "id": 2,
+      "titre": "Anesthésie pédiatrique pour chirurgie lourde",
+      "contenu": "clinique",
+      "image": "/images/ImageFormation/1776787819680.jpg",
+      "vues": 0,
+      "likes": 0,
+      "commentaires": 0,
+      "createdAt": "2026-04-21T16:10:19.683Z"
+    }
+  ],
+  "nextId": 3
+}

@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeBtn) {
     closeBtn.onclick = () => {
       document.getElementById('editModal').classList.remove('open');
+      currentEditId = null;
     };
   }
 });
@@ -80,7 +81,7 @@ async function chargerFormations() {
           <h3>${f.titre}</h3>
           <p>${f.contenu.substring(0, 100)}...</p>
           <div class="admin-actions">
-            <button class="action-btn btn-edit" onclick="openEditModal(${f.id}, '${f.titre.replace(/'/g, "\\'")}', '${f.contenu.replace(/'/g, "\\'").replace(/\n/g, "\\n").replace(/\r/g, "")}', '${f.image || ''}')">
+            <button class="action-btn btn-edit" onclick="prepareEdit(${f.id}, \`${f.titre.replace(/`/g, '\\`')}\`, \`${f.contenu.replace(/`/g, '\\`')}\`, '${f.image || ''}')">
               <i class="fas fa-pen"></i>
             </button>
             <button class="action-btn btn-delete" onclick="supprimerFormation(${f.id})">
@@ -99,18 +100,16 @@ async function chargerFormations() {
 // ➕ Ajouter formation
 async function ajouterFormation(e) {
   e.preventDefault();
-  const form = document.querySelector("#addForm");
-  const titre = form.querySelector('input[name="titre"]').value;
-  const contenu = form.querySelector('textarea[name="contenu"]').value;
+  const formData = new FormData(e.target);
   
   try {
-    const res = await fetch(`${API_BASE}/admin/formations`, {
+    const res = await fetch(`${API_BASE}/api/admin/formations`, {
       method: "POST",
       headers: { 
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "Authorization": `Bearer ${token}`
+        // Note: Ne pas mettre Content-Type avec FormData, le navigateur le fait seul
       },
-      body: JSON.stringify({ titre, contenu, image: null })
+      body: formData
     });
     if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
     showToast("Formation ajoutée avec succès ! 🎉");
@@ -125,7 +124,7 @@ async function ajouterFormation(e) {
 async function supprimerFormation(id) {
   if (confirm("Êtes-vous sûr de vouloir supprimer cette formation ?")) {
     try {
-      const res = await fetch(`${API_BASE}/admin/formations/${id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/formations/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -140,10 +139,10 @@ async function supprimerFormation(id) {
 
 let currentEditId = null;
 
-function openEditModal(id, titre, contenu, image) {
+window.prepareEdit = function(id, titre, contenu, image) {
   currentEditId = id;
   document.getElementById('editTitre').value = titre;
-  document.getElementById('editContenu').value = contenu.replace(/\\n/g, '\n');
+  document.getElementById('editContenu').value = contenu;
   const currentImageDiv = document.getElementById('currentImage');
   if (image) {
     currentImageDiv.innerHTML = `<p>Image actuelle:</p><img src="${API_BASE}${image}" alt="Image actuelle" style="max-width: 100px; max-height: 100px;">`;
@@ -158,16 +157,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (editForm) {
     editForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const titre = document.getElementById('editTitre').value;
-      const contenu = document.getElementById('editContenu').value;
+      if (!currentEditId) return;
+      
+      const formData = new FormData(e.target);
+      
       try {
-        const res = await fetch(`${API_BASE}/admin/formations/${currentEditId}`, {
+        const res = await fetch(`${API_BASE}/api/admin/formations/${currentEditId}`, {
           method: "PUT",
           headers: { 
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
+            "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify({ titre, contenu, image: null })
+          body: formData
         });
         if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
         showToast("Formation mise à jour avec succès ! ✏️");

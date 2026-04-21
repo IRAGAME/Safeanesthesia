@@ -4,7 +4,7 @@ const id = params.get("id");
 
 async function chargerFormation() {
   try {
-    const res = await fetch(`${API_BASE}/formations/${id}`); //
+    const res = await fetch(`${API_BASE}/api/formations/${id}`); 
     if (!res.ok) throw new Error("Formation introuvable");
     const formation = await res.json();
 
@@ -21,7 +21,7 @@ async function chargerFormation() {
 }
 async function chargerFormationsHome() {
   try {
-    const res = await fetch(`${API_BASE}/formations`);
+    const res = await fetch(`${API_BASE}/api/formations`);
     if (!res.ok) throw new Error("Impossible de charger les formations");
     const formations = await res.json();
 
@@ -46,7 +46,7 @@ async function chargerFormationsHome() {
 
       // Lorsqu’on clique sur une carte, on ouvre la page détail
       card.addEventListener("click", () => {
-        window.location.href = `formation.html?id=${f.id}`;
+        window.location.href = `/formation?id=${f.id}`;
       });
 
       container.appendChild(card);
