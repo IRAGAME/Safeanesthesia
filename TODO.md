@@ -1,66 +1,24 @@
-# TODO - Suppression des dégradés (garder header & footer)
+# 🚀 Plan de Publication GitHub — SafeAnesthesia
 
-## Fichiers à modifier
-- [ ] public/style.css
-- [ ] public/pages/login.html
+## Étape 1 — package.json
+- [ ] Ajouter scripts `start` et `dev`
+- [ ] Retirer dépendances inutilisées (`mongoose`, `sql.js`)
 
-## Étapes style.css
-- [ ] header → GARDER dégradé
-- [ ] .btn-primary → couleur unique
-- [ ] .btn-primary::before → couleur unique
-- [ ] section > h2::after → couleur unique
-- [ ] footer (1er) → GARDER dégradé
-- [ ] .post-card::before → couleur unique
-- [ ] .values-card-premium i → couleur unique + supprimer background-clip
-- [ ] .cta-final → couleur unique
-- [ ] .pays:hover → couleur unique
-- [ ] .specialty-card::before → couleur unique
-- [ ] .pedagogie-clean → couleur unique
-- [ ] .pedagogie-card::before → couleur unique
-- [ ] .card-icon → couleur unique
-- [ ] .pedagogie → couleur unique
-- [ ] .pedagogie-item::before → couleur unique
-- [ ] .pedagogie-item i → couleur unique + supprimer background-clip
-- [ ] .contact-form-section button → couleur unique
-- [ ] .formation-wrapper → couleur unique
-- [ ] #titre → couleur unique + supprimer background-clip
-- [ ] footer (2ème) → GARDER dégradé
-- [ ] .caption → couleur unique
-- [ ] .admin-login-body → couleur unique
-- [ ] .admin-header h1 → couleur unique + supprimer background-clip
-- [ ] .btn-add-new → couleur unique
-- [ ] .logout-btn → couleur unique
-- [ ] .btn-edit → couleur unique
-- [ ] .btn-edit:hover → couleur unique
-- [ ] .btn-delete → couleur unique
-- [ ] .btn-delete:hover → couleur unique
-- [ ] .modal-header → couleur unique
-- [ ] .file-input-label → couleur unique
-- [ ] .file-input-wrapper:hover .file-input-label → couleur unique
-- [ ] .btn-save → couleur unique
-- [ ] #company-history → couleur unique
-- [ ] .history-timeline::before → couleur unique
-- [ ] .history-dot → couleur unique
-- [ ] .history-card::before → couleur unique
-- [ ] .history-year → couleur unique
-- [ ] .membership-section → couleur unique
-- [ ] .membership-card::before → couleur unique
-- [ ] .membership-card .card-header → couleur unique
-- [ ] .category-icon → couleur unique
-- [ ] .process-steps::before → couleur unique
-- [ ] .step-number → couleur unique
-- [ ] .step-icon → couleur unique
-- [ ] .contribution-note → couleur unique
-- [ ] .membership-cta → couleur unique
-- [ ] .pillars-section → couleur unique
-- [ ] .pillar-card.vision::before → couleur unique
-- [ ] .pillar-card.mission::before → couleur unique
-- [ ] .pillar-card.values::before → couleur unique
-- [ ] .pillar-card.vision .pillar-icon → couleur unique
-- [ ] .pillar-card.mission .pillar-icon → couleur unique
-- [ ] .pillar-card.values .pillar-icon → couleur unique
+## Étape 2 — server.js
+- [ ] Conditionner `app.listen()` pour ne pas bloquer Vercel serverless
 
-## Étapes login.html
-- [ ] body → couleur unique
-- [ ] .login-btn → couleur unique
+## Étape 3 — api/handler.js
+- [ ] Créer le handler Vercel avec `serverless-http`
+
+## Étape 4 — .gitignore
+- [ ] Ajouter patterns standards Node.js
+
+## Étape 5 — README.md
+- [ ] Corriger références cassées
+- [ ] Mettre à jour instructions de démarrage
+
+## Étape 6 — Tests & Push
+- [ ] `npm install` pour mettre à jour package-lock.json
+- [ ] Test local `node server.js`
+- [ ] `git add`, `commit`, `push`
 

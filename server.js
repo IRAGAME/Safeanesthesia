@@ -449,14 +449,16 @@ app.use((req, res) => {
 
 // ================= SERVER STARTUP =================
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`\n🚀 SafeAnesthesia Server`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-  console.log(`📍 URL: http://localhost:${PORT}`);
-  console.log(`📁 DB: ${DB_FILE}`);
-  console.log(`🔐 JWT: ${process.env.JWT_SECRET ? '✅' : '⚠️  Par défaut'}`);
-  console.log(`📧 Email: ${process.env.SMTP_USER ? '✅' : '⚠️  Désactivé'}`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`\n🚀 SafeAnesthesia Server`);
+    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+    console.log(`📍 URL: http://localhost:${PORT}`);
+    console.log(`📁 DB: ${DB_FILE}`);
+    console.log(`🔐 JWT: ${process.env.JWT_SECRET ? '✅' : '⚠️  Par défaut'}`);
+    console.log(`📧 Email: ${process.env.SMTP_USER ? '✅' : '⚠️  Désactivé'}`);
+    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+  });
+}
 
 export default app;

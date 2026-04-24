@@ -9,12 +9,14 @@ plateforme web de **formation médicale continue** pour SPOOA-PM Africa.
 npm install
 
 # 2. Configurer variables (.env)
-nano .env
-# Changez: ADMIN_PASSWORD=admin → ADMIN_PASSWORD=VotrePass
+cp .env.example .env
+# Changez: ADMIN_PASSWORD=your_admin_password_here → ADMIN_PASSWORD=VotrePass
+# Changez: JWT_SECRET=your_jwt_secret_key_here → JWT_SECRET=une_cle_aleatoire
 
 # 3. Démarrer serveur
-node server.js
-# "Serveur lancé sur http://localhost:3000"
+npm start
+# ou
+npm run dev
 
 # 4. Accès
 # 🌐 Public:   http://localhost:3000
@@ -34,7 +36,7 @@ Pour y accéder:
 3. Cliquez "Se connecter"
 4. Accédez au dashboard `/admin`
 
-📖 Détails → **[ADMIN_ACCESS.md](ADMIN_ACCESS.md)**
+📖 L'accès admin se fait via `/login` avec le mot de passe défini dans `.env`
 
 ---
 

@@ -1,13 +1,15 @@
 {
   "name": "safeanesthesia",
   "version": "1.0.0",
-  "description": "",
+  "description": "Plateforme web de formation médicale continue pour SPOOA-PM Africa",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["formation", "anesthesie", "afrique", "medical"],
+  "author": "SPOOA-PM Africa",
   "license": "ISC",
   "type": "module",
   "dependencies": {
@@ -18,10 +20,8 @@
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.1.3",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12",
-    "serverless-http": "^4.0.0",
-    "sql.js": "^1.13.0"
+    "serverless-http": "^4.0.0"
   }
 }

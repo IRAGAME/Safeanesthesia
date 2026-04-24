@@ -4,3 +4,20 @@ node_modules
 formations.sqlite
 *.sqlite
 *.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Local data backups
+data/*.backup.json
+
