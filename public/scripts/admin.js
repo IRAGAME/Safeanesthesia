@@ -76,10 +76,12 @@ async function chargerFormations() {
       const card = document.createElement("div");
       card.className = "admin-card";
       card.innerHTML = `
-        ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}" class="admin-card-img">` : '<div style="height:200px;background:#eee;"></div>'}
+        <div class="card-image">
+          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : '<div style="height:160px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="color:#ccc;font-size:2rem;"></i></div>'}
+        </div>
         <div class="admin-card-content">
-          <h3>${f.titre}</h3>
-          <p>${f.contenu.substring(0, 100)}...</p>
+          <h3 class="card-title-text"></h3>
+          <p class="card-desc-text"></p>
           <div class="admin-actions">
             <button class="action-btn btn-edit" onclick="prepareEdit(${f.id}, \`${f.titre.replace(/`/g, '\\`')}\`, \`${f.contenu.replace(/`/g, '\\`')}\`, '${f.image || ''}')">
               <i class="fas fa-pen"></i>
@@ -90,6 +92,8 @@ async function chargerFormations() {
           </div>
         </div>
       `;
+      card.querySelector(".card-title-text").textContent = f.titre;
+      card.querySelector(".card-desc-text").textContent = f.contenu.substring(0, 100) + "...";
       container.appendChild(card);
     });
   } catch (error) {
@@ -145,9 +149,9 @@ window.prepareEdit = function(id, titre, contenu, image) {
   document.getElementById('editContenu').value = contenu;
   const currentImageDiv = document.getElementById('currentImage');
   if (image) {
-    currentImageDiv.innerHTML = `<p>Image actuelle:</p><img src="${API_BASE}${image}" alt="Image actuelle" style="max-width: 100px; max-height: 100px;">`;
+    currentImageDiv.innerHTML = `<p><i class="fas fa-image"></i> Image actuelle</p><img src="${API_BASE}${image}" alt="Image actuelle">`;
   } else {
-    currentImageDiv.innerHTML = '<p>Aucune image</p>';
+    currentImageDiv.innerHTML = '<div class="no-image"><i class="fas fa-image"></i> Aucune image actuelle</div>';
   }
   document.getElementById('editModal').classList.add('open');
 }

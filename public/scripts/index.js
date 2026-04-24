@@ -1,64 +1,75 @@
 const API_BASE = window.location.origin;
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
 
-async function chargerFormation() {
-  try {
-    const res = await fetch(`${API_BASE}/api/formations/${id}`); 
-    if (!res.ok) throw new Error("Formation introuvable");
-    const formation = await res.json();
+// Variable globale pour stocker les données originales
+let tutesLesFormations = [];
 
-    document.querySelector("#titre").textContent = formation.titre;
-    document.querySelector("#duree").textContent = "Durée : " + formation.duree;
-    document.querySelector("#resume").textContent = formation.resume;
-    document.querySelector("#contenu").textContent = formation.contenu;
-    if (formation.image) {
-      document.querySelector("#image").src = formation.image;
-    }
-  } catch (err) {
-    document.querySelector("#titre").textContent = "Erreur : " + err.message;
-  }
-}
-async function chargerFormationsHome() {
-  try {
-    const res = await fetch(`${API_BASE}/api/formations`);
-    if (!res.ok) throw new Error("Impossible de charger les formations");
-    const formations = await res.json();
-
+/**
+ * Affiche les cartes de formation dans le conteneur
+ */
+function afficherFormations(formations) {
     const container = document.querySelector("#formations");
-    container.innerHTML = "";
+    if (!container) return;
+    
+    if (formations.length === 0) {
+      container.innerHTML = `<p class="no-results">Aucune formation ne correspond à votre recherche.</p>`;
+      return;
+    }
 
+    container.innerHTML = "";
     formations.forEach(f => {
       const card = document.createElement("div");
       card.className = "post-card";
       card.setAttribute("data-id", f.id);
-
       card.innerHTML = `
         <div class="card-image">
           ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : ""}
         </div>
         <div class="card-content">
-          <h3>${f.titre}</h3>
-          <p>${f.contenu.substring(0, 120)}...</p>
+          <h3 class="card-title"></h3>
+          <p class="card-desc"></p>
           <span class="read-more">Découvrir le programme</span>
         </div>
       `;
-
-      // Lorsqu’on clique sur une carte, on ouvre la page détail
-      card.addEventListener("click", () => {
-        window.location.href = `/formation?id=${f.id}`;
-      });
-
+      card.querySelector(".card-title").textContent = f.titre;
+      card.querySelector(".card-desc").textContent = f.contenu.substring(0, 120) + "...";
+      card.onclick = () => window.location.href = `/formation?id=${f.id}`;
       container.appendChild(card);
     });
+}
+
+/**
+ * Charge les données depuis l'API
+ */
+async function chargerFormationsHome() {
+  try {
+    const res = await fetch(`${API_BASE}/api/formations`);
+    if (!res.ok) throw new Error("Impossible de charger les formations");
+    tutesLesFormations = await res.json();
+    afficherFormations(tutesLesFormations);
   } catch (err) {
     console.error("Erreur chargement formations:", err);
-    document.querySelector("#formations-home").innerHTML = `<p>Erreur : ${err.message}</p>`;
+    const container = document.querySelector("#formations");
+    if (container) container.innerHTML = `<p>Erreur : ${err.message}</p>`;
   }
 }
 
-if (id) {
-  document.addEventListener("DOMContentLoaded", chargerFormation);
-} else {
-  document.addEventListener("DOMContentLoaded", chargerFormationsHome);
-};
+// Initialisation
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) {
+    chargerFormationsHome();
+
+    // Gestion de la recherche
+    const searchInput = document.getElementById('formationSearch');
+    searchInput?.addEventListener('input', (e) => {
+      const terme = e.target.value.toLowerCase();
+      const resultats = tutesLesFormations.filter(f => 
+        f.titre.toLowerCase().includes(terme) || 
+        f.contenu.toLowerCase().includes(terme)
+      );
+      afficherFormations(resultats);
+    });
+  }
+});

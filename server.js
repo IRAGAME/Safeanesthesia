@@ -13,6 +13,12 @@ import nodemailer from "nodemailer";
 
 // Configuration
 dotenv.config();
+
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET === "your_secret_key") {
+  console.error("❌ Erreur: JWT_SECRET n'est pas configuré ou est trop faible. Le serveur s'arrête.");
+  process.exit(1);
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
@@ -100,7 +106,7 @@ function authAdmin(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret-key-default");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
@@ -122,7 +128,18 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage });
+
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limite 5Mo
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|webp/;
+    const mimeType = allowedTypes.test(file.mimetype);
+    const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    if (mimeType && extName) return cb(null, true);
+    cb(new Error("Seules les images (jpg, png, webp) sont autorisées"));
+  }
+});
 
 // ================= EMAIL =================
 const transporter = nodemailer.createTransport({
@@ -307,8 +324,9 @@ app.post("/login", loginLimiter, (req, res) => {
     }
 
     const token = jwt.sign(
-      { user: "admin", iat: Date.now() },
-      process.env.JWT_SECRET || "secret-key-default"
+      { user: "admin" },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
     );
 
     res.json({ token });
@@ -327,8 +345,9 @@ app.post("/api/auth/login", loginLimiter, (req, res) => {
     }
 
     const token = jwt.sign(
-      { user: "admin", iat: Date.now() },
-      process.env.JWT_SECRET || "secret-key-default"
+      { user: "admin" },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
     );
 
     res.json({ token });
@@ -357,19 +376,22 @@ app.post("/send", contactLimiter, async (req, res) => {
       return res.status(400).json({ error: "Tous les champs sont requis" });
     }
 
+    // Nettoyage basique pour éviter l'injection HTML
+    const safeMessage = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
     // Envoyer email
     try {
       await transporter.sendMail({
         from: process.env.SMTP_USER || "noreply@safeanesthesia.com",
         to: process.env.CONTACT_EMAIL || process.env.SMTP_USER,
         replyTo: email,
-        subject: `Message de ${name} - SafeAnesthesia`,
+        subject: `[Contact] ${name}`,
         html: `
           <h2>Nouveau message de contact</h2>
-          <p><strong>Nom:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Nom:</strong> ${name.replace(/</g, "&lt;")}</p>
+          <p><strong>Email:</strong> ${email.replace(/</g, "&lt;")}</p>
           <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
+          <p>${safeMessage.replace(/\n/g, '<br>')}</p>
         `
       });
     } catch (emailError) {
