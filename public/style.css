@@ -9,7 +9,7 @@
   --secondary: #007BFF; /* Bleu moderne */
   --accent: #FF6B6B;    /* Rouge corail */
   --tertiary: #6C63FF;  /* Violet moderne */
-  
+
   /* Neutres */
   --background: #f8f9fa;
   --surface: #ffffff;
@@ -476,7 +476,7 @@ header {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #008a57 100%);
+  background: var(--primary);
   color: white;
   position: relative;
   overflow: hidden;
@@ -489,7 +489,7 @@ header {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #008a57 0%, var(--primary) 100%);
+  background: #008a57;
   transition: left 0.4s ease;
   z-index: -1;
 }
@@ -539,7 +539,7 @@ section > h2::after {
   transform: translateX(-50%);
   width: clamp(60px, 10vw, 120px);
   height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  background: var(--primary);
   border-radius: 2px;
 }
 
@@ -609,7 +609,7 @@ p {
   top: 0;
   bottom: 0;
   width: 3px;
-  background: linear-gradient(180deg, var(--primary), var(--secondary));
+  background: var(--primary);
   transform: scaleY(0);
   transform-origin: top;
   transition: transform 0.3s ease;
@@ -822,9 +822,7 @@ p {
 
 .values-card-premium i {
   font-size: 2.5rem;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary);
   margin-bottom: 25px;
   display: block;
 }
@@ -1012,7 +1010,7 @@ p {
 
 /* CTA Final Home */
 .cta-final {
-  background: linear-gradient(135deg, rgba(0, 168, 107, 0.05) 0%, rgba(0, 123, 255, 0.05) 100%);
+  background: rgba(0, 168, 107, 0.05);
   text-align: center;
   border-radius: 30px;
   margin: 40px auto;
@@ -1057,7 +1055,7 @@ p {
   transform: translateY(-4px);
   border-color: var(--primary);
   box-shadow: var(--shadow-md);
-  background: linear-gradient(135deg, rgba(0, 168, 107, 0.05), rgba(0, 123, 255, 0.05));
+  background: rgba(0, 168, 107, 0.05);
 }
 
 .texte-pays {
@@ -1093,7 +1091,7 @@ p {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 168, 107, 0.1), rgba(0, 123, 255, 0.1));
+  background: rgba(0, 168, 107, 0.1);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 0;
@@ -1287,7 +1285,7 @@ p {
 
 /* Approche Pédagogique Clean */
 .pedagogie-clean {
-  background: linear-gradient(135deg, rgba(0, 168, 107, 0.03) 0%, rgba(0, 123, 255, 0.03) 100%);
+  background: rgba(0, 168, 107, 0.03);
   padding: var(--spacing-3xl) var(--spacing-lg);
 }
 
@@ -1332,7 +1330,7 @@ p {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+  background: var(--primary);
   transform: scaleX(0);
   transform-origin: center;
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
@@ -1354,7 +1352,7 @@ p {
   justify-content: center;
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, var(--primary) 0%, #008a57 100%);
+  background: var(--primary);
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 168, 107, 0.2);
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
@@ -1446,7 +1444,7 @@ p {
    Approches Pédagogiques (Refonte)
    ========================= */
 .pedagogie {
-  background: linear-gradient(to bottom, #fff, #f8fafc);
+  background: #f8fafc;
   padding: 80px 20px;
   margin-top: 60px;
   border-radius: 30px;
@@ -1481,7 +1479,7 @@ p {
   content: "";
   position: absolute;
   top: 0; left: 0; width: 100%; height: 0;
-  background: linear-gradient(135deg, rgba(0, 168, 107, 0.05) 0%, rgba(0, 123, 255, 0.05) 100%);
+  background: rgba(0, 168, 107, 0.05);
   transition: height 0.4s ease;
   z-index: -1;
 }
@@ -1499,9 +1497,7 @@ p {
 .pedagogie-item i {
   font-size: 3rem;
   margin-bottom: 25px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary);
   display: inline-block;
   transition: transform 0.4s ease;
 }
@@ -1636,7 +1632,7 @@ p {
   width: 100%;
   padding: 18px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary) 0%, #008a57 100%);
+  background: var(--primary);
   color: white;
   font-weight: 600;
   font-size: 1.1rem;
@@ -1687,7 +1683,7 @@ p {
 /* Wrapper global pour centrer et donner de l'espace */
 .formation-wrapper {
   padding: 100px var(--spacing-md) 60px;
-  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+  background: #f8f9fa;
   min-height: 100vh;
 }
 
@@ -1729,12 +1725,9 @@ p {
 .formation-content-body h1#titre {
   font-size: 2.5rem;
   font-weight: 800;
-  color: var(--text);
+  color: var(--primary);
   margin-bottom: 1.5rem;
   line-height: 1.2;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   text-align: left;
 }
 
@@ -3180,6 +3173,190 @@ footer {
     flex-direction: column;
     text-align: center;
     align-items: center;
+  }
+}
+
+/* =========================
+   Section Piliers Stratégiques
+   ========================= */
+.pillars-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f0f9f4 100%);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  border-radius: 30px;
+  margin: var(--spacing-3xl) auto;
+}
+
+.pillars-section .section-header-pro {
+  margin-bottom: var(--spacing-3xl);
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+/* Carte pilier */
+.pillar-card {
+  background: var(--surface);
+  border-radius: 24px;
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pillar-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  transition: height 0.3s ease;
+}
+
+.pillar-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+.pillar-card:hover::before {
+  height: 8px;
+}
+
+/* Couleurs spécifiques par pilier */
+.pillar-card.vision::before {
+  background: linear-gradient(90deg, var(--secondary), #00c6ff);
+}
+.pillar-card.mission::before {
+  background: linear-gradient(90deg, var(--primary), #00c6ff);
+}
+.pillar-card.values::before {
+  background: linear-gradient(90deg, var(--accent), #ff8e8e);
+}
+
+/* Icône du pilier */
+.pillar-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pillar-card.vision .pillar-icon {
+  background: linear-gradient(135deg, var(--secondary), #00c6ff);
+}
+.pillar-card.mission .pillar-icon {
+  background: linear-gradient(135deg, var(--primary), #00c6ff);
+}
+.pillar-card.values .pillar-icon {
+  background: linear-gradient(135deg, var(--accent), #ff8e8e);
+}
+
+.pillar-icon i {
+  color: white;
+  font-size: 1.8rem;
+}
+
+/* Contenu du pilier */
+.pillar-content h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: var(--text);
+}
+
+.pillar-lead {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--spacing-lg);
+}
+
+.pillar-lead strong {
+  color: var(--text);
+}
+
+/* Liste du pilier */
+.pillar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.pillar-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+}
+
+.pillar-list li:last-child {
+  border-bottom: none;
+}
+
+.pillar-list li i {
+  font-size: 1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.pillar-card.vision .pillar-list li i {
+  color: var(--secondary);
+}
+.pillar-card.mission .pillar-list li i {
+  color: var(--primary);
+}
+.pillar-card.values .pillar-list li i {
+  color: var(--accent);
+}
+
+/* Responsive Piliers */
+@media (max-width: 768px) {
+  .pillars-section {
+    padding: var(--spacing-2xl) var(--spacing-md);
+    border-radius: 20px;
+  }
+
+  .pillars-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  .pillar-card {
+    padding: var(--spacing-xl);
+  }
+
+  .pillar-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+  }
+
+  .pillar-icon i {
+    font-size: 1.5rem;
+  }
+
+  .pillar-content h3 {
+    font-size: 1.25rem;
   }
 }
 
