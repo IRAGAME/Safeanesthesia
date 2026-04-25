@@ -3,12 +3,6 @@
     { "src": "index.html", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/formations", "dest": "/formations.html" },
-    { "src": "/formation", "dest": "/formation.html" },
-    { "src": "/about", "dest": "/about.html" },
-    { "src": "/contact", "dest": "/contact.html" },
-    { "src": "/admin", "dest": "/admin.html" },
-    { "src": "/login", "dest": "/login.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

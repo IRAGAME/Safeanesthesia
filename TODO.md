@@ -1,33 +1,17 @@
-# Plan - Réorganisation Safeanesthesia (Frontend/Backend Split)
+# TODO - Correction déploiement Vercel
 
-## Étapes
+## Plan
+- [x] 1. Créer `frontend/css/` et déplacer `style.css`
+- [x] 2. Créer `frontend/images/` et déplacer les images
+- [x] 3. Créer `frontend/scripts/` et déplacer les scripts JS
+- [x] 4. Mettre à jour les chemins dans tous les fichiers HTML
+- [x] 5. Mettre à jour les chemins dans `style.css`
+- [x] 6. Mettre à jour `vercel.json`
+- [x] 7. Mettre à jour `README.md`
+- [x] 8. Supprimer `frontend/public/`
 
-- [x] **1. Créer la structure `/frontend` et `/backend`**
-- [x] **2. Déplacer et adapter les fichiers HTML** (chemins /public/...)
-- [x] **3. Déplacer les assets statiques** vers `/frontend/public/`
-- [x] **4. Déplacer le backend** vers `/backend/`
-- [x] **5. Configurer CORS dans server.js** (autoriser Vercel)
-- [x] **6. Mettre à jour les appels API** (window.location.origin → Render URL)
-- [x] **7. Créer `vercel.json`** dans `/frontend`
-- [x] **8. Créer `.env.example`** dans `/backend`
-- [x] **9. Mettre à jour `README.md`**
-- [x] **10. Nettoyage** des anciens fichiers à la racine
-
-## Fichiers modifiés
-- `backend/server.js` (CORS + suppression routes pages)
-- `frontend/public/scripts/formations.js`
-- `frontend/public/scripts/admin.js`
-- `frontend/public/scripts/formation.js`
-- `frontend/public/scripts/index.js`
-- `frontend/index.html` (chemins CSS/JS/images)
-- `frontend/about.html`
-- `frontend/contact.html` (+ script inline API_BASE)
-- `frontend/formations.html`
-- `frontend/formation.html`
-- `frontend/admin.html`
-- `frontend/login.html` (+ script inline API_BASE)
-
-## Fichiers créés
-- `frontend/vercel.json`
-- `backend/.env.example`
+## Vérifications
+- [x] Aucun chemin absolu `/public/...` ne reste dans le frontend
+- [x] Structure des dossiers correcte
+- [x] Tous les liens internes pointent vers des fichiers `.html`
 

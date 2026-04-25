@@ -38,10 +38,20 @@ safeanesthesia/
 │   ├── admin.html
 │   ├── login.html
 │   ├── vercel.json
-│   └── public/
-│       ├── style.css
-│       ├── scripts/
-│       └── images/
+│   ├── css/
+│   │   └── style.css
+│   ├── images/
+│   │   ├── back1.png
+│   │   ├── back3.jpg
+│   │   ├── dg/
+│   │   ├── partenaire/
+│   │   └── spooa/
+│   └── scripts/
+│       ├── admin.js
+│       ├── formation.js
+│       ├── formations.js
+│       ├── index.js
+│       └── script.js
 │
 └── backend/            # API Node.js + Express (Render)
       ├── server.js
@@ -93,10 +103,10 @@ NODE_ENV=production
 **L'accès admin N'est PAS visible sur la page d'accueil !**
 
 Pour y accéder :
-1. Allez à : `https://safe-anesthesia.vercel.app/login`
+1. Allez à : `https://safe-anesthesia.vercel.app/login.html`
 2. Entrez le mot de passe (dans `.env` → `ADMIN_PASSWORD`)
 3. Cliquez "Se connecter"
-4. Accédez au dashboard `/admin`
+4. Accédez au dashboard `admin.html`
 
 ---
 

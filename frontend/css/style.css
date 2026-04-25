@@ -380,10 +380,10 @@ header {
   max-width: none;
 }
 
-.hero { background-image: url("/images/spooa/back.jpg"); }
-.heroAbout { background-image: url("/images/back1.png"); }
-.heroForm { background-image: url("/images/back3.jpg"); }
-.heroCont { background-image: url("/images/spooa/back1.jpg"); }
+.hero { background-image: url("../images/spooa/back.jpg"); }
+.heroAbout { background-image: url("../images/back1.png"); }
+.heroForm { background-image: url("../images/back3.jpg"); }
+.heroCont { background-image: url("../images/spooa/back1.jpg"); }
 
 /* Overlay Gradient */
 .hero::before, .heroAbout::before, .heroForm::before, .heroCont::before {
