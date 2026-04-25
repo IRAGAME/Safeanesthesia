@@ -1,17 +1,30 @@
-# TODO - Correction déploiement Vercel
+# TODO - Correction Frontend Vercel
 
-## Plan
-- [x] 1. Créer `frontend/css/` et déplacer `style.css`
-- [x] 2. Créer `frontend/images/` et déplacer les images
-- [x] 3. Créer `frontend/scripts/` et déplacer les scripts JS
-- [x] 4. Mettre à jour les chemins dans tous les fichiers HTML
-- [x] 5. Mettre à jour les chemins dans `style.css`
-- [x] 6. Mettre à jour `vercel.json`
-- [x] 7. Mettre à jour `README.md`
-- [x] 8. Supprimer `frontend/public/`
+## Étapes terminées ✅
 
-## Vérifications
-- [x] Aucun chemin absolu `/public/...` ne reste dans le frontend
-- [x] Structure des dossiers correcte
-- [x] Tous les liens internes pointent vers des fichiers `.html`
+1. **Renommer `frontend/scripts/` → `frontend/js/`** ✅
+2. **Mettre à jour les chemins dans les fichiers HTML** (`scripts/` → `js/`) ✅
+   - [x] index.html
+   - [x] about.html
+   - [x] admin.html
+   - [x] contact.html
+   - [x] formation.html
+   - [x] formations.html
+3. **Corriger les chemins absolus en JS/HTML** ✅
+   - [x] js/index.js : `/formation?id=` → `formation.html?id=`
+   - [x] js/formations.js : `/formation?id=` → `formation.html?id=`
+   - [x] login.html : `/admin` → `admin.html`
+   - [x] contact.html : `action="/send"` → `action="#"` (géré par JS fetch)
+4. **Vérifier `frontend/vercel.json`** ✅
+   - Déjà configuré avec `@vercel/static` et routes catch-all
+5. **Mettre à jour `README.md`** ✅
+   - Précisé Root Directory = `/frontend` pour Vercel
+   - Précisé `node server.js` pour Render
+   - Mis à jour la structure avec `js/` au lieu de `scripts/`
+6. **Vérification finale** ✅
+   - Aucun chemin absolu `/` trouvé dans `frontend/`
+   - Structure correcte : HTML à racine, `css/`, `images/`, `js/`, `vercel.json`
+
+---
+**Statut : Toutes les corrections sont terminées.**
 

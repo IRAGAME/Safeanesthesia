@@ -13,6 +13,8 @@ Plateforme web de **formation médicale continue** pour SPOOA-PM Africa.
 3. **Build Command** = *(laisser vide)*
 4. **Output Directory** = `.`
 
+> **Important** : Le dossier `frontend` est configuré comme **Root Directory** dans Vercel. Tous les fichiers statiques (HTML, CSS, JS, images) se trouvent dans ce dossier.
+
 Le frontend sera accessible sur `https://safe-anesthesia.vercel.app`.
 
 ### Backend (Render)
@@ -20,6 +22,8 @@ Le frontend sera accessible sur `https://safe-anesthesia.vercel.app`.
 1. Connecter le repo à Render
 2. **Root Directory** = `/backend`
 3. **Start Command** = `node server.js`
+
+> **Important** : Le backend reste déployé sur Render avec la commande `node server.js`. Il gère l'API et la base de données.
 
 Le backend sera accessible sur `https://safe-anesthesia.onrender.com`.
 
@@ -29,7 +33,7 @@ Le backend sera accessible sur `https://safe-anesthesia.onrender.com`.
 
 ```
 safeanesthesia/
-├── frontend/           # Site statique (Vercel)
+├── frontend/           # Site statique (Vercel) — Root Directory
 │   ├── index.html
 │   ├── about.html
 │   ├── contact.html
@@ -46,7 +50,7 @@ safeanesthesia/
 │   │   ├── dg/
 │   │   ├── partenaire/
 │   │   └── spooa/
-│   └── scripts/
+│   └── js/             # Scripts frontend
 │       ├── admin.js
 │       ├── formation.js
 │       ├── formations.js

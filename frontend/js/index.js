@@ -32,7 +32,7 @@ function afficherFormations(formations) {
       `;
       card.querySelector(".card-title").textContent = f.titre;
       card.querySelector(".card-desc").textContent = f.contenu.substring(0, 120) + "...";
-      card.onclick = () => window.location.href = `/formation?id=${f.id}`;
+      card.onclick = () => window.location.href = `formation.html?id=${f.id}`;
       container.appendChild(card);
     });
 }
