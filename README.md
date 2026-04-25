@@ -1,92 +1,110 @@
 # 🏥 Safe Anesthesia - Formation Médicale Sécurisée
 
-plateforme web de **formation médicale continue** pour SPOOA-PM Africa.
-
-## 🚀 Quickstart
-
-```bash
-# 1. Installer dépendances
-npm install
-
-# 2. Configurer variables (.env)
-cp .env.example .env
-# Changez: ADMIN_PASSWORD=your_admin_password_here → ADMIN_PASSWORD=VotrePass
-# Changez: JWT_SECRET=your_jwt_secret_key_here → JWT_SECRET=une_cle_aleatoire
-
-# 3. Démarrer serveur
-npm start
-# ou
-npm run dev
-
-# 4. Accès
-# 🌐 Public:   http://localhost:3000
-# 🔐 Login:    http://localhost:3000/login
-# 📊 Admin:    http://localhost:3000/admin (après login)
-```
+Plateforme web de **formation médicale continue** pour SPOOA-PM Africa.
 
 ---
 
-## 🔐 Accès Admin
+## 🚀 Déploiement
 
-**L'accès admin N'est PAS visible sur la page d'accueil!**
+### Frontend (Vercel)
 
-Pour y accéder:
-1. Allez à: `http://localhost:3000/login`
-2. Entrez le mot de passe (dans `.env` → `ADMIN_PASSWORD`)
-3. Cliquez "Se connecter"
-4. Accédez au dashboard `/admin`
+1. Connecter le repo à Vercel
+2. **Root Directory** = `/frontend`
+3. **Build Command** = *(laisser vide)*
+4. **Output Directory** = `.`
 
-📖 L'accès admin se fait via `/login` avec le mot de passe défini dans `.env`
+Le frontend sera accessible sur `https://safe-anesthesia.vercel.app`.
+
+### Backend (Render)
+
+1. Connecter le repo à Render
+2. **Root Directory** = `/backend`
+3. **Start Command** = `node server.js`
+
+Le backend sera accessible sur `https://safe-anesthesia.onrender.com`.
 
 ---
 
-## 📁 Structure
+## 🏗️ Structure
 
 ```
 safeanesthesia/
-├── server.js           # Backend Express + API
-├── .env                # Config (⚠️ jamais commiter)
-├── package.json
-├── formations.sqlite   # Database
-└── public/
-    ├── index.html
-    ├── style.css
-    ├── pages/
-    │   ├── login.html       # 🔓 Connexion
-    │   ├── admin.html       # 🔐 Dashboard
-    │   └── ...
-    └── scripts/
-        └── ...
+├── frontend/           # Site statique (Vercel)
+│   ├── index.html
+│   ├── about.html
+│   ├── contact.html
+│   ├── formations.html
+│   ├── formation.html
+│   ├── admin.html
+│   ├── login.html
+│   ├── vercel.json
+│   └── public/
+│       ├── style.css
+│       ├── scripts/
+│       └── images/
+│
+└── backend/            # API Node.js + Express (Render)
+      ├── server.js
+      ├── package.json
+      ├── .env.example
+      ├── api/
+      │   └── handler.js
+      ├── data/
+      │   └── formations.json
+      └── public/
+            └── images/
+                  └── ImageFormation/   # Images uploadées
 ```
 
 ---
 
-## ⚙️ Configuration (.env)
+## ⚙️ Configuration Backend (.env)
+
+```bash
+cd backend
+cp .env.example .env
+```
+
+Variables requises :
 
 ```env
 # Authentification
-ADMIN_PASSWORD=admin                    # À changer!
-JWT_SECRET=your_secret_key              # À générer!
+ADMIN_PASSWORD=your_admin_password_here
+JWT_SECRET=your_jwt_secret_key_here
 
 # Email SMTP (optionnel)
-SMTP_USER=votre_email@gmail.com
-SMTP_PASS=app_password
-ADMIN_EMAIL=admin@safeanesthesia.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+CONTACT_EMAIL=admin@safeanesthesia.com
 
 # Serveur
 PORT=3000
-NODE_ENV=development
+NODE_ENV=production
 ```
 
 **⚠️ NE JAMAIS COMMITER .env**
 
 ---
 
+## 🔐 Accès Admin
+
+**L'accès admin N'est PAS visible sur la page d'accueil !**
+
+Pour y accéder :
+1. Allez à : `https://safe-anesthesia.vercel.app/login`
+2. Entrez le mot de passe (dans `.env` → `ADMIN_PASSWORD`)
+3. Cliquez "Se connecter"
+4. Accédez au dashboard `/admin`
+
+---
+
 ## 🛠️ Stack
 
-**Backend:** Node.js + Express + JWT + SQLite  
-**Frontend:** HTML5 + CSS3 + Vanilla JS  
-**Sécurité:** Helmet + Rate Limiting + Middleware Auth
+**Backend :** Node.js + Express + JWT + JSON DB  
+**Frontend :** HTML5 + CSS3 + Vanilla JS (statique)  
+**Sécurité :** Helmet + Rate Limiting + Middleware Auth + CORS
 
 ---
 
@@ -94,16 +112,18 @@ NODE_ENV=development
 
 ### Publiques
 ```
-GET  /                        # Accueil
-GET  /api/formations          # Liste formations
-POST /send                    # Contact email
+GET  /api/health                # Health check
+GET  /api/formations            # Liste formations
+GET  /api/formations/:id        # Détail formation
+POST /send                      # Contact email
 ```
 
-### Login
+### Auth
 ```
-POST /api/auth/login          # Connexion (JWT)
-GET  /api/auth/verify         # Vérifier token
-POST /api/auth/logout         # Déconnexion
+POST /login                     # Connexion (JWT)
+POST /api/auth/login            # Connexion (JWT)
+GET  /api/auth/verify           # Vérifier token
+POST /api/auth/logout           # Déconnexion
 ```
 
 ### Admin (protégées - JWT requis)
@@ -119,57 +139,22 @@ DELETE /api/admin/formations/:id   # Supprimer
 
 **"Le serveur ne démarre pas"**
 ```bash
-npm install              # Installer dépendances
-node -c server.js       # Vérifier syntaxe
+cd backend
+npm install
+node server.js
 ```
 
 **"Impossible de se connecter"**
-- Vérifier `.env` existe
+- Vérifier que `.env` existe dans `/backend`
 - Vérifier `ADMIN_PASSWORD` défini
-- Vérifier console serveur pour erreurs
+- Vérifier la console serveur pour erreurs
 
-**"Admin page vide"**
-- F12 → Console (voir erreurs)
-- Vérifier localStorage.adminToken
-- Reconnecter-vous
+**"CORS blocked"**
+- Vérifier que `https://safe-anesthesia.vercel.app` est dans `allowedOrigins` de `backend/server.js`
 
 ---
 
-## 🚀 Production
+**Version :** 2.0  
+**Statut :** ✅ Production-Ready  
+**Licence :** Propriétaire SPOOA-PM Africa
 
-### GitHub Pages
-GitHub Pages = statique uniquement  
-Pour API Node.js: Vercel, Heroku, DigitalOcean, Railway...
-
-### Avant déploiement
-- [ ] Mot de passe changé
-- [ ] JWT_SECRET générée
-- [ ] SMTP configuré
-- [ ] HTTPS activé
-- [ ] .env sauvegardé
-- [ ] Tests validés
-
----
-
-## 📊 Sécurité
-
-✅ JWT authentication  
-✅ Rate limiting (5 tentatives/15 min)  
-✅ Middleware protection  
-✅ Helmet headers  
-✅ Password in .env  
-✅ Double validation (client + serveur)  
-
----
-
-## 📞 Besoin d'aide?
-
-1. Lire: [ADMIN_ACCESS.md](ADMIN_ACCESS.md)
-2. Vérifier: Console (F12)
-3. Vérifier: Logs serveur
-
----
-
-**Version:** 1.0  
-**Statut:** ✅ Production-Ready  
-**Licence:** Propriétaire SPOOA-PM Africa

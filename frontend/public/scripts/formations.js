@@ -1,4 +1,4 @@
-const API_BASE = window.location.origin;
+const API_BASE = "https://safe-anesthesia.onrender.com";
 
 async function chargerFormations() {
   try {

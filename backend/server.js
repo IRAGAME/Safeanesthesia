@@ -32,6 +32,7 @@ app.disable("x-powered-by");
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
+  "https://safe-anesthesia.vercel.app",
   process.env.GITHUB_PAGES_URL || "",
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""
 ].filter(Boolean);
@@ -404,36 +405,6 @@ app.post("/send", contactLimiter, async (req, res) => {
     console.error("❌ Erreur POST /send:", error.message);
     res.status(500).json({ error: "Erreur lors de l'envoi" });
   }
-});
-
-// ================= PAGES HTML =================
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/pages/login.html"));
-});
-
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/pages/admin.html"));
-});
-
-app.get("/about", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/pages/about.html"));
-});
-
-app.get("/contact", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/pages/contact.html"));
-});
-
-app.get("/formations", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/pages/formations.html"));
-});
-
-app.get("/formation", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/pages/formation.html"));
 });
 
 // ================= ERROR HANDLING =================
