@@ -1,24 +1,17 @@
 # 🚀 Plan de Publication GitHub — SafeAnesthesia
 
-## Étape 1 — package.json
-- [ ] Ajouter scripts `start` et `dev`
-- [ ] Retirer dépendances inutilisées (`mongoose`, `sql.js`)
+## ✅ Toutes les étapes sont terminées !
 
-## Étape 2 — server.js
-- [ ] Conditionner `app.listen()` pour ne pas bloquer Vercel serverless
+| Étape | Statut | Détail |
+|-------|--------|--------|
+| `package.json` | ✅ | Scripts `start`/`dev` ajoutés, `mongoose` & `sql.js` retirés |
+| `server.js` | ✅ | `app.listen()` conditionné pour Vercel serverless |
+| `api/handler.js` | ✅ | Handler Vercel créé avec `serverless-http` |
+| `.gitignore` | ✅ | Patterns standards Node.js ajoutés |
+| `README.md` | ✅ | Quickstart corrigé, lien cassé retiré |
+| `node_modules` | ✅ | Retiré du suivi git (-623 880 lignes) |
+| Tests & Push | ✅ | Serveur testé OK, commit & push vers `origin/main` |
 
-## Étape 3 — api/handler.js
-- [ ] Créer le handler Vercel avec `serverless-http`
-
-## Étape 4 — .gitignore
-- [ ] Ajouter patterns standards Node.js
-
-## Étape 5 — README.md
-- [ ] Corriger références cassées
-- [ ] Mettre à jour instructions de démarrage
-
-## Étape 6 — Tests & Push
-- [ ] `npm install` pour mettre à jour package-lock.json
-- [ ] Test local `node server.js`
-- [ ] `git add`, `commit`, `push`
+**🔗 Repo GitHub :** https://github.com/IRAGAME/Safeanesthesia  
+**🖥️ Démarrage local :** `npm start` → http://localhost:3000
 
