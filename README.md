@@ -6,14 +6,19 @@ Plateforme web de **formation médicale continue** pour SPOOA-PM Africa.
 
 ## 🚀 Déploiement
 
-### Frontend (Vercel)
+### Frontend (Vercel) - Statique
 
 1. Connecter le repo à Vercel
-2. **Root Directory** = `/frontend`
+2. **Root Directory** = `frontend`
 3. **Build Command** = *(laisser vide)*
 4. **Output Directory** = `.`
 
-> **Important** : Le dossier `frontend` est configuré comme **Root Directory** dans Vercel. Tous les fichiers statiques (HTML, CSS, JS, images) se trouvent dans ce dossier.
+> **Important** : Le dossier `frontend` est configuré comme **Root Directory** dans Vercel. Tous les fichiers statiques (HTML, CSS, JS, images) se trouvent directement dans ce dossier.
+
+- **CSS** : `/frontend/css/style.css`
+- **JS** : `/frontend/js/*.js`
+- **Images** : `/frontend/images/*`
+- **Pages HTML** : `/frontend/*.html`
 
 Le frontend sera accessible sur `https://safe-anesthesia.vercel.app`.
 
