@@ -14,9 +14,9 @@ async function chargerFormations() {
       card.className = "post-card";
       card.setAttribute("data-id", f.id);
 
-      card.innerHTML = `
+card.innerHTML = `
         <div class="card-image">
-          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : ""}
+          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}" loading="lazy">` : ""}
         </div>
         <div class="card-content">
           <h3>${f.titre}</h3>

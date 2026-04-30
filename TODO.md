@@ -1,30 +1,37 @@
-# TODO - Correction Frontend Vercel
+# Fix Images on Vercel - TODO
 
-## Étapes terminées ✅
+## Objectif
+Corriger l'affichage des images sur Vercel en déplaçant les fichiers statiques dans `/frontend/public/images/`.
 
-1. **Renommer `frontend/scripts/` → `frontend/js/`** ✅
-2. **Mettre à jour les chemins dans les fichiers HTML** (`scripts/` → `js/`) ✅
-   - [x] index.html
-   - [x] about.html
-   - [x] admin.html
-   - [x] contact.html
-   - [x] formation.html
-   - [x] formations.html
-3. **Corriger les chemins absolus en JS/HTML** ✅
-   - [x] js/index.js : `/formation?id=` → `formation.html?id=`
-   - [x] js/formations.js : `/formation?id=` → `formation.html?id=`
-   - [x] login.html : `/admin` → `admin.html`
-   - [x] contact.html : `action="/send"` → `action="#"` (géré par JS fetch)
-4. **Vérifier `frontend/vercel.json`** ✅
-   - Déjà configuré avec `@vercel/static` et routes catch-all
-5. **Mettre à jour `README.md`** ✅
-   - Précisé Root Directory = `/frontend` pour Vercel
-   - Précisé `node server.js` pour Render
-   - Mis à jour la structure avec `js/` au lieu de `scripts/`
-6. **Vérification finale** ✅
-   - Aucun chemin absolu `/` trouvé dans `frontend/`
-   - Structure correcte : HTML à racine, `css/`, `images/`, `js/`, `vercel.json`
+## Étapes
 
----
-**Statut : Toutes les corrections sont terminées.**
+### Étape 1: Créer le dossier public/images et déplacer les images
+- [x] Créer `/frontend/public/images/` ✅
+- [x] Déplacer `/frontend/images/spooa/` → `/frontend/public/images/spooa/` ✅
+- [x] Déplacer `/frontend/images/dg/` → `/frontend/public/images/dg/` ✅
+- [x] Déplacer `/frontend/images/partenaire/` → `/frontend/public/images/partenaire/` ✅
+- [x] Déplacer `/frontend/images/back1.png` → `/frontend/public/images/back1.png` ✅
+- [x] Déplacer `/frontend/images/back3.jpg` → `/frontend/public/images/back3.jpg` ✅
+- [x] Supprimer l'ancien dossier `/frontend/images/` ✅
 
+### Étape 2: Mettre à jour vercel.json
+- [x] Configurer `vercel.json` pour servir les fichiers statiques ✅
+
+### Étape 2: Mettre à jour vercel.json
+- [ ] Configurer `vercel.json` pour servir les fichiers statiques depuis `/public`
+
+### Étape 3: Vérifier les chemins dans les fichiers HTML
+- [ ] Vérifier `frontend/index.html` - chemins vers `images/spooa/`, `images/spooa/car*.jpg`
+- [ ] Vérifier `frontend/formations.html` - chemins vers `images/spooa/logo.png`
+- [ ] Vérifier `frontend/about.html` - chemins vers `images/spooa/logo.png`, `images/dg/*.jpg`, `images/partenaire/*.jpg`
+- [ ] Vérifier `frontend/contact.html` - chemins vers `images/spooa/logo.png`
+- [ ] Vérifier `frontend/formation.html` - chemin vers `images/spooa/logo.png`
+- [ ] Vérifier `frontend/admin.html` - chemin vers `images/spooa/logo.png`
+
+### Étape 4: Tester le déploiement
+- [ ] Commit et push des changements
+- [ ] Vérifier le déploiement sur Vercel
+
+## Notes
+- Les images des formations dynamiques sont servies via l'API Render (`https://safeanesthesia.onrender.com`) - elles fonctionnent déjà
+- Les images statiques (logos, backgrounds, partenaires, directeurs) ne fonctionnaient pas car Vercel ne servait pas `/frontend/images/`

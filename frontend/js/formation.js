@@ -11,8 +11,9 @@ async function chargerFormation() {
     document.querySelector("#titre").textContent = formation.titre;
     document.querySelector("#contenu").textContent = formation.contenu;
     
-    if (formation.image) {
+if (formation.image) {
       document.querySelector("#image").src = `${API_BASE}${formation.image}`;
+      document.querySelector("#image").loading = "lazy";
     }
   } catch (err) {
     document.querySelector("#titre").textContent = "Erreur : " + err.message;
