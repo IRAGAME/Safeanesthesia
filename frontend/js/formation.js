@@ -12,7 +12,16 @@ async function chargerFormation() {
     document.querySelector("#contenu").textContent = formation.contenu;
     
     if (formation.image) {
-      document.querySelector("#image").src = `${API_BASE}${formation.image}`;
+      const img = document.querySelector("#image");
+      img.src = `${API_BASE}${formation.image}`;
+      img.fetchPriority = 'high';
+      img.decoding = 'async';
+      img.onerror = () => {
+        console.error('Formation image failed:', img.src);
+        img.src = 'images/placeholder.jpg';
+        img.alt = 'Image indisponible';
+      };
+      img.onload = () => console.log('Formation image loaded:', img.src);
     }
   } catch (err) {
     document.querySelector("#titre").textContent = "Erreur : " + err.message;
