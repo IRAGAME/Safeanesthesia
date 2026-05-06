@@ -14,16 +14,8 @@
 9. [ ] Test on Vercel: `vercel --prod`
 10. [ ] Lighthouse: Performance >90 + attempt_completion
 
+**Note (API fix):** API_BASE Vercel/Render corrigé + CORS backend mis à jour.
+
 **Next:** Step 8 JS hero lazy + final test
 
-
-4. [ ] Static HTML: Add preloads + fetchpriority to index.html logo/carousel
-5. [ ] Lazy load about.html: leaders + partenaires imgs
-6. [ ] Update all HTMLs: Consistent logo optimization
-7. [ ] CSS: Add rendering hints (content-visibility)
-8. [ ] JS: Lazy hero backgrounds (script.js observer)
-9. [ ] Test on Vercel: `vercel --prod`
-10. [ ] Lighthouse: Performance >90 + attempt_completion
-
-**Next Step:** #2 - Edit formation JS files
 
