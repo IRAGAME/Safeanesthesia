@@ -16,7 +16,7 @@ async function chargerFormations() {
 
       card.innerHTML = `
         <div class="card-image">
-          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}" loading="lazy" decoding="async" onerror="this.src='images/placeholder.jpg'; console.error('Image failed:', this.src)">` : '<div class="no-image-placeholder"><i class="fas fa-image"></i> Image non disponible</div>'}
+${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" style="display:block">` : '<div class="no-image-placeholder" style="display:flex;align-items:center;justify-content:center;height:180px;background:var(--background)"><i class="fas fa-image" style="color:var(--text-light);font-size:2rem"></i></div>'}
         </div>
         <div class="card-content">
           <h3>${f.titre}</h3>
