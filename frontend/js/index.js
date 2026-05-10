@@ -23,7 +23,7 @@ function afficherFormations(formations) {
       card.setAttribute("data-id", f.id);
       card.innerHTML = `
         <div class="card-image">
-          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : ""}
+          ${f.image ? `<img src="${f.image}" alt="${f.titre}">` : ""}
         </div>
         <div class="card-content">
           <h3 class="card-title"></h3>

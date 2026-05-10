@@ -13,7 +13,9 @@ async function chargerFormation() {
     
     if (formation.image) {
       const img = document.querySelector("#image");
-      img.src = `${API_BASE}${formation.image}`;
+      // formation.image est déjà un chemin relatif du type /images/ImageFormation/<file>
+      // On charge donc depuis le frontend Vercel (static), pas depuis l'API Render.
+      img.src = formation.image;
       img.fetchPriority = 'high';
       img.decoding = 'async';
       img.onerror = () => {
