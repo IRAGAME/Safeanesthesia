@@ -34,6 +34,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://safeanesthesia.vercel.app",
   "https://safe-anesthesia.vercel.app",
+  "https://safe-anesthesia-iragames-projects.vercel.app", // Exemple d'URL de preview Vercel
   process.env.GITHUB_PAGES_URL || "",
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""
 ].filter(Boolean);

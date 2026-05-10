@@ -1,4 +1,4 @@
-const API_BASE = "https://safeanesthesia.onrender.com";
+const API_BASE = "https://safe-anesthesia.onrender.com";
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
@@ -13,9 +13,8 @@ async function chargerFormation() {
     
     if (formation.image) {
       const img = document.querySelector("#image");
-      // formation.image est déjà un chemin relatif du type /images/ImageFormation/<file>
-      // On charge donc depuis le frontend Vercel (static), pas depuis l'API Render.
-      img.src = formation.image;
+      // On doit charger l'image depuis le backend (Render)
+      img.src = `${API_BASE}${formation.image}`;
       img.fetchPriority = 'high';
       img.decoding = 'async';
       img.onerror = () => {
