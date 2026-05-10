@@ -1,4 +1,4 @@
-const API_BASE = "https://safeanesthesia.onrender.com";
+const API_BASE = "https://safe-anesthesia.onrender.com";
 
 async function chargerFormations() {
   try {

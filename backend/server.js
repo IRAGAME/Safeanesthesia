@@ -36,12 +36,13 @@ const allowedOrigins = [
   "https://safe-anesthesia.vercel.app",
   "https://safe-anesthesia-iragames-projects.vercel.app", // Exemple d'URL de preview Vercel
   process.env.GITHUB_PAGES_URL || "",
-  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""
 ].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+    // Autorise localhost, les domaines explicitement listés, et tous les sous-domaines .vercel.app
+    const isVercel = origin && origin.endsWith('.vercel.app');
+    if (!origin || allowedOrigins.includes(origin) || isVercel || process.env.NODE_ENV !== 'production') {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
