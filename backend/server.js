@@ -33,6 +33,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "https://safeanesthesia.vercel.app",
+  "https://safe-anesthesia.vercel.app",
   process.env.GITHUB_PAGES_URL || "",
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""
 ].filter(Boolean);
