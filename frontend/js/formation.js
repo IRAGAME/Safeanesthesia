@@ -13,6 +13,7 @@ async function chargerFormation() {
     
     if (formation.image) {
       const img = document.querySelector("#image");
+      if (!img) return;
       // formation.image est de type /images/ImageFormation/<file> (servi par le backend Render)
       img.src = `${API_BASE}${formation.image}`;
       img.fetchPriority = 'high';
@@ -22,10 +23,11 @@ async function chargerFormation() {
         img.src = 'images/placeholder.jpg';
         img.alt = 'Image indisponible';
       };
-      img.onload = () => console.log('Formation image loaded:', img.src);
+      img.onload = () => {};
     }
   } catch (err) {
-    document.querySelector("#titre").textContent = "Erreur : " + err.message;
+    const titreEl = document.querySelector("#titre");
+    if (titreEl) titreEl.textContent = "Erreur : " + err.message;
   }
 }
 

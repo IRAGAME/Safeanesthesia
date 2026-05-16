@@ -34,7 +34,8 @@ ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}" loading="lazy" de
     });
   } catch (err) {
     console.error("Erreur chargement formations:", err);
-    document.querySelector("#formations").innerHTML = `<p>Erreur : ${err.message}</p>`;
+    const container = document.querySelector("#formations");
+    if (container) container.innerHTML = `<p>Erreur : ${err.message}</p>`;
   }
 }
 
