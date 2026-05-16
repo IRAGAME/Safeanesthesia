@@ -1,21 +1,31 @@
-# TODO - Fix Frontend/Backend Communication
+# Tâches en cours - SafeAnesthesia
 
-## ✅ Étape 1 : Corriger API_BASE dans tous les fichiers JS frontend
-- [ ] frontend/js/admin.js
-- [ ] frontend/js/formations.js  
-- [ ] frontend/js/formation.js
-- [ ] frontend/js/index.js
-- [ ] frontend/js/formationModel.js
-- [ ] frontend/js/script.js
+## ✅ Optimisation Images Frontend (7/10 complètes)
+- [x] Créer TODO.md
+- [x] Fixer images formations: `js/formations.js` + `js/formation.js`
+- [x] Tester page formations
+- [x] HTML statique: Préload + fetchpriority logo/carousel
+- [x] Lazy load about.html: leaders + partenaires
+- [x] Mettre à jour tous les HTMLs: Optimisation logo cohérente
+- [x] CSS: Ajouter content-visibility hints
 
-## ✅ Étape 2 : Ajouter URL Vercel dans CORS backend/server.js
-- [ ] Modifier allowedOrigins
+- [ ] **À FAIRE**: JS lazy hero backgrounds (script.js observer)
+- [ ] **À FAIRE**: Test Vercel: `vercel --prod`
+- [ ] **À FAIRE**: Lighthouse: Performance >90
 
-## 🔄 Étape 3 : Deploy + Test
-- [ ] Push changes
-- [ ] Test images
-- [ ] Test admin (login/ajout/suppression)
+## ✅ Frontend-Backend API Communication
+- [x] Corriger API_BASE dans tous les fichiers JS frontend
+- [x] Ajouter URL Vercel au CORS backend
+- [x] Articles déployés et testés
 
-## 📋 Prochaines étapes après validation
+## 🔄 Nettoyage Effectué
+- ✅ Supprimé formationModel.js du frontend
+- ✅ Consolidé TODO.md (supprimé doublon frontend/TODO.md)
+- ✅ Harmonisé .env et .env.example
+- ✅ Nettoyé configuration SMTP
+
+## 📋 Prochaines Étapes
 - Vérifier logs Render pour erreurs
 - Tester CORS avec /api/health
+- Implémenter step 8 (lazy hero backgrounds)
+- Test final Performance Lighthouse
