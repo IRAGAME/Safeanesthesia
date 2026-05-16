@@ -7,7 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <!-- Logo preload -->
+  <link rel="preload" href="images/spooa/logo.png" as="image" fetchpriority="high">
   <script src="js/script.js" defer></script>
+
   <script src="js/formation.js" defer></script>
 </head>
 <body>
@@ -16,7 +19,8 @@
   <header class="header">
     <div class="header-left">
       <a href="index.html" class="logo">
-        <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
+        <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo" fetchpriority="high" decoding="async">
+
       </a>
       <div class="header-titles">
         <h1 class="main-title">SPOOA-PM Africa</h1>
