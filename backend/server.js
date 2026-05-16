@@ -1,6 +1,7 @@
 import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
+import { createCorsMiddleware } from "./cors.js";
+
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
@@ -29,26 +30,8 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.disable("x-powered-by");
 
 // CORS
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "https://safe-anesthesia.vercel.app",
-  process.env.GITHUB_PAGES_URL || "",
-  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ""
-].filter(Boolean);
+app.use(createCorsMiddleware());
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 // Rate limiting
 const loginLimiter = rateLimit({

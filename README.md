@@ -29,6 +29,13 @@ Le backend sera accessible sur `https://safe-anesthesia.onrender.com`.
 
 ---
 
+## 🔗 URL finale (front + API)
+- Frontend (Vercel) : `https://safe-anesthesia.vercel.app`
+- API Backend (Render) : `https://safe-anesthesia.onrender.com/api/...`
+
+
+---
+
 ## 🏗️ Structure
 
 ```
