@@ -1,5 +1,6 @@
 const API_BASE = "https://safe-anesthesia.onrender.com";
 
+
 // Variable globale pour stocker les données originales
 let tutesLesFormations = [];
 
@@ -22,7 +23,7 @@ function afficherFormations(formations) {
       card.setAttribute("data-id", f.id);
       card.innerHTML = `
         <div class="card-image">
-          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : ""}
+          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}" loading="lazy" decoding="async">` : ""}
         </div>
         <div class="card-content">
           <h3 class="card-title"></h3>

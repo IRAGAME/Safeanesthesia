@@ -9,14 +9,21 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" href="images/spooa/logo.png" type="image/png">
-  <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
+  <!-- Image Preloads for Performance -->
+  <link rel="preload" href="images/spooa/logo.png" as="image" fetchpriority="high">
+  <link rel="preload" href="images/spooa/car1.jpg" as="image" fetchpriority="high">
+  <link rel="preload" href="images/spooa/car2.jpg" as="image">
+  <link rel="preload" href="images/spooa/car3.jpg" as="image">
+
 </head>
 <body>
  
   <header class="header">
     <div class="header-left">
       <a href="index.html" class="logo">
-        <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo">
+        <img src="images/spooa/logo.png" alt="SafeAnesthesia Logo" fetchpriority="high" decoding="async">
+
       </a>
       <div class="header-titles">
         <h1 class="main-title">SPOOA-PM Africa</h1>
@@ -141,7 +148,8 @@
     <div class="carousel-container">
       <div class="carousel">
         <div class="slide active">
-          <img src="images/spooa/car1.jpg" alt="Objectifs">
+          <img src="images/spooa/car1.jpg" alt="Objectifs" fetchpriority="high" decoding="async">
+
           <div class="caption">
             <span class="caption-tag">Impact</span>
             <h3>Nos Objectifs</h3>
@@ -149,7 +157,8 @@
           </div>
         </div>
         <div class="slide">
-          <img src="images/spooa/car3.jpg" alt="Partenaires">
+          <img src="images/spooa/car3.jpg" alt="Partenaires" loading="lazy" decoding="async">
+
           <div class="caption">
             <span class="caption-tag">Réseau</span>
             <h3>Nos Partenaires</h3>

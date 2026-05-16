@@ -133,6 +133,39 @@ p {
   margin-bottom: var(--spacing-md);
 }
 
+/* =========================
+   Image Performance Optimizations
+   ========================= */
+img {
+  content-visibility: auto;
+  contain-intrinsic-size: 300px 200px;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Specific optimizations */
+.leader-image img,
+.partenaire-logo img,
+.card-image img {
+  will-change: transform;
+  image-rendering: crisp-edges;
+}
+
+/* Hero carousel */
+.carousel img {
+  will-change: transform;
+}
+
+/* Placeholder fallback */
+.no-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+  color: var(--text-light);
+  font-size: 1rem;
+  height: 180px;
+}
+
 .text-light {
   color: var(--text-light);
   font-weight: 400;
