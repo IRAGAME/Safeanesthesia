@@ -1,6 +1,23 @@
 {
+  "version": 2,
   "builds": [
-    { "src": ".", "use": "@vercel/static" }
+    { "src": "index.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    {
+      "src": "/\\..*",
+      "status": 404
+    },
+    {
+      "src": "/(.*)\\.html$",
+      "headers": {
+        "Cache-Control": "public, max-age=3600"
+      }
+    },
+    {
+      "src": "/(?!.*\\.[^/]+$).*",
+      "dest": "/index.html"
+    }
   ]
 }
 

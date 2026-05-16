@@ -1,53 +1,289 @@
 # 🏥 Safe Anesthesia - Formation Médicale Sécurisée
 
-Plateforme web de **formation médicale continue** pour SPOOA-PM Africa.
+Plateforme web moderne de **formation médicale continue** pour SPOOA-PM Africa.
 
 ---
 
-## 🚀 Déploiement
+## 🚀 Architecture Déploiement
 
-### Frontend (Vercel)
+### **Frontend (Vercel)** - Statique (HTML/CSS/JS)
+- **Repository root:** `/frontend`
+- **Build:** Aucune compilation (fichiers statiques)
+- **Output:** `.` (root du dossier)
+- **URL:** `https://safe-anesthesia.vercel.app`
 
-1. Connecter le repo à Vercel
-2. **Root Directory** = `/frontend`
-3. **Build Command** = *(laisser vide)*
-4. **Output Directory** = `.`
-
-> **Important** : Le dossier `frontend` est configuré comme **Root Directory** dans Vercel. Tous les fichiers statiques (HTML, CSS, JS, images) se trouvent dans ce dossier.
-
-Le frontend sera accessible sur `https://safe-anesthesia.vercel.app`.
-
-### Backend (Render)
-
-1. Connecter le repo à Render
-2. **Root Directory** = `/backend`
-3. **Start Command** = `node server.js`
-
-> **Important** : Le backend reste déployé sur Render avec la commande `node server.js`. Il gère l'API et la base de données.
-
-Le backend sera accessible sur `https://safe-anesthesia.onrender.com`.
+### **Backend (Render)** - Node.js + Express
+- **Repository root:** `/backend`
+- **Start command:** `node server.js`
+- **Port:** 3000
+- **URL:** `https://safeanesthesia.onrender.com`
 
 ---
 
-## 🏗️ Structure
+## 🛠️ Stack Technique
+
+| Composant | Technologie | Rôle |
+|-----------|-------------|------|
+| **Frontend** | HTML5, CSS3, Vanilla JS | Interface utilisateur statique |
+| **Backend** | Node.js 18+, Express 5 | API REST + Authentification |
+| **DB** | JSON (fichiers) | Stockage formations |
+| **Auth** | JWT (24h) | Sécurité Admin |
+| **Sécurité** | Helmet, CORS, Rate Limiting | Protection requêtes |
+| **Email** | Nodemailer + SMTP | Contact form |
+
+---
+
+## 📋 Configuration Préalable
+
+### 1. Variables d'Environnement Backend
+
+Créer `/backend/.env`:
+```env
+# 🔐 SÉCURITÉ
+JWT_SECRET=votre_clé_jwt_très_secrète_et_aléatoire
+ADMIN_PASSWORD=votre_mot_de_passe_admin_fort
+
+# 📧 EMAIL (pour formulaire de contact)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=votre_email@gmail.com
+SMTP_PASS=votre_mot_de_passe_application  # App Password de Gmail
+SMTP_FROM=noreply@safeanesthesia.com
+ADMIN_EMAIL=admin@safeanesthesia.com
+
+# 🖥️ SERVEUR
+PORT=3000
+NODE_ENV=production
+```
+
+**💡 Pour Gmail avec 2FA:**
+1. Activer l'authentification à 2 facteurs
+2. Générer un "App Password" spécifique
+3. Utiliser ce password dans `SMTP_PASS` (pas votre password Gmail)
+
+### 2. Vérifier la Configuration Frontend
+
+Le fichier `frontend/vercel.json` doit être present et configurer les routes.
+
+---
+
+## 📡 API Routes
+
+### **Routes Publiques**
+
+```
+GET /api/health                    # Health check
+GET /api/formations                # Lister toutes les formations
+GET /api/formations/:id            # Détail d'une formation
+```
+
+### **Routes Authentifiées (Admin)**
+
+```
+POST   /api/auth/login             # Connexion (retourne JWT token)
+GET    /api/auth/verify            # Vérifier token valide
+POST   /api/auth/logout            # Logout (info client)
+POST   /api/admin/formations       # Créer formation (multipart)
+PUT    /api/admin/formations/:id   # Modifier formation (multipart)
+DELETE /api/admin/formations/:id   # Supprimer formation
+```
+
+### **Routes de Contact**
+
+```
+POST /send                         # Envoyer message de contact
+```
+
+---
+
+## 🔐 Sécurité
+
+### CORS (Cross-Origin Resource Sharing)
+- ✅ Domaines Vercel autorisés: `*.vercel.app`
+- ✅ Localhost en développement
+- ✅ Credintials: Activé
+
+### Rate Limiting
+- **Login:** 5 tentatives par 15 minutes
+- **Contact:** 5 messages par minute
+
+### JWT Authentication
+- **Expiration:** 24 heures
+- **Algorithm:** HS256
+- **Format:** `Authorization: Bearer <token>`
+
+### File Upload
+- **Max size:** 5MB
+- **Formats autorisés:** JPG, PNG, WebP
+- **Stockage:** `backend/public/images/ImageFormation/`
+
+---
+
+## 🌐 Communication Frontend/Backend
+
+Tous les appels API du frontend pointent vers:
+```javascript
+const API_BASE = "https://safeanesthesia.onrender.com";
+```
+
+### Exemple Requête Authentifiée (Admin)
+
+```javascript
+// 1. Login
+const res = await fetch("https://safeanesthesia.onrender.com/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ password: "admin_password" })
+});
+const { token } = await res.json();
+
+// 2. Utiliser le token
+const res2 = await fetch("https://safeanesthesia.onrender.com/api/admin/formations", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "multipart/form-data"
+  },
+  body: formData  // {titre, contenu, image}
+});
+```
+
+---
+
+## 📦 Structure Dossiers
 
 ```
 safeanesthesia/
-├── frontend/           # Site statique (Vercel) — Root Directory
-│   ├── index.html
-│   ├── about.html
-│   ├── contact.html
-│   ├── formations.html
-│   ├── formation.html
-│   ├── admin.html
-│   ├── login.html
-│   ├── vercel.json
+├── frontend/                       # 🌐 Vercel (ROOT DIRECTORY)
+│   ├── index.html                 # Page d'accueil
+│   ├── formations.html            # Liste formations
+│   ├── formation.html             # Détail formation
+│   ├── admin.html                 # Panel admin
+│   ├── login.html                 # Login
+│   ├── contact.html               # Formulaire contact
+│   ├── about.html                 # À propos
+│   ├── vercel.json                # Config Vercel
 │   ├── css/
 │   │   └── style.css
-│   ├── images/
-│   │   ├── back1.png
-│   │   ├── back3.jpg
-│   │   ├── dg/
+│   ├── js/
+│   │   ├── admin.js
+│   │   ├── formations.js
+│   │   ├── formation.js
+│   │   ├── index.js
+│   │   └── script.js
+│   └── images/
+│       ├── spooa/
+│       ├── partenaire/
+│       └── dg/
+│
+├── backend/                        # 🔌 Render
+│   ├── server.js                  # Express app (principal)
+│   ├── package.json
+│   ├── .env                       # Configuration (à créer)
+│   ├── .env.example               # Template
+│   ├── api/
+│   │   └── handler.js             # Wrapper Vercel (optionnel)
+│   ├── data/
+│   │   └── formations.json        # Base de données
+│   └── public/
+│       └── images/
+│           └── ImageFormation/    # Images uploadées
+│
+├── README.md                       # Ce fichier
+├── SETUP.md                        # Guide installation local
+└── TODO.md                         # Tâches suivi
+```
+
+---
+
+## 🚀 Déploiement Production
+
+### **Frontend sur Vercel**
+
+1. Connecter le repo GitHub à Vercel
+2. Variables:
+   - **Framework:** Aucun (Static Site)
+   - **Root Directory:** `frontend`
+   - **Build Command:** (laisser vide)
+   - **Output Directory:** `.`
+
+3. Deploy
+
+### **Backend sur Render**
+
+1. Connecter le repo GitHub à Render
+2. Créer un Web Service:
+   - **Root Directory:** `backend`
+   - **Build Command:** `npm install`
+   - **Start Command:** `node server.js`
+   - **Plan:** Free ou Paid
+
+3. Ajouter Environment Variables (depuis Render dashboard):
+   - `JWT_SECRET`
+   - `ADMIN_PASSWORD`
+   - `SMTP_*` (si utilisation emails)
+   - `NODE_ENV=production`
+   - `PORT=3000`
+
+4. Deploy
+
+---
+
+## ✅ Checklist Déploiement
+
+- [ ] `.env` configuré en `/backend` (JWT_SECRET, ADMIN_PASSWORD, SMTP)
+- [ ] `frontend/vercel.json` vérifié
+- [ ] API_BASE dans les fichiers JS pointe vers Render
+- [ ] CORS configuré dans backend (Vercel domains)
+- [ ] Images optimisées (voir TODO.md)
+- [ ] Tests locaux réussis
+- [ ] Frontend déployé sur Vercel
+- [ ] Backend déployé sur Render
+- [ ] Communication frontend↔backend vérifiée
+
+---
+
+## 🧪 Tests
+
+### Local
+
+```bash
+# Backend
+cd backend
+npm install
+npm start  # Écoute sur http://localhost:3000
+
+# Frontend
+# Servir avec un serveur local (Python, Node, etc.)
+python3 -m http.server 8000  # Dans le dossier frontend
+# Puis: http://localhost:8000
+```
+
+### Production
+
+- [ ] Vérifier `/api/health` → {status: "ok"}
+- [ ] Charger `/api/formations` → Liste JSON
+- [ ] Login admin → JWT token reçu
+- [ ] Créer formation → Image uploadée
+- [ ] Formulaire contact → Email reçu
+
+---
+
+## 📞 Support & Maintenance
+
+- **Frontend bugs:** Vérifier Vercel logs
+- **Backend errors:** Vérifier Render logs
+- **CORS issues:** Vérifier `allowedOrigins` dans server.js
+- **Database:** `backend/data/formations.json`
+
+---
+
+## 📄 Fichiers Importants
+
+- [SETUP.md](SETUP.md) - Installation & développement local
+- [TODO.md](TODO.md) - Optimisations et tâches suivi
+- [backend/server.js](backend/server.js) - API principale
+- [frontend/vercel.json](frontend/vercel.json) - Config Vercel
 │   │   ├── partenaire/
 │   │   └── spooa/
 │   └── js/             # Scripts frontend

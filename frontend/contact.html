@@ -127,17 +127,31 @@
 document.getElementById("contactForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const API_BASE = "https://safe-anesthesia.onrender.com";
-  const response = await fetch(`${API_BASE}/send`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      message: document.getElementById("message").value
-    })
-  });
-  const data = await response.text();
-  alert(data);
+  const statusEl = document.getElementById("form-status");
+  
+  try {
+    const response = await fetch(`${API_BASE}/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        message: document.getElementById("message").value
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      statusEl.innerHTML = `<p class="success">✅ ${data.message || "Message reçu avec succès!"}</p>`;
+      document.getElementById("contactForm").reset();
+      setTimeout(() => statusEl.innerHTML = "", 5000);
+    } else {
+      statusEl.innerHTML = `<p class="error">❌ ${data.error || "Erreur lors de l'envoi du message"}</p>`;
+    }
+  } catch (err) {
+    statusEl.innerHTML = `<p class="error">❌ Erreur de connexion: ${err.message}</p>`;
+  }
 });
 </script>
 </body>
