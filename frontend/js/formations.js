@@ -1,5 +1,3 @@
-const API_BASE = "https://safe-anesthesia.onrender.com";
-
 async function chargerFormations() {
   try {
     const res = await fetch(`${API_BASE}/api/formations`); // ✅ route corrigée

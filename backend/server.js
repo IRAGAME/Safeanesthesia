@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import { createCorsMiddleware } from "./cors.js";
+import { imageStorage } from "./storage.js";
 
 import jwt from "jsonwebtoken";
 import fs from "fs";
@@ -102,9 +103,9 @@ function authAdmin(req, res, next) {
 // ================= MULTER (Upload images) =================
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "public/images/ImageFormation");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    const uploadDir = imageStorage.getUploadDir();
+    if (!uploadDir) {
+      return cb(new Error("Le stockage distant ne supporte pas l'upload direct"));
     }
     cb(null, uploadDir);
   },
@@ -187,7 +188,7 @@ app.post("/api/admin/formations", authAdmin, upload.single("image"), (req, res) 
     const db = dbUtils.read();
 
     // Créer la nouvelle formation
-    const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
+    const imagePath = req.file ? imageStorage.getPublicUrl(req.file.filename) : null;
     const newFormation = {
       id: db.nextId++,
       titre: titre.trim(),
@@ -243,10 +244,9 @@ app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), (req, re
     if (req.file) {
       // Supprimer l'ancienne image si elle existe
       if (formation.image) {
-        const oldPath = path.join(__dirname, "public", formation.image);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        imageStorage.deleteImage(formation.image);
       }
-      formation.image = `/images/ImageFormation/${req.file.filename}`;
+      formation.image = imageStorage.getPublicUrl(req.file.filename);
     }
     formation.updatedAt = new Date().toISOString();
 
@@ -279,8 +279,7 @@ app.delete("/api/admin/formations/:id", authAdmin, (req, res) => {
     // Supprimer l'image du disque
     const formation = db.formations[index];
     if (formation.image) {
-      const imagePath = path.join(__dirname, "public", formation.image);
-      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+      imageStorage.deleteImage(formation.image);
     }
 
     // Supprimer

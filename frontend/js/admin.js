@@ -1,5 +1,3 @@
-// Vérifiez bien si votre URL Render contient un tiret ou non (ex: safe-anesthesia)
-const API_BASE = "https://safe-anesthesia.onrender.com";
 let token = localStorage.getItem("token");
 
 // 🎨 Toast

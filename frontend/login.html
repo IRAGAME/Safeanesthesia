@@ -208,9 +208,8 @@
     </div>
   </div>
 
+  <script src="js/config.js"></script>
   <script>
-    const API_BASE = "https://safe-anesthesia.onrender.com";
-
     // Vérifier si l'utilisateur est déjà connecté
     document.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem('adminToken');
@@ -222,7 +221,7 @@
           });
           if (res.ok) {
             // Token valide, rediriger vers le dashboard
-            window.location.href = '/admin';
+            window.location.href = 'admin.html';
           }
         } catch (error) {
           localStorage.removeItem('adminToken');

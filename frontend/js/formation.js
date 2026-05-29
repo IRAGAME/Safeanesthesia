@@ -1,4 +1,3 @@
-const API_BASE = "https://safe-anesthesia.onrender.com";
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
