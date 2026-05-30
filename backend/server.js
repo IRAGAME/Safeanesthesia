@@ -1,9 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import { createCorsMiddleware } from "./cors.js";
+import { imageStorage } from "./storage.js";
 
 import jwt from "jsonwebtoken";
-import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -11,6 +11,7 @@ import multer from "multer";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
+import db from "./database.js";
 
 // Configuration
 dotenv.config();
@@ -51,31 +52,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// ================= DATABASE (JSON) =================
-const DATA_DIR = path.join(__dirname, "data");
-const DB_FILE = path.join(DATA_DIR, "formations.json");
-
-// Créer le répertoire data s'il n'existe pas
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-const dbUtils = {
-  read: () => {
-    try {
-      if (!fs.existsSync(DB_FILE)) return { formations: [], nextId: 1 };
-      return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-    } catch (e) {
-      return { formations: [], nextId: 1 };
-    }
-  },
-  write: (data) => {
-    try {
-      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-};
+// ================= DATABASE (SQLite) =================
+// La base de données est initialisée dans database.js
+// Les formations sont stockées dans data/formations.db
 
 // ================= AUTHENTIFICATION =================
 function authAdmin(req, res, next) {
@@ -102,9 +81,9 @@ function authAdmin(req, res, next) {
 // ================= MULTER (Upload images) =================
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "public/images/ImageFormation");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    const uploadDir = imageStorage.getUploadDir();
+    if (!uploadDir) {
+      return cb(new Error("Le stockage distant ne supporte pas l'upload direct"));
     }
     cb(null, uploadDir);
   },
@@ -146,8 +125,8 @@ app.get("/api/health", (req, res) => {
 // Récupérer toutes les formations
 app.get("/api/formations", (req, res) => {
   try {
-    const db = dbUtils.read();
-    res.json(db.formations || []);
+    const formations = db.all('SELECT * FROM formations ORDER BY createdAt DESC');
+    res.json(formations);
   } catch (error) {
     res.status(500).json({ error: "Erreur serveur" });
   }
@@ -156,8 +135,7 @@ app.get("/api/formations", (req, res) => {
 // Récupérer une formation par ID
 app.get("/api/formations/:id", (req, res) => {
   try {
-    const db = dbUtils.read();
-    const formation = db.formations.find(f => f.id === parseInt(req.params.id));
+    const formation = db.get('SELECT * FROM formations WHERE id = ?', [req.params.id]);
     
     if (!formation) {
       return res.status(404).json({ error: "Formation introuvable" });
@@ -175,7 +153,6 @@ app.post("/api/admin/formations", authAdmin, upload.single("image"), (req, res) 
   try {
     const { titre, contenu } = req.body;
 
-    // Validation
     if (!titre || !titre.trim()) {
       return res.status(400).json({ error: "Titre requis" });
     }
@@ -183,30 +160,17 @@ app.post("/api/admin/formations", authAdmin, upload.single("image"), (req, res) 
       return res.status(400).json({ error: "Contenu requis" });
     }
 
-    // Recharger la DB
-    const db = dbUtils.read();
+    const imagePath = req.file ? imageStorage.getPublicUrl(req.file.filename) : null;
 
-    // Créer la nouvelle formation
-    const imagePath = req.file ? `/images/ImageFormation/${req.file.filename}` : null;
-    const newFormation = {
-      id: db.nextId++,
-      titre: titre.trim(),
-      contenu: contenu.trim(),
-      image: imagePath,
-      vues: 0,
-      likes: 0,
-      commentaires: 0,
-      createdAt: new Date().toISOString()
-    };
+    const newId = db.insert(
+      `INSERT INTO formations (titre, contenu, image, vues, likes, commentaires, createdAt)
+       VALUES (?, ?, ?, 0, 0, 0, ?)`,
+      [titre.trim(), contenu.trim(), imagePath, new Date().toISOString()]
+    );
 
-    // Ajouter à la DB
-    db.formations.push(newFormation);
-    
-    if (dbUtils.write(db)) {
-      res.status(201).json({ ok: true, formation: newFormation });
-    } else {
-      res.status(500).json({ error: "Erreur lors de la sauvegarde" });
-    }
+    const newFormation = db.get('SELECT * FROM formations WHERE id = ?', [newId]);
+
+    res.status(201).json({ ok: true, formation: newFormation });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erreur lors de l'ajout de la formation" });
@@ -220,7 +184,6 @@ app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), (req, re
     const id = parseInt(req.params.id);
     const { titre, contenu } = req.body;
 
-    // Validation
     if (!titre || !titre.trim()) {
       return res.status(400).json({ error: "Titre requis" });
     }
@@ -228,33 +191,27 @@ app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), (req, re
       return res.status(400).json({ error: "Contenu requis" });
     }
 
-    // Recharger la DB
-    const db = dbUtils.read();
-
-    // Trouver la formation
-    const formation = db.formations.find(f => f.id === id);
-    if (!formation) {
+    const existing = db.get('SELECT * FROM formations WHERE id = ?', [id]);
+    if (!existing) {
       return res.status(404).json({ error: "Formation introuvable" });
     }
 
-    // Mettre à jour
-    formation.titre = titre.trim();
-    formation.contenu = contenu.trim();
+    let imagePath = existing.image;
     if (req.file) {
-      // Supprimer l'ancienne image si elle existe
-      if (formation.image) {
-        const oldPath = path.join(__dirname, "public", formation.image);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      if (existing.image) {
+        imageStorage.deleteImage(existing.image);
       }
-      formation.image = `/images/ImageFormation/${req.file.filename}`;
+      imagePath = imageStorage.getPublicUrl(req.file.filename);
     }
-    formation.updatedAt = new Date().toISOString();
 
-    if (dbUtils.write(db)) {
-      res.json({ ok: true, formation });
-    } else {
-      res.status(500).json({ error: "Erreur lors de la sauvegarde" });
-    }
+    db.run(
+      `UPDATE formations SET titre = ?, contenu = ?, image = ?, updatedAt = ?
+       WHERE id = ?`,
+      [titre.trim(), contenu.trim(), imagePath, new Date().toISOString(), id]
+    );
+
+    const updated = db.get('SELECT * FROM formations WHERE id = ?', [id]);
+    res.json({ ok: true, formation: updated });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erreur lors de la mise à jour" });
@@ -267,30 +224,17 @@ app.delete("/api/admin/formations/:id", authAdmin, (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
-    // Recharger la DB
-    const db = dbUtils.read();
-
-    // Trouver l'index
-    const index = db.formations.findIndex(f => f.id === id);
-    if (index === -1) {
+    const formation = db.get('SELECT * FROM formations WHERE id = ?', [id]);
+    if (!formation) {
       return res.status(404).json({ error: "Formation introuvable" });
     }
-    
-    // Supprimer l'image du disque
-    const formation = db.formations[index];
+
     if (formation.image) {
-      const imagePath = path.join(__dirname, "public", formation.image);
-      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+      imageStorage.deleteImage(formation.image);
     }
 
-    // Supprimer
-    db.formations.splice(index, 1);
-
-    if (dbUtils.write(db)) {
-      res.json({ ok: true, message: "Formation supprimée", id });
-    } else {
-      res.status(500).json({ error: "Erreur lors de la suppression" });
-    }
+    db.run('DELETE FROM formations WHERE id = ?', [id]);
+    res.json({ ok: true, message: "Formation supprimée", id });
   } catch (error) {
     console.error("❌ Erreur DELETE /api/admin/formations/:id:", error.message);
     res.status(500).json({ error: "Erreur lors de la suppression" });
@@ -408,7 +352,7 @@ if (!process.env.VERCEL) {
     console.log(`\n🚀 SafeAnesthesia Server`);
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
     console.log(`📍 URL: http://localhost:${PORT}`);
-    console.log(`📁 DB: ${DB_FILE}`);
+    console.log(`💾 SQLite: data/formations.db`);
     console.log(`🔐 JWT: ${process.env.JWT_SECRET ? '✅' : '⚠️  Par défaut'}`);
     console.log(`📧 Email: ${process.env.SMTP_USER ? '✅' : '⚠️  Désactivé'}`);
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);

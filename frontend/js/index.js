@@ -1,6 +1,3 @@
-const API_BASE = "https://safe-anesthesia.onrender.com";
-
-
 // Variable globale pour stocker les données originales
 let tutesLesFormations = [];
 
@@ -31,9 +28,11 @@ function afficherFormations(formations) {
           <span class="read-more">Découvrir le programme</span>
         </div>
       `;
-      card.querySelector(".card-title").textContent = f.titre;
-      card.querySelector(".card-desc").textContent = f.contenu.substring(0, 120) + "...";
-      card.onclick = () => window.location.href = `formation.html?id=${f.id}`;
+      const titleEl = card.querySelector(".card-title");
+      const descEl = card.querySelector(".card-desc");
+      if (titleEl) titleEl.textContent = f.titre;
+      if (descEl) descEl.textContent = (f.contenu || "").substring(0, 120) + "...";
+      card.onclick = () => { window.location.href = `formation.html?id=${f.id}`; };
       container.appendChild(card);
     });
 }
@@ -66,10 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById('formationSearch');
     searchInput?.addEventListener('input', (e) => {
       const terme = e.target.value.toLowerCase();
-      const resultats = tutesLesFormations.filter(f => 
-        f.titre.toLowerCase().includes(terme) || 
-        f.contenu.toLowerCase().includes(terme)
-      );
+      const resultats = (tutesLesFormations || []).filter(f => {
+        const titre = (f.titre || "").toLowerCase();
+        const contenu = (f.contenu || "").toLowerCase();
+        return titre.includes(terme) || contenu.includes(terme);
+      });
       afficherFormations(resultats);
     });
   }
