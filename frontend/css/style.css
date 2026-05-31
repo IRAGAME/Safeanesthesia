@@ -2598,15 +2598,6 @@ footer {
   }
 }
 
-@media (max-width: 768px) {
-  .hero, .heroAbout, .heroForm, .heroCont {
-    min-height: 50vh;
-    background-size: contain;
-    background-position: center;
-    background-color: #0a1628;
-  }
-}
-
 /* =========================
    Section Histoire / Timeline
    ========================= */
