@@ -1,48 +1,32 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+import { supabase } from './supabase.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const STORAGE_TYPE = process.env.STORAGE_TYPE || "local";
-const EXTERNAL_BASE_URL = process.env.STORAGE_EXTERNAL_URL || "";
-
-const LOCAL_UPLOAD_DIR = path.join(__dirname, "public/images/ImageFormation");
-
-function ensureLocalDir() {
-  if (!fs.existsSync(LOCAL_UPLOAD_DIR)) {
-    fs.mkdirSync(LOCAL_UPLOAD_DIR, { recursive: true });
-  }
-}
+const BUCKET_NAME = 'formations';
 
 export const imageStorage = {
-  getUploadDir() {
-    if (STORAGE_TYPE === "external") {
-      return null;
-    }
-    ensureLocalDir();
-    return LOCAL_UPLOAD_DIR;
+  async upload(file) {
+    const ext = file.originalname.split('.').pop();
+    const fileName = `${Date.now()}.${ext}`;
+    const { error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: false
+      });
+    if (error) throw new Error(`Upload failed: ${error.message}`);
+
+    const { data: publicUrl } = supabase.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(fileName);
+
+    return publicUrl.publicUrl;
   },
 
-  getPublicUrl(filename) {
-    if (STORAGE_TYPE === "external" && EXTERNAL_BASE_URL) {
-      return `${EXTERNAL_BASE_URL}/${filename}`;
-    }
-    return `/images/ImageFormation/${filename}`;
-  },
-
-  deleteImage(imagePath) {
-    if (STORAGE_TYPE === "external") return true;
-    const fullPath = path.join(__dirname, "public", imagePath);
-    try {
-      if (fs.existsSync(fullPath)) {
-        fs.unlinkSync(fullPath);
-      }
-      return true;
-    } catch {
-      return false;
-    }
+  async delete(imageUrl) {
+    if (!imageUrl) return;
+    const fileName = imageUrl.split('/').pop();
+    const { error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .remove([fileName]);
+    if (error) console.warn('Failed to delete image:', error.message);
   }
 };

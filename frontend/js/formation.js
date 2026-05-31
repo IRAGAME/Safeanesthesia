@@ -13,8 +13,7 @@ async function chargerFormation() {
     if (formation.image) {
       const img = document.querySelector("#image");
       if (!img) return;
-      // formation.image est de type /images/ImageFormation/<file> (servi par le backend Render)
-      img.src = `${API_BASE}${formation.image}`;
+      img.src = imageUrl(formation.image);
       img.fetchPriority = 'high';
       img.decoding = 'async';
       img.onerror = () => {

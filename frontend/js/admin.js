@@ -77,7 +77,7 @@ async function chargerFormations() {
       card.className = "admin-card";
       card.innerHTML = `
         <div class="card-image">
-          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : '<div style="height:160px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="color:#ccc;font-size:2rem;"></i></div>'}
+          ${f.image ? `<img src="${imageUrl(f.image)}" alt="${f.titre}">` : '<div style="height:160px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="color:#ccc;font-size:2rem;"></i></div>'}
         </div>
         <div class="admin-card-content">
           <h3 class="card-title-text"></h3>
@@ -149,7 +149,7 @@ window.prepareEdit = function(id, titre, contenu, image) {
   document.getElementById('editContenu').value = contenu;
   const currentImageDiv = document.getElementById('currentImage');
   if (image) {
-    currentImageDiv.innerHTML = `<p><i class="fas fa-image"></i> Image actuelle</p><img src="${API_BASE}${image}" alt="Image actuelle">`;
+    currentImageDiv.innerHTML = `<p><i class="fas fa-image"></i> Image actuelle</p><img src="${imageUrl(image)}" alt="Image actuelle">`;
   } else {
     currentImageDiv.innerHTML = '<div class="no-image"><i class="fas fa-image"></i> Aucune image actuelle</div>';
   }

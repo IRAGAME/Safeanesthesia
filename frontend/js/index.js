@@ -20,7 +20,7 @@ function afficherFormations(formations) {
 
       if (f.image) {
         const img = document.createElement("img");
-        img.src = `${API_BASE}${f.image}`;
+        img.src = imageUrl(f.image);
         img.alt = f.titre;
         img.loading = "lazy";
         img.decoding = "async";
