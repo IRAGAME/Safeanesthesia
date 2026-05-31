@@ -10,6 +10,19 @@ function showToast(message, type = 'success') {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+function boutonLoading(btn, loading) {
+  if (loading) {
+    btn.disabled = true;
+    btn.dataset.originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.style.opacity = '0.7';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = btn.dataset.originalHtml || btn.innerHTML;
+    btn.style.opacity = '1';
+  }
+}
+
 // Initialisation
 function updateUI() {
   if (!token) {
@@ -104,6 +117,8 @@ async function chargerFormations() {
 // Ajouter formation
 async function ajouterFormation(e) {
   e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  boutonLoading(btn, true);
   const formData = new FormData(e.target);
   
   try {
@@ -111,7 +126,6 @@ async function ajouterFormation(e) {
       method: "POST",
       headers: { 
         "Authorization": `Bearer ${token}`
-        // Note: Ne pas mettre Content-Type avec FormData, le navigateur le fait seul
       },
       body: formData
     });
@@ -120,17 +134,18 @@ async function ajouterFormation(e) {
       try { const body = await res.json(); if (body.error) msg += `: ${body.error}`; } catch {}
       throw new Error(msg);
     }
-    showToast("Formation ajoutée avec succès !");
+    showToast("Formation ajoutee avec succes !");
     e.target.reset();
     chargerFormations();
   } catch (error) {
     showToast(`Erreur: ${error.message}`, 'error');
   }
+  boutonLoading(btn, false);
 }
 
 // Supprimer formation
 async function supprimerFormation(id) {
-  if (confirm("Êtes-vous sûr de vouloir supprimer cette formation ?")) {
+  if (confirm("etes-vous sur de vouloir supprimer cette formation ?")) {
     try {
       const res = await fetch(`${API_BASE}/api/admin/formations/${id}`, {
         method: "DELETE",
@@ -141,7 +156,7 @@ async function supprimerFormation(id) {
         try { const body = await res.json(); if (body.error) msg += `: ${body.error}`; } catch {}
         throw new Error(msg);
       }
-      showToast("Formation supprimée avec succès !");
+      showToast("Formation supprimee avec succes !");
       chargerFormations();
     } catch (error) {
       showToast(`Erreur: ${error.message}`, 'error');
@@ -171,6 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       if (!currentEditId) return;
       
+      const btn = e.target.querySelector('button[type="submit"]');
+      boutonLoading(btn, true);
       const formData = new FormData(e.target);
       
       try {
@@ -186,12 +203,13 @@ document.addEventListener('DOMContentLoaded', () => {
           try { const body = await res.json(); if (body.error) msg += `: ${body.error}`; } catch {}
           throw new Error(msg);
         }
-        showToast("Formation mise à jour avec succès !");
+        showToast("Formation mise a jour avec succes !");
         document.getElementById('editModal').classList.remove('open');
         chargerFormations();
       } catch (error) {
         showToast(`Erreur: ${error.message}`, 'error');
       }
+      boutonLoading(btn, false);
     });
   }
 });
