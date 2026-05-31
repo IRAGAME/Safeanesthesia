@@ -4,21 +4,26 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Lazy load hero backgrounds
   const heroes = document.querySelectorAll('.hero, .heroAbout, .heroForm, .heroCont');
+  heroes.forEach(h => {
+    const cssBg = getComputedStyle(h).backgroundImage;
+    if (cssBg && cssBg !== 'none') {
+      h.dataset.heroBg = cssBg;
+    }
+    h.style.backgroundImage = 'linear-gradient(45deg, rgba(0,168,107,0.1), rgba(0,123,255,0.1))';
+  });
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.style.backgroundImage = getComputedStyle(entry.target).backgroundImage;
+        if (entry.target.dataset.heroBg) {
+          entry.target.style.backgroundImage = entry.target.dataset.heroBg;
+        }
         observer.unobserve(entry.target);
       }
     });
   }, { threshold: 0.1 });
   
   heroes.forEach(h => observer.observe(h));
-  
-  // Set low-res placeholders initially (optional data-bg)
-  heroes.forEach(h => {
-    h.style.backgroundImage = 'linear-gradient(45deg, rgba(0,168,107,0.1), rgba(0,123,255,0.1))';
-  });
  
   // menu
 
