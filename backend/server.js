@@ -74,9 +74,9 @@ function authAdmin(req, res, next) {
 }
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: process.env.SMTP_PORT || 465,
-  secure: true,
+  host: process.env.SMTP_HOST || "ssl0.ovh.net",
+  port: parseInt(process.env.SMTP_PORT || "587"),
+  secure: process.env.SMTP_SECURE === "true",
   auth: {
     user: process.env.SMTP_USER || "",
     pass: process.env.SMTP_PASS || ""
@@ -237,7 +237,7 @@ app.post("/send", contactLimiter, async (req, res) => {
 
     try {
       await transporter.sendMail({
-        from: process.env.SMTP_USER || "noreply@safeanesthesia.com",
+        from: process.env.SMTP_USER || "contact@safeanesthesia.fr",
         to: process.env.CONTACT_EMAIL || process.env.SMTP_USER,
         replyTo: email,
         subject: `[Contact] ${name}`,
