@@ -1,13 +1,9 @@
-// Variable globale pour stocker les données originales
 let tutesLesFormations = [];
 
-/**
- * Affiche les cartes de formation dans le conteneur
- */
 function afficherFormations(formations) {
     const container = document.querySelector("#formations");
     if (!container) return;
-    
+
     if (formations.length === 0) {
       container.innerHTML = `<p class="no-results">Aucune formation ne correspond à votre recherche.</p>`;
       return;
@@ -18,28 +14,41 @@ function afficherFormations(formations) {
       const card = document.createElement("div");
       card.className = "post-card";
       card.setAttribute("data-id", f.id);
-      card.innerHTML = `
-        <div class="card-image">
-          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}" loading="lazy" decoding="async">` : ""}
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>
-          <p class="card-desc"></p>
-          <span class="read-more">Découvrir le programme</span>
-        </div>
+
+      const imageDiv = document.createElement("div");
+      imageDiv.className = "card-image";
+
+      if (f.image) {
+        const img = document.createElement("img");
+        img.src = `${API_BASE}${f.image}`;
+        img.alt = f.titre;
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.onerror = function() {
+          this.outerHTML = '<div class="no-image-placeholder" style="display:flex;align-items:center;justify-content:center;height:180px;background:var(--background)"><i class="fas fa-image" style="color:var(--text-light);font-size:2rem"></i></div>';
+        };
+        imageDiv.appendChild(img);
+      }
+      card.appendChild(imageDiv);
+
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "card-content";
+      contentDiv.innerHTML = `
+        <h3 class="card-title"></h3>
+        <p class="card-desc"></p>
+        <span class="read-more">Découvrir le programme</span>
       `;
-      const titleEl = card.querySelector(".card-title");
-      const descEl = card.querySelector(".card-desc");
+      const titleEl = contentDiv.querySelector(".card-title");
+      const descEl = contentDiv.querySelector(".card-desc");
       if (titleEl) titleEl.textContent = f.titre;
       if (descEl) descEl.textContent = (f.contenu || "").substring(0, 120) + "...";
+      card.appendChild(contentDiv);
+
       card.onclick = () => { window.location.href = `formation.html?id=${f.id}`; };
       container.appendChild(card);
     });
 }
 
-/**
- * Charge les données depuis l'API
- */
 async function chargerFormationsHome() {
   try {
     const res = await fetch(`${API_BASE}/api/formations`);
@@ -53,7 +62,6 @@ async function chargerFormationsHome() {
   }
 }
 
-// Initialisation
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -61,7 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!id) {
     chargerFormationsHome();
 
-    // Gestion de la recherche
     const searchInput = document.getElementById('formationSearch');
     searchInput?.addEventListener('input', (e) => {
       const terme = e.target.value.toLowerCase();
