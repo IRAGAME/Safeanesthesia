@@ -3,6 +3,7 @@ import cors from "cors";
 export function createCorsMiddleware() {
   const allowedOrigins = [
     "https://safe-anesthesia.vercel.app",
+    "https://safeanesthesia.onrender.com",
     /^https:\/\/.*--safe-anesthesia\.vercel\.app$/,
     /^https:\/\/.*\.vercel\.app$/,
   ];
