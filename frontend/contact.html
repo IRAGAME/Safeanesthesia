@@ -143,14 +143,14 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
     const data = await response.json();
     
     if (response.ok) {
-      statusEl.innerHTML = `<p class="success">✅ ${data.message || "Message reçu avec succès!"}</p>`;
+      statusEl.innerHTML = `<p class="success">${data.message || "Message reçu avec succès!"}</p>`;
       document.getElementById("contactForm").reset();
       setTimeout(() => statusEl.innerHTML = "", 5000);
     } else {
-      statusEl.innerHTML = `<p class="error">❌ ${data.error || "Erreur lors de l'envoi du message"}</p>`;
+      statusEl.innerHTML = `<p class="error">${data.error || "Erreur lors de l'envoi du message"}</p>`;
     }
   } catch (err) {
-    statusEl.innerHTML = `<p class="error">❌ Erreur de connexion: ${err.message}</p>`;
+    statusEl.innerHTML = `<p class="error">Erreur de connexion: ${err.message}</p>`;
   }
 });
 </script>

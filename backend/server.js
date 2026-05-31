@@ -2,39 +2,29 @@ import express from "express";
 import dotenv from "dotenv";
 import { createCorsMiddleware } from "./cors.js";
 import { imageStorage } from "./storage.js";
+import { getFormations, getFormation, createFormation, updateFormation, deleteFormation } from "./supabase.js";
 
 import jwt from "jsonwebtoken";
-import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import multer from "multer";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
-import db from "./database.js";
 
-// Configuration
 dotenv.config();
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET === "your_secret_key") {
-  console.error("❌ Erreur: JWT_SECRET n'est pas configuré ou est trop faible. Le serveur s'arrête.");
+  console.error("Erreur: JWT_SECRET n'est pas configuré ou est trop faible. Le serveur s'arrête.");
   process.exit(1);
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ================= SÉCURITÉ =================
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.disable("x-powered-by");
 
-// CORS
 app.use(createCorsMiddleware());
 
-
-// Rate limiting
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
@@ -47,16 +37,21 @@ const contactLimiter = rateLimit({
   message: { error: "Trop de tentatives, réessayez dans 1 minute." }
 });
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
 
-// ================= DATABASE (SQLite) =================
-// La base de données est initialisée dans database.js
-// Les formations sont stockées dans data/formations.db
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|webp/;
+    const mimeType = allowedTypes.test(file.mimetype);
+    const extName = allowedTypes.test('.' + file.originalname.split('.').pop().toLowerCase());
+    if (mimeType && extName) return cb(null, true);
+    cb(new Error("Seules les images (jpg, png, webp) sont autorisées"));
+  }
+});
 
-// ================= AUTHENTIFICATION =================
 function authAdmin(req, res, next) {
   const header = req.headers["authorization"];
   if (!header) {
@@ -73,38 +68,11 @@ function authAdmin(req, res, next) {
     req.user = decoded;
     next();
   } catch (error) {
-    console.error("❌ Erreur token:", error.message);
+    console.error("Erreur token:", error.message);
     return res.status(403).json({ message: "Token invalide ou expiré" });
   }
 }
 
-// ================= MULTER (Upload images) =================
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = imageStorage.getUploadDir();
-    if (!uploadDir) {
-      return cb(new Error("Le stockage distant ne supporte pas l'upload direct"));
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ 
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Limite 5Mo
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|webp/;
-    const mimeType = allowedTypes.test(file.mimetype);
-    const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    if (mimeType && extName) return cb(null, true);
-    cb(new Error("Seules les images (jpg, png, webp) sont autorisées"));
-  }
-});
-
-// ================= EMAIL =================
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.gmail.com",
   port: process.env.SMTP_PORT || 465,
@@ -115,41 +83,32 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// ================= HEALTH CHECK =================
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// ================= FORMATIONS - GET =================
-
-// Récupérer toutes les formations
-app.get("/api/formations", (req, res) => {
+app.get("/api/formations", async (req, res) => {
   try {
-    const formations = db.all('SELECT * FROM formations ORDER BY createdAt DESC');
+    const formations = await getFormations();
     res.json(formations);
   } catch (error) {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
 
-// Récupérer une formation par ID
-app.get("/api/formations/:id", (req, res) => {
+app.get("/api/formations/:id", async (req, res) => {
   try {
-    const formation = db.get('SELECT * FROM formations WHERE id = ?', [req.params.id]);
-    
+    const formation = await getFormation(req.params.id);
     if (!formation) {
       return res.status(404).json({ error: "Formation introuvable" });
     }
-    
     res.json(formation);
   } catch (error) {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
 
-// ================= FORMATIONS - CREATE (ADMIN) =================
-
-app.post("/api/admin/formations", authAdmin, upload.single("image"), (req, res) => {
+app.post("/api/admin/formations", authAdmin, upload.single("image"), async (req, res) => {
   try {
     const { titre, contenu } = req.body;
 
@@ -160,15 +119,16 @@ app.post("/api/admin/formations", authAdmin, upload.single("image"), (req, res) 
       return res.status(400).json({ error: "Contenu requis" });
     }
 
-    const imagePath = req.file ? imageStorage.getPublicUrl(req.file.filename) : null;
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = await imageStorage.upload(req.file);
+    }
 
-    const newId = db.insert(
-      `INSERT INTO formations (titre, contenu, image, vues, likes, commentaires, createdAt)
-       VALUES (?, ?, ?, 0, 0, 0, ?)`,
-      [titre.trim(), contenu.trim(), imagePath, new Date().toISOString()]
-    );
-
-    const newFormation = db.get('SELECT * FROM formations WHERE id = ?', [newId]);
+    const newFormation = await createFormation({
+      titre: titre.trim(),
+      contenu: contenu.trim(),
+      image: imageUrl
+    });
 
     res.status(201).json({ ok: true, formation: newFormation });
   } catch (error) {
@@ -177,9 +137,7 @@ app.post("/api/admin/formations", authAdmin, upload.single("image"), (req, res) 
   }
 });
 
-// ================= FORMATIONS - UPDATE (ADMIN) =================
-
-app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), (req, res) => {
+app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const { titre, contenu } = req.body;
@@ -191,26 +149,25 @@ app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), (req, re
       return res.status(400).json({ error: "Contenu requis" });
     }
 
-    const existing = db.get('SELECT * FROM formations WHERE id = ?', [id]);
+    const existing = await getFormation(id);
     if (!existing) {
       return res.status(404).json({ error: "Formation introuvable" });
     }
 
-    let imagePath = existing.image;
+    let imageUrl = existing.image;
     if (req.file) {
       if (existing.image) {
-        imageStorage.deleteImage(existing.image);
+        await imageStorage.delete(existing.image);
       }
-      imagePath = imageStorage.getPublicUrl(req.file.filename);
+      imageUrl = await imageStorage.upload(req.file);
     }
 
-    db.run(
-      `UPDATE formations SET titre = ?, contenu = ?, image = ?, updatedAt = ?
-       WHERE id = ?`,
-      [titre.trim(), contenu.trim(), imagePath, new Date().toISOString(), id]
-    );
+    const updated = await updateFormation(id, {
+      titre: titre.trim(),
+      contenu: contenu.trim(),
+      image: imageUrl
+    });
 
-    const updated = db.get('SELECT * FROM formations WHERE id = ?', [id]);
     res.json({ ok: true, formation: updated });
   } catch (error) {
     console.error(error);
@@ -218,49 +175,24 @@ app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), (req, re
   }
 });
 
-// ================= FORMATIONS - DELETE (ADMIN) =================
-
-app.delete("/api/admin/formations/:id", authAdmin, (req, res) => {
+app.delete("/api/admin/formations/:id", authAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
-    const formation = db.get('SELECT * FROM formations WHERE id = ?', [id]);
+    const formation = await getFormation(id);
     if (!formation) {
       return res.status(404).json({ error: "Formation introuvable" });
     }
 
     if (formation.image) {
-      imageStorage.deleteImage(formation.image);
+      await imageStorage.delete(formation.image);
     }
 
-    db.run('DELETE FROM formations WHERE id = ?', [id]);
+    await deleteFormation(id);
     res.json({ ok: true, message: "Formation supprimée", id });
   } catch (error) {
-    console.error("❌ Erreur DELETE /api/admin/formations/:id:", error.message);
+    console.error("Erreur DELETE /api/admin/formations/:id:", error.message);
     res.status(500).json({ error: "Erreur lors de la suppression" });
-  }
-});
-
-// ================= AUTHENTIFICATION =================
-
-app.post("/login", loginLimiter, (req, res) => {
-  try {
-    const { password } = req.body;
-
-    if (!password || password !== process.env.ADMIN_PASSWORD) {
-      return res.status(401).json({ message: "Mot de passe incorrect" });
-    }
-
-    const token = jwt.sign(
-      { user: "admin" },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-
-    res.json({ token });
-  } catch (error) {
-    console.error("❌ Erreur POST /login:", error.message);
-    res.status(500).json({ error: "Erreur lors de la connexion" });
   }
 });
 
@@ -280,7 +212,7 @@ app.post("/api/auth/login", loginLimiter, (req, res) => {
 
     res.json({ token });
   } catch (error) {
-    console.error("❌ Erreur POST /api/auth/login:", error.message);
+    console.error("Erreur POST /api/auth/login:", error.message);
     res.status(500).json({ error: "Erreur lors de la connexion" });
   }
 });
@@ -293,21 +225,16 @@ app.post("/api/auth/logout", authAdmin, (req, res) => {
   res.json({ message: "Déconnecté avec succès" });
 });
 
-// ================= CONTACT =================
-
 app.post("/send", contactLimiter, async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
-    // Validation
     if (!name || !email || !message) {
       return res.status(400).json({ error: "Tous les champs sont requis" });
     }
 
-    // Nettoyage basique pour éviter l'injection HTML
     const safeMessage = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-    // Envoyer email
     try {
       await transporter.sendMail({
         from: process.env.SMTP_USER || "noreply@safeanesthesia.com",
@@ -323,21 +250,18 @@ app.post("/send", contactLimiter, async (req, res) => {
         `
       });
     } catch (emailError) {
-      console.warn("⚠️  Email non envoyé:", emailError.message);
-      // Continue quand même
+      console.warn("Email non envoyé:", emailError.message);
     }
 
-    res.json({ ok: true, message: "✅ Message reçu! Nous vous répondrons bientôt." });
+    res.json({ ok: true, message: "Message reçu! Nous vous répondrons bientôt." });
   } catch (error) {
-    console.error("❌ Erreur POST /send:", error.message);
+    console.error("Erreur POST /send:", error.message);
     res.status(500).json({ error: "Erreur lors de l'envoi" });
   }
 });
 
-// ================= ERROR HANDLING =================
-
 app.use((err, req, res, next) => {
-  console.error("❌ Erreur serveur:", err.message);
+  console.error("Erreur serveur:", err.message);
   res.status(500).json({ error: "Erreur serveur interne" });
 });
 
@@ -345,16 +269,15 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route non trouvée" });
 });
 
-// ================= SERVER STARTUP =================
-
 if (!process.env.VERCEL) {
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`\n🚀 SafeAnesthesia Server`);
+    console.log(`\nSafeAnesthesia Server`);
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-    console.log(`📍 URL: http://localhost:${PORT}`);
-    console.log(`💾 SQLite: data/formations.db`);
-    console.log(`🔐 JWT: ${process.env.JWT_SECRET ? '✅' : '⚠️  Par défaut'}`);
-    console.log(`📧 Email: ${process.env.SMTP_USER ? '✅' : '⚠️  Désactivé'}`);
+    console.log(`URL: http://localhost:${PORT}`);
+    console.log(`Database: Supabase`);
+    console.log(`Storage: Supabase`);
+    console.log(`JWT: ${process.env.JWT_SECRET ? 'Configure' : 'Par defaut'}`);
+    console.log(`Email: ${process.env.SMTP_USER ? 'Configure' : 'Desactive'}`);
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
   });
 }

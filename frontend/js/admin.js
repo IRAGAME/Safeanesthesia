@@ -1,15 +1,16 @@
 let token = localStorage.getItem("token");
 
-// 🎨 Toast
+// Toast
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
-  toast.textContent = message;
+  const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
   toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas ${icon}"></i><span class="toast-text">${message}</span>`;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// 🔐 Initialisation
+// Initialisation
 function updateUI() {
   if (!token) {
     document.getElementById('loginForm').style.display = 'block';
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const password = document.querySelector("#password").value;
       try {
-        const res = await fetch(`${API_BASE}/login`, {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password })
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 📚 Charger formations
+// Charger formations
 async function chargerFormations() {
   try {
     const res = await fetch(`${API_BASE}/api/formations`);
@@ -76,7 +77,7 @@ async function chargerFormations() {
       card.className = "admin-card";
       card.innerHTML = `
         <div class="card-image">
-          ${f.image ? `<img src="${API_BASE}${f.image}" alt="${f.titre}">` : '<div style="height:160px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="color:#ccc;font-size:2rem;"></i></div>'}
+          ${f.image ? `<img src="${imageUrl(f.image)}" alt="${f.titre}">` : '<div style="height:160px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="color:#ccc;font-size:2rem;"></i></div>'}
         </div>
         <div class="admin-card-content">
           <h3 class="card-title-text"></h3>
@@ -100,7 +101,7 @@ async function chargerFormations() {
   }
 }
 
-// ➕ Ajouter formation
+// Ajouter formation
 async function ajouterFormation(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
@@ -115,7 +116,7 @@ async function ajouterFormation(e) {
       body: formData
     });
     if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
-    showToast("Formation ajoutée avec succès ! 🎉");
+    showToast("Formation ajoutée avec succès !");
     e.target.reset();
     chargerFormations();
   } catch (error) {
@@ -123,7 +124,7 @@ async function ajouterFormation(e) {
   }
 }
 
-// ❌ Supprimer formation
+// Supprimer formation
 async function supprimerFormation(id) {
   if (confirm("Êtes-vous sûr de vouloir supprimer cette formation ?")) {
     try {
@@ -132,7 +133,7 @@ async function supprimerFormation(id) {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
-      showToast("Formation supprimée avec succès ! 🗑️");
+      showToast("Formation supprimée avec succès !");
       chargerFormations();
     } catch (error) {
       showToast(`Erreur lors de la suppression: ${error.message}`, 'error');
@@ -148,7 +149,7 @@ window.prepareEdit = function(id, titre, contenu, image) {
   document.getElementById('editContenu').value = contenu;
   const currentImageDiv = document.getElementById('currentImage');
   if (image) {
-    currentImageDiv.innerHTML = `<p><i class="fas fa-image"></i> Image actuelle</p><img src="${API_BASE}${image}" alt="Image actuelle">`;
+    currentImageDiv.innerHTML = `<p><i class="fas fa-image"></i> Image actuelle</p><img src="${imageUrl(image)}" alt="Image actuelle">`;
   } else {
     currentImageDiv.innerHTML = '<div class="no-image"><i class="fas fa-image"></i> Aucune image actuelle</div>';
   }
@@ -173,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
           body: formData
         });
         if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
-        showToast("Formation mise à jour avec succès ! ✏️");
+        showToast("Formation mise à jour avec succès !");
         document.getElementById('editModal').classList.remove('open');
         chargerFormations();
       } catch (error) {

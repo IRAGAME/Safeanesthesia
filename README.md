@@ -1,10 +1,10 @@
-# 🏥 Safe Anesthesia - Formation Médicale Sécurisée
+# Safe Anesthesia - Formation Medicale Securisee
 
 Plateforme web de **formation médicale continue** pour SPOOA-PM Africa.
 
 ---
 
-## 🚀 Déploiement
+## Deploiement
 
 ### Frontend (Vercel)
 
@@ -29,14 +29,14 @@ Le backend sera accessible sur `https://safe-anesthesia.onrender.com`.
 
 ---
 
-## 🔗 URL finale (front + API)
+## URL finale (front + API)
 - Frontend (Vercel) : `https://safe-anesthesia.vercel.app`
 - API Backend (Render) : `https://safe-anesthesia.onrender.com/api/...`
 
 
 ---
 
-## 🏗️ Structure
+## Structure du projet
 
 ```
 safeanesthesia/
@@ -79,7 +79,7 @@ safeanesthesia/
 
 ---
 
-## ⚙️ Configuration Backend (.env)
+## Configuration Backend (.env)
 
 ```bash
 cd backend
@@ -105,11 +105,11 @@ PORT=3000
 NODE_ENV=production
 ```
 
-**⚠️ NE JAMAIS COMMITER .env**
+**NE JAMAIS COMMITER .env**
 
 ---
 
-## 🔐 Accès Admin
+## Acces Admin
 
 **L'accès admin N'est PAS visible sur la page d'accueil !**
 
@@ -121,7 +121,7 @@ Pour y accéder :
 
 ---
 
-## 🛠️ Stack
+## Stack technique
 
 **Backend :** Node.js + Express + JWT + JSON DB  
 **Frontend :** HTML5 + CSS3 + Vanilla JS (statique)  
@@ -129,7 +129,7 @@ Pour y accéder :
 
 ---
 
-## 📚 Routes API
+## Routes API
 
 ### Publiques
 ```
@@ -156,7 +156,7 @@ DELETE /api/admin/formations/:id   # Supprimer
 
 ---
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 **"Le serveur ne démarre pas"**
 ```bash
@@ -176,6 +176,6 @@ node server.js
 ---
 
 **Version :** 2.0  
-**Statut :** ✅ Production-Ready  
+**Statut :** Production-Ready  
 **Licence :** Propriétaire SPOOA-PM Africa
 

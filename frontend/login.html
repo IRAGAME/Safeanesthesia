@@ -259,7 +259,7 @@
         // Stocker le token
         localStorage.setItem('adminToken', data.token);
         
-        successMsg.textContent = '✅ Connexion réussie!';
+        successMsg.textContent = 'Connexion réussie!';
         successMsg.classList.add('show');
 
         // Rediriger vers le dashboard
@@ -268,7 +268,7 @@
         }, 1000);
 
       } catch (error) {
-        errorMsg.textContent = `❌ Erreur: ${error.message}`;
+        errorMsg.textContent = `Erreur: ${error.message}`;
         errorMsg.classList.add('show');
         loginBtn.classList.remove('loading');
         loginBtn.disabled = false;
