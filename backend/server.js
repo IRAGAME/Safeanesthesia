@@ -133,7 +133,7 @@ app.post("/api/admin/formations", authAdmin, upload.single("image"), async (req,
     res.status(201).json({ ok: true, formation: newFormation });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erreur lors de l'ajout de la formation" });
+    res.status(500).json({ error: error.message || "Erreur lors de l'ajout de la formation" });
   }
 });
 
@@ -171,7 +171,7 @@ app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), async (r
     res.json({ ok: true, formation: updated });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erreur lors de la mise à jour" });
+    res.status(500).json({ error: error.message || "Erreur lors de la mise à jour" });
   }
 });
 
@@ -192,7 +192,7 @@ app.delete("/api/admin/formations/:id", authAdmin, async (req, res) => {
     res.json({ ok: true, message: "Formation supprimée", id });
   } catch (error) {
     console.error("Erreur DELETE /api/admin/formations/:id:", error.message);
-    res.status(500).json({ error: "Erreur lors de la suppression" });
+    res.status(500).json({ error: error.message || "Erreur lors de la suppression" });
   }
 });
 
@@ -256,13 +256,13 @@ app.post("/send", contactLimiter, async (req, res) => {
     res.json({ ok: true, message: "Message reçu! Nous vous répondrons bientôt." });
   } catch (error) {
     console.error("Erreur POST /send:", error.message);
-    res.status(500).json({ error: "Erreur lors de l'envoi" });
+    res.status(500).json({ error: error.message || "Erreur lors de l'envoi" });
   }
 });
 
 app.use((err, req, res, next) => {
   console.error("Erreur serveur:", err.message);
-  res.status(500).json({ error: "Erreur serveur interne" });
+  res.status(500).json({ error: err.message || "Erreur serveur interne" });
 });
 
 app.use((req, res) => {
