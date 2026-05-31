@@ -1,6 +1,6 @@
 let token = localStorage.getItem("token");
 
-// 🎨 Toast
+// Toast
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
   toast.textContent = message;
@@ -9,7 +9,7 @@ function showToast(message, type = 'success') {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// 🔐 Initialisation
+// Initialisation
 function updateUI() {
   if (!token) {
     document.getElementById('loginForm').style.display = 'block';
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 📚 Charger formations
+// Charger formations
 async function chargerFormations() {
   try {
     const res = await fetch(`${API_BASE}/api/formations`);
@@ -100,7 +100,7 @@ async function chargerFormations() {
   }
 }
 
-// ➕ Ajouter formation
+// Ajouter formation
 async function ajouterFormation(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
@@ -115,7 +115,7 @@ async function ajouterFormation(e) {
       body: formData
     });
     if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
-    showToast("Formation ajoutée avec succès ! 🎉");
+    showToast("Formation ajoutée avec succès !");
     e.target.reset();
     chargerFormations();
   } catch (error) {
@@ -123,7 +123,7 @@ async function ajouterFormation(e) {
   }
 }
 
-// ❌ Supprimer formation
+// Supprimer formation
 async function supprimerFormation(id) {
   if (confirm("Êtes-vous sûr de vouloir supprimer cette formation ?")) {
     try {
@@ -132,7 +132,7 @@ async function supprimerFormation(id) {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
-      showToast("Formation supprimée avec succès ! 🗑️");
+      showToast("Formation supprimée avec succès !");
       chargerFormations();
     } catch (error) {
       showToast(`Erreur lors de la suppression: ${error.message}`, 'error');
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
           body: formData
         });
         if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
-        showToast("Formation mise à jour avec succès ! ✏️");
+        showToast("Formation mise à jour avec succès !");
         document.getElementById('editModal').classList.remove('open');
         chargerFormations();
       } catch (error) {

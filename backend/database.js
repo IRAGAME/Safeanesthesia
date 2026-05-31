@@ -72,10 +72,10 @@ if (rowCount === 0 && fs.existsSync(JSON_PATH)) {
       const maxId = Math.max(...jsonData.formations.map(f => f.id));
       db.run('UPDATE sqlite_sequence SET seq = ? WHERE name = ?', [maxId, 'formations']);
       save();
-      console.log(`✅ Migrated ${jsonData.formations.length} formations from JSON to SQLite`);
+      console.log(`Migrated ${jsonData.formations.length} formations from JSON to SQLite`);
     }
   } catch (e) {
-    console.warn('⚠️ Could not migrate JSON data:', e.message);
+    console.warn('Could not migrate JSON data:', e.message);
   }
 }
 

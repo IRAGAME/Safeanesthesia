@@ -17,7 +17,7 @@ import db from "./database.js";
 dotenv.config();
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET === "your_secret_key") {
-  console.error("❌ Erreur: JWT_SECRET n'est pas configuré ou est trop faible. Le serveur s'arrête.");
+  console.error("Erreur: JWT_SECRET n'est pas configuré ou est trop faible. Le serveur s'arrête.");
   process.exit(1);
 }
 
@@ -73,7 +73,7 @@ function authAdmin(req, res, next) {
     req.user = decoded;
     next();
   } catch (error) {
-    console.error("❌ Erreur token:", error.message);
+    console.error("Erreur token:", error.message);
     return res.status(403).json({ message: "Token invalide ou expiré" });
   }
 }
@@ -236,7 +236,7 @@ app.delete("/api/admin/formations/:id", authAdmin, (req, res) => {
     db.run('DELETE FROM formations WHERE id = ?', [id]);
     res.json({ ok: true, message: "Formation supprimée", id });
   } catch (error) {
-    console.error("❌ Erreur DELETE /api/admin/formations/:id:", error.message);
+    console.error("Erreur DELETE /api/admin/formations/:id:", error.message);
     res.status(500).json({ error: "Erreur lors de la suppression" });
   }
 });
@@ -259,7 +259,7 @@ app.post("/api/auth/login", loginLimiter, (req, res) => {
 
     res.json({ token });
   } catch (error) {
-    console.error("❌ Erreur POST /api/auth/login:", error.message);
+    console.error("Erreur POST /api/auth/login:", error.message);
     res.status(500).json({ error: "Erreur lors de la connexion" });
   }
 });
@@ -302,13 +302,13 @@ app.post("/send", contactLimiter, async (req, res) => {
         `
       });
     } catch (emailError) {
-      console.warn("⚠️  Email non envoyé:", emailError.message);
+      console.warn("Email non envoyé:", emailError.message);
       // Continue quand même
     }
 
-    res.json({ ok: true, message: "✅ Message reçu! Nous vous répondrons bientôt." });
+    res.json({ ok: true, message: "Message reçu! Nous vous répondrons bientôt." });
   } catch (error) {
-    console.error("❌ Erreur POST /send:", error.message);
+    console.error("Erreur POST /send:", error.message);
     res.status(500).json({ error: "Erreur lors de l'envoi" });
   }
 });
@@ -316,7 +316,7 @@ app.post("/send", contactLimiter, async (req, res) => {
 // ================= ERROR HANDLING =================
 
 app.use((err, req, res, next) => {
-  console.error("❌ Erreur serveur:", err.message);
+  console.error("Erreur serveur:", err.message);
   res.status(500).json({ error: "Erreur serveur interne" });
 });
 
@@ -328,12 +328,12 @@ app.use((req, res) => {
 
 if (!process.env.VERCEL) {
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`\n🚀 SafeAnesthesia Server`);
+    console.log(`\nSafeAnesthesia Server`);
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-    console.log(`📍 URL: http://localhost:${PORT}`);
-    console.log(`💾 SQLite: data/formations.db`);
-    console.log(`🔐 JWT: ${process.env.JWT_SECRET ? '✅' : '⚠️  Par défaut'}`);
-    console.log(`📧 Email: ${process.env.SMTP_USER ? '✅' : '⚠️  Désactivé'}`);
+    console.log(`URL: http://localhost:${PORT}`);
+    console.log(`SQLite: data/formations.db`);
+    console.log(`JWT: ${process.env.JWT_SECRET ? 'Configure' : 'Par defaut'}`);
+    console.log(`Email: ${process.env.SMTP_USER ? 'Configure' : 'Desactive'}`);
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
   });
 }
