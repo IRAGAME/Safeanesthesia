@@ -115,12 +115,16 @@ async function ajouterFormation(e) {
       },
       body: formData
     });
-    if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+    if (!res.ok) {
+      let msg = `Erreur ${res.status}`;
+      try { const body = await res.json(); if (body.error) msg += `: ${body.error}`; } catch {}
+      throw new Error(msg);
+    }
     showToast("Formation ajoutée avec succès !");
     e.target.reset();
     chargerFormations();
   } catch (error) {
-    showToast(`Erreur lors de l'ajout: ${error.message}`, 'error');
+    showToast(`Erreur: ${error.message}`, 'error');
   }
 }
 
@@ -132,11 +136,15 @@ async function supprimerFormation(id) {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
-      if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+      if (!res.ok) {
+        let msg = `Erreur ${res.status}`;
+        try { const body = await res.json(); if (body.error) msg += `: ${body.error}`; } catch {}
+        throw new Error(msg);
+      }
       showToast("Formation supprimée avec succès !");
       chargerFormations();
     } catch (error) {
-      showToast(`Erreur lors de la suppression: ${error.message}`, 'error');
+      showToast(`Erreur: ${error.message}`, 'error');
     }
   }
 }
@@ -173,12 +181,16 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: formData
         });
-        if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        if (!res.ok) {
+          let msg = `Erreur ${res.status}`;
+          try { const body = await res.json(); if (body.error) msg += `: ${body.error}`; } catch {}
+          throw new Error(msg);
+        }
         showToast("Formation mise à jour avec succès !");
         document.getElementById('editModal').classList.remove('open');
         chargerFormations();
       } catch (error) {
-        showToast(`Erreur lors de la modification: ${error.message}`, 'error');
+        showToast(`Erreur: ${error.message}`, 'error');
       }
     });
   }
