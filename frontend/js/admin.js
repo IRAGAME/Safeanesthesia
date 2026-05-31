@@ -3,8 +3,9 @@ let token = localStorage.getItem("token");
 // Toast
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
-  toast.textContent = message;
+  const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
   toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas ${icon}"></i><span class="toast-text">${message}</span>`;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
