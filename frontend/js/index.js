@@ -1,4 +1,5 @@
 let tutesLesFormations = [];
+let modeRecherche = false;
 
 function afficherFormations(formations) {
     const container = document.querySelector("#formations");
@@ -10,7 +11,9 @@ function afficherFormations(formations) {
     }
 
     container.innerHTML = "";
-    formations.forEach(f => {
+    const afficher = modeRecherche ? formations : formations.slice(0, 3);
+
+    afficher.forEach(f => {
       const card = document.createElement("div");
       card.className = "post-card";
       card.setAttribute("data-id", f.id);
@@ -36,7 +39,7 @@ function afficherFormations(formations) {
       contentDiv.innerHTML = `
         <h3 class="card-title"></h3>
         <p class="card-desc"></p>
-        <span class="read-more">Découvrir le programme</span>
+        <span class="read-more">Decouvrir le programme</span>
       `;
       const titleEl = contentDiv.querySelector(".card-title");
       const descEl = contentDiv.querySelector(".card-desc");
@@ -47,6 +50,13 @@ function afficherFormations(formations) {
       card.onclick = () => { window.location.href = `formation.html?id=${f.id}`; };
       container.appendChild(card);
     });
+
+    if (!modeRecherche && formations.length > 3) {
+      const voirPlus = document.createElement("div");
+      voirPlus.style.cssText = "grid-column:1/-1;text-align:center;margin-top:2rem";
+      voirPlus.innerHTML = '<a href="formations.html" class="btn btn-secondary">Voir toutes les formations</a>';
+      container.appendChild(voirPlus);
+    }
 }
 
 async function chargerFormationsHome() {
@@ -71,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const searchInput = document.getElementById('formationSearch');
     searchInput?.addEventListener('input', (e) => {
+      modeRecherche = e.target.value.trim().length > 0;
       const terme = e.target.value.toLowerCase();
       const resultats = (tutesLesFormations || []).filter(f => {
         const titre = (f.titre || "").toLowerCase();
