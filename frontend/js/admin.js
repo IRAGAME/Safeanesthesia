@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const password = document.querySelector("#password").value;
       try {
-        const res = await fetch(`${API_BASE}/login`, {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password })

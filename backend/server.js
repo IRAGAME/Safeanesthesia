@@ -243,27 +243,6 @@ app.delete("/api/admin/formations/:id", authAdmin, (req, res) => {
 
 // ================= AUTHENTIFICATION =================
 
-app.post("/login", loginLimiter, (req, res) => {
-  try {
-    const { password } = req.body;
-
-    if (!password || password !== process.env.ADMIN_PASSWORD) {
-      return res.status(401).json({ message: "Mot de passe incorrect" });
-    }
-
-    const token = jwt.sign(
-      { user: "admin" },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-
-    res.json({ token });
-  } catch (error) {
-    console.error("❌ Erreur POST /login:", error.message);
-    res.status(500).json({ error: "Erreur lors de la connexion" });
-  }
-});
-
 app.post("/api/auth/login", loginLimiter, (req, res) => {
   try {
     const { password } = req.body;
