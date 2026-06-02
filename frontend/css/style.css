@@ -398,7 +398,8 @@ header {
 .hero, .heroAbout, .heroForm, .heroCont {
   position: relative;
   width: 100%;
-  min-height: 80vh; /* Réduit de 150vh pour plus de cohérence */
+  height: 80vh;
+  min-height: 600px;
   display: flex;
   flex-direction: column;
   justify-content: center;
