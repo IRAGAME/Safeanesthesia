@@ -368,7 +368,21 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: var(--spacing-lg);
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+.menu ul li {
+  width: 100%;
+  text-align: center;
+}
+.menu ul li a {
+  display: block;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 1.1rem;
 }
 
 /* Menu Desktop Query */
@@ -386,9 +400,20 @@ header {
     pointer-events: auto;
   }
   .menu ul {
-    flex-direction: column;
     flex-direction: row;
     gap: var(--spacing-2xl);
+    width: auto;
+    padding: 0;
+    margin: 0;
+  }
+  .menu ul li {
+    width: auto;
+  }
+  .menu ul li a {
+    display: inline;
+    width: auto;
+    padding: 0;
+    font-size: 0.95rem;
   }
 }
 
