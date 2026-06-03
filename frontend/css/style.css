@@ -1037,12 +1037,13 @@ p {
   border: 1px solid var(--border);
   text-align: center;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--text-secondary);
   transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-height: 70px;
 }
 
