@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!res.ok) throw new Error("Mot de passe incorrect");
         const data = await res.json();
         token = data.token;
-        localStorage.setItem("token", token);
+        localStorage.setItem("adminToken", token);
         location.reload();
       } catch (error) {
         showToast(`Erreur: ${error.message}`, 'error');
