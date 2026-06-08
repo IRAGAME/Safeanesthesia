@@ -1,4 +1,4 @@
-let token = localStorage.getItem("token");
+let token = localStorage.getItem("adminToken");
 
 // Toast
 function showToast(message, type = 'success') {
