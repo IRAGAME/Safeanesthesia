@@ -199,6 +199,24 @@ async function sendEmail(env, { name, email, message }) {
   });
 }
 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ALLOWED_IMAGE_EXT = /\.(jpe?g|png|webp)$/i;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+function validateImageFile(file) {
+  if (!file) return null;
+  if (file.buffer.byteLength > MAX_FILE_SIZE) {
+    return "L'image ne doit pas dépasser 5 Mo.";
+  }
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return "Seules les images (jpg, png, webp) sont autorisées.";
+  }
+  if (!ALLOWED_IMAGE_EXT.test(file.name)) {
+    return "Extension de fichier non autorisée.";
+  }
+  return null;
+}
+
 // ─── FORM DATA PARSER (multipart, fichiers) ───────────────────────────────
 async function parseFormData(request) {
   const formData = await request.formData();
@@ -275,6 +293,9 @@ export default {
         if (!fields.contenu || !fields.contenu.trim())
           return json({ error: "Contenu requis" }, 400);
 
+        const fileError = validateImageFile(file);
+        if (fileError) return json({ error: fileError }, 400);
+
         const db = supabase(env);
         let imageUrl = null;
         if (file) {
@@ -303,6 +324,9 @@ export default {
           return json({ error: "Titre requis" }, 400);
         if (!fields.contenu || !fields.contenu.trim())
           return json({ error: "Contenu requis" }, 400);
+
+        const fileError = validateImageFile(file);
+        if (fileError) return json({ error: fileError }, 400);
 
         const db = supabase(env);
         const existing = await db.getFormation(id);
