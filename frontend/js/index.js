@@ -85,8 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const terme = e.target.value.toLowerCase();
       const resultats = (tutesLesFormations || []).filter(f => {
         const titre = (f.titre || "").toLowerCase();
-        const contenu = (f.contenu || "").toLowerCase();
-        return titre.includes(terme) || contenu.includes(terme);
+        return titre.includes(terme);
       });
       afficherFormations(resultats);
     });
