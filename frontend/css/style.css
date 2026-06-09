@@ -696,12 +696,14 @@ p {
 }
 
 .card-content h3 {
-  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  font-size: clamp(1rem, 2vw, 1.2rem);
   font-weight: 700;
   color: var(--text);
   line-height: var(--lh-tight);
   transition: color 0.3s ease;
   margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .post-card:hover .card-content h3 {
@@ -763,7 +765,7 @@ p {
   }
 
   .card-content h3 {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   .card-content p {
