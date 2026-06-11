@@ -1,6 +1,12 @@
 let tutesLesFormations = [];
 let modeRecherche = false;
 
+const STATIQUES = [
+  "Compétences non techniques en santé",
+  "Urgences et réanimation de base",
+  "Urgences et réanimation obstétricales"
+];
+
 function afficherFormations(formations) {
     const container = document.querySelector("#formations");
     if (!container) return;
@@ -11,7 +17,19 @@ function afficherFormations(formations) {
     }
 
     container.innerHTML = "";
-    const afficher = modeRecherche ? formations : formations.slice(0, 3);
+    let afficher;
+    if (modeRecherche) {
+      afficher = formations;
+    } else {
+      const statiques = tutesLesFormations.filter(f =>
+        STATIQUES.includes(f.titre)
+      );
+      if (statiques.length === 3) {
+        afficher = statiques;
+      } else {
+        afficher = formations.slice(0, 3);
+      }
+    }
 
     afficher.forEach(f => {
       const card = document.createElement("div");
@@ -85,8 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const terme = e.target.value.toLowerCase();
       const resultats = (tutesLesFormations || []).filter(f => {
         const titre = (f.titre || "").toLowerCase();
-        const contenu = (f.contenu || "").toLowerCase();
-        return titre.includes(terme) || contenu.includes(terme);
+        return titre.includes(terme);
       });
       afficherFormations(resultats);
     });
