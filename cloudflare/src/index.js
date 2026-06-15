@@ -4,22 +4,46 @@
 //   RESEND_API_KEY (optionnel, pour l'envoi d'email)
 //   CONTACT_EMAIL (destination du formulaire de contact)
 
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Max-Age": "86400",
+const ALLOWED_ORIGINS = [
+  "https://safe-anesthesia.vercel.app",
+  "https://safeanesthesia.onrender.com",
+  "http://localhost:3000",
+];
+
+const SECURITY_HEADERS = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
 };
+
+// requestRef is set at the top of each fetch() call so json() can access it
+let requestRef = null;
+
+function getCorsHeaders() {
+  const origin = requestRef ? requestRef.headers.get("Origin") : null;
+  const cors = {
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Max-Age": "86400",
+  };
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    cors["Access-Control-Allow-Origin"] = origin;
+  } else {
+    cors["Access-Control-Allow-Origin"] = "null";
+  }
+  return cors;
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+    headers: { "Content-Type": "application/json", ...SECURITY_HEADERS, ...getCorsHeaders() },
   });
 }
 
 function corsPreflight() {
-  return new Response(null, { status: 204, headers: CORS_HEADERS });
+  return new Response(null, { status: 204, headers: { ...SECURITY_HEADERS, ...getCorsHeaders() } });
 }
 
 // ─── JWT ─────────────────────────────────────────────────────────────────
@@ -120,7 +144,8 @@ function supabase(env) {
       return this.query("GET", "/rest/v1/formations?select=*&order=id.desc");
     },
     getFormation(id) {
-      return this.query("GET", `/rest/v1/formations?select=*&id=eq.${id}&limit=1`).then(
+      const safeId = encodeURIComponent(String(id));
+      return this.query("GET", `/rest/v1/formations?select=*&id=eq.${safeId}&limit=1`).then(
         (d) => d[0] || null
       );
     },
@@ -128,12 +153,14 @@ function supabase(env) {
       return this.query("POST", "/rest/v1/formations", { titre, contenu, image });
     },
     updateFormation(id, { titre, contenu, image }) {
+      const safeId = encodeURIComponent(String(id));
       const updates = { titre, contenu, updatedAt: new Date().toISOString() };
       if (image !== undefined) updates.image = image;
-      return this.query("PATCH", `/rest/v1/formations?id=eq.${id}`, updates);
+      return this.query("PATCH", `/rest/v1/formations?id=eq.${safeId}`, updates);
     },
     deleteFormation(id) {
-      return this.query("DELETE", `/rest/v1/formations?id=eq.${id}`);
+      const safeId = encodeURIComponent(String(id));
+      return this.query("DELETE", `/rest/v1/formations?id=eq.${safeId}`);
     },
     getPublicUrl(path) {
       return `${env.SUPABASE_URL}/storage/v1/object/public/${path}`;
@@ -254,6 +281,7 @@ function rateLimit(key, max = 5, windowMs = 60000) {
 // ─── ROUTER ────────────────────────────────────────────────────────────────
 export default {
   async fetch(request, env) {
+    requestRef = request;
     const url = new URL(request.url);
     const path = url.pathname;
     const method = request.method;
@@ -264,7 +292,7 @@ export default {
     try {
       // ── Health ───────────────────────────────────────
       if (method === "GET" && path === "/api/health") {
-        return json({ status: "ok", timestamp: new Date().toISOString() });
+        return json({ status: "ok" });
       }
 
       // ── Formations (public) ──────────────────────────
@@ -276,6 +304,7 @@ export default {
 
       if (method === "GET" && path.startsWith("/api/formations/")) {
         const id = path.split("/").pop();
+        if (!/^\d+$/.test(id)) return json({ error: "ID invalide" }, 400);
         const db = supabase(env);
         const formation = await db.getFormation(id);
         if (!formation) return json({ error: "Formation introuvable" }, 404);
@@ -290,8 +319,12 @@ export default {
         const { fields, file } = await parseFormData(request);
         if (!fields.titre || !fields.titre.trim())
           return json({ error: "Titre requis" }, 400);
+        if (fields.titre.trim().length > 200)
+          return json({ error: "Le titre ne doit pas dépasser 200 caractères" }, 400);
         if (!fields.contenu || !fields.contenu.trim())
           return json({ error: "Contenu requis" }, 400);
+        if (fields.contenu.trim().length > 10000)
+          return json({ error: "Le contenu ne doit pas dépasser 10000 caractères" }, 400);
 
         const fileError = validateImageFile(file);
         if (fileError) return json({ error: fileError }, 400);
@@ -319,11 +352,16 @@ export default {
         if (auth.status) return auth;
 
         const id = path.split("/").pop();
+        if (!/^\d+$/.test(id)) return json({ error: "ID invalide" }, 400);
         const { fields, file } = await parseFormData(request);
         if (!fields.titre || !fields.titre.trim())
           return json({ error: "Titre requis" }, 400);
+        if (fields.titre.trim().length > 200)
+          return json({ error: "Le titre ne doit pas dépasser 200 caractères" }, 400);
         if (!fields.contenu || !fields.contenu.trim())
           return json({ error: "Contenu requis" }, 400);
+        if (fields.contenu.trim().length > 10000)
+          return json({ error: "Le contenu ne doit pas dépasser 10000 caractères" }, 400);
 
         const fileError = validateImageFile(file);
         if (fileError) return json({ error: fileError }, 400);
@@ -355,6 +393,7 @@ export default {
         if (auth.status) return auth;
 
         const id = path.split("/").pop();
+        if (!/^\d+$/.test(id)) return json({ error: "ID invalide" }, 400);
         const db = supabase(env);
         const existing = await db.getFormation(id);
         if (!existing) return json({ error: "Formation introuvable" }, 404);
@@ -403,6 +442,12 @@ export default {
         if (!name || !email || !message) {
           return json({ error: "Tous les champs sont requis" }, 400);
         }
+        if (name.trim().length > 100)
+          return json({ error: "Le nom ne doit pas dépasser 100 caractères" }, 400);
+        if (email.trim().length > 200)
+          return json({ error: "L'email ne doit pas dépasser 200 caractères" }, 400);
+        if (message.trim().length > 5000)
+          return json({ error: "Le message ne doit pas dépasser 5000 caractères" }, 400);
         try {
           await sendEmail(env, { name, email, message });
         } catch (e) {

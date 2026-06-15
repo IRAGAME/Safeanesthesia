@@ -25,11 +25,19 @@ function creerCarte(f) {
 
   const contentDiv = document.createElement("div");
   contentDiv.className = "card-content";
-  contentDiv.innerHTML = `
-    <h3>${f.titre}</h3>
-    <p>${f.contenu.substring(0, 120)}...</p>
-    <span class="read-more">Découvrir le programme</span>
-  `;
+
+  const h3 = document.createElement("h3");
+  h3.textContent = f.titre || '';
+  contentDiv.appendChild(h3);
+
+  const p = document.createElement("p");
+  p.textContent = (f.contenu || '').substring(0, 120) + '...';
+  contentDiv.appendChild(p);
+
+  const span = document.createElement("span");
+  span.className = "read-more";
+  span.textContent = "Découvrir le programme";
+  contentDiv.appendChild(span);
 
   card.appendChild(imageDiv);
   card.appendChild(contentDiv);

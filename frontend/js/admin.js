@@ -35,6 +35,13 @@ function escJS(str) {
   return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
 }
 
+function createSafeButton(text, iconClass, className) {
+  const btn = document.createElement('button');
+  btn.className = className;
+  btn.innerHTML = `<i class="fas ${iconClass}"></i> ${text}`;
+  return btn;
+}
+
 function updateUI() {
   const loginForm = document.getElementById('loginForm');
   const dashboard = document.getElementById('dashboardContent');
@@ -147,30 +154,64 @@ async function chargerFormations() {
       const contenuSafe = escJS(f.contenu || '');
       const imageUrlStr = f.image ? escJS(f.image) : '';
 
-      card.innerHTML = `
-        <div class="card-image">
-          ${f.image
-            ? `<img src="${imageUrl(f.image)}" alt="${escHTML(f.titre)}" loading="lazy">`
-            : '<div style="height:160px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="color:#ccc;font-size:2rem;"></i></div>'}
-        </div>
-        <div class="admin-card-content">
-          <h3 class="card-title-text"></h3>
-          <p class="card-desc-text"></p>
-          <div class="admin-actions">
-            <button class="action-btn btn-edit" onclick="prepareEdit(${f.id}, \`${titreSafe}\`, \`${contenuSafe}\`, '${imageUrlStr}')">
-              <i class="fas fa-pen"></i>
-            </button>
-            <button class="action-btn btn-delete" onclick="supprimerFormation(${f.id})">
-              <i class="fas fa-trash"></i> Supprimer
-            </button>
-          </div>
-        </div>
-      `;
+      const imgDiv = document.createElement('div');
+      imgDiv.className = 'card-image';
+      if (f.image) {
+        const img = document.createElement('img');
+        img.src = imageUrl(f.image);
+        img.alt = f.titre || '';
+        img.loading = 'lazy';
+        imgDiv.appendChild(img);
+      } else {
+        imgDiv.innerHTML = '<div style="height:160px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="color:#ccc;font-size:2rem;"></i></div>';
+      }
+      card.appendChild(imgDiv);
 
-      const titleEl = card.querySelector(".card-title-text");
-      const descEl = card.querySelector(".card-desc-text");
-      if (titleEl) titleEl.textContent = f.titre || '';
-      if (descEl) descEl.textContent = (f.contenu || '').substring(0, 100) + '...';
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'admin-card-content';
+
+      const h3 = document.createElement('h3');
+      h3.className = 'card-title-text';
+      h3.textContent = f.titre || '';
+      contentDiv.appendChild(h3);
+
+      const p = document.createElement('p');
+      p.className = 'card-desc-text';
+      p.textContent = (f.contenu || '').substring(0, 100) + '...';
+      contentDiv.appendChild(p);
+
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'admin-actions';
+
+      const editBtn = createSafeButton('', 'fa-pen', 'action-btn btn-edit');
+      editBtn.addEventListener('click', () => {
+        currentEditId = f.id;
+        const editTitre = document.getElementById('editTitre');
+        const editContenu = document.getElementById('editContenu');
+        const currentImageDiv = document.getElementById('currentImage');
+        const modal = document.getElementById('editModal');
+
+        if (editTitre) editTitre.value = f.titre || '';
+        if (editContenu) editContenu.value = f.contenu || '';
+
+        if (currentImageDiv) {
+          if (f.image) {
+            currentImageDiv.innerHTML = `<p><i class="fas fa-image"></i> Image actuelle</p><img src="${imageUrl(f.image)}" alt="Image actuelle" style="max-width:200px;border-radius:8px;">`;
+          } else {
+            currentImageDiv.innerHTML = '<div class="no-image"><i class="fas fa-image"></i> Aucune image actuelle</div>';
+          }
+        }
+
+        if (modal) modal.classList.add('open');
+      });
+      actionsDiv.appendChild(editBtn);
+
+      const deleteBtn = createSafeButton(' Supprimer', 'fa-trash', 'action-btn btn-delete');
+      deleteBtn.addEventListener('click', () => supprimerFormation(f.id));
+      actionsDiv.appendChild(deleteBtn);
+
+      contentDiv.appendChild(actionsDiv);
+      card.appendChild(contentDiv);
 
       container.appendChild(card);
     });
@@ -222,27 +263,6 @@ async function supprimerFormation(id) {
   } catch (error) {
     showToast(`Erreur: ${error.message}`, 'error');
   }
-}
-
-window.prepareEdit = function(id, titre, contenu, image) {
-  currentEditId = id;
-  const editTitre = document.getElementById('editTitre');
-  const editContenu = document.getElementById('editContenu');
-  const currentImageDiv = document.getElementById('currentImage');
-  const modal = document.getElementById('editModal');
-
-  if (editTitre) editTitre.value = titre || '';
-  if (editContenu) editContenu.value = contenu || '';
-
-  if (currentImageDiv) {
-    if (image) {
-      currentImageDiv.innerHTML = `<p><i class="fas fa-image"></i> Image actuelle</p><img src="${imageUrl(image)}" alt="Image actuelle" style="max-width:200px;border-radius:8px;">`;
-    } else {
-      currentImageDiv.innerHTML = '<div class="no-image"><i class="fas fa-image"></i> Aucune image actuelle</div>';
-    }
-  }
-
-  if (modal) modal.classList.add('open');
 }
 
 window.addEventListener('unhandledrejection', (e) => {
