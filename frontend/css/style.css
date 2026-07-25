@@ -416,10 +416,16 @@ header {
   color: white;
   padding: clamp(100px, 15vh, 140px) var(--spacing-md) 60px;
   background-size: cover;
-  background-position: top center;
+  background-position: center;
   background-repeat: no-repeat;
   margin: 0;
   max-width: none;
+}
+
+@media (min-width: 1024px) {
+  .hero, .heroAbout, .heroForm, .heroCont {
+    background-attachment: fixed;
+  }
 }
 
 .hero { background-image: url("../images/temp/back7.jpeg"); }
@@ -443,6 +449,31 @@ header {
   position: relative;
   z-index: 2;
   animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* Bottom fade effect - mobile only */
+@media (max-width: 768px) {
+  .hero::before, .heroAbout::before, .heroForm::before, .heroCont::before {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0.4) 60%,
+      rgba(0, 0, 0, 0.15) 85%,
+      rgba(248, 249, 250, 0.6) 100%
+    );
+  }
+
+  .hero::after, .heroAbout::after, .heroForm::after, .heroCont::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, var(--background));
+    z-index: 3;
+    pointer-events: none;
+  }
 }
 
 /* Hero Typography */
@@ -846,7 +877,7 @@ p {
   .stats-banner-divider {
     width: 80px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
   }
   .stats-banner-number {
     font-size: 2.8rem;
@@ -975,20 +1006,14 @@ p {
    ========================= */
 /* Stats Banner - Style Compteur */
 .stats-banner {
-  background: linear-gradient(135deg, var(--text) 0%, #0d1117 50%, var(--text) 100%);
+  background: none;
   padding: 0;
   margin: 0;
   max-width: none;
   position: relative;
   overflow: hidden;
-}
-
-.stats-banner::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300A86B' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.5;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .stats-banner-inner {
@@ -998,7 +1023,7 @@ p {
   gap: 0;
   max-width: 1000px;
   margin: 0 auto;
-  padding: 70px 40px;
+  padding: 50px 40px;
   position: relative;
   z-index: 1;
 }
@@ -1012,11 +1037,11 @@ p {
 .stats-banner-number {
   display: block;
   font-family: var(--font-heading);
-  font-size: clamp(3rem, 8vw, 4.5rem);
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
   font-weight: 800;
   line-height: 1;
   margin-bottom: 8px;
-  background: linear-gradient(135deg, #00A86B, #34d399);
+  background: linear-gradient(135deg, #00A86B, #059669);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1028,15 +1053,15 @@ p {
   font-family: var(--font-accent);
   font-size: 0.8rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.5);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 3px;
 }
 
 .stats-banner-divider {
   width: 1px;
-  height: 80px;
-  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  height: 60px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.1), transparent);
   flex-shrink: 0;
 }
 
