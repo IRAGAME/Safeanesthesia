@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /login.html
+Disallow: /admin
+
+Sitemap: https://spooapmafrica.com/sitemap.xml
+
+# Canonical domain: https://spooapmafrica.com
+# Default domain (safeanesthesia.pages.dev) should NOT be indexed.
+# Cloudflare Redirect Rule handles .dev → .com automatically.
