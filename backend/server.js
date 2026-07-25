@@ -12,15 +12,28 @@ import nodemailer from "nodemailer";
 
 dotenv.config();
 
-if (!process.env.JWT_SECRET || process.env.JWT_SECRET === "your_secret_key") {
-  console.error("Erreur: JWT_SECRET n'est pas configuré ou est trop faible. Le serveur s'arrête.");
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  console.error("Erreur: JWT_SECRET doit contenir au moins 32 caractères. Le serveur s'arrête.");
   process.exit(1);
 }
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: "cross-origin" } }));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+      styleSrc: ["'self'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
+      imgSrc: ["'self'", "https://*.supabase.co", "data:"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+      connectSrc: ["'self'", "https://safeanesthesia-api.iragimargos.workers.dev"],
+      upgradeInsecureRequests: [],
+    },
+  },
+}));
 app.disable("x-powered-by");
 
 app.use(createCorsMiddleware());
@@ -84,7 +97,7 @@ const transporter = nodemailer.createTransport({
 });
 
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+  res.json({ status: "ok" });
 });
 
 app.get("/api/formations", async (req, res) => {
@@ -98,12 +111,17 @@ app.get("/api/formations", async (req, res) => {
 
 app.get("/api/formations/:id", async (req, res) => {
   try {
-    const formation = await getFormation(req.params.id);
+    const id = parseInt(req.params.id);
+    if (isNaN(id) || id < 1) {
+      return res.status(400).json({ error: "ID invalide" });
+    }
+    const formation = await getFormation(id);
     if (!formation) {
       return res.status(404).json({ error: "Formation introuvable" });
     }
     res.json(formation);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
@@ -115,8 +133,14 @@ app.post("/api/admin/formations", authAdmin, upload.single("image"), async (req,
     if (!titre || !titre.trim()) {
       return res.status(400).json({ error: "Titre requis" });
     }
+    if (titre.trim().length > 200) {
+      return res.status(400).json({ error: "Le titre ne doit pas dépasser 200 caractères" });
+    }
     if (!contenu || !contenu.trim()) {
       return res.status(400).json({ error: "Contenu requis" });
+    }
+    if (contenu.trim().length > 10000) {
+      return res.status(400).json({ error: "Le contenu ne doit pas dépasser 10000 caractères" });
     }
 
     let imageUrl = null;
@@ -133,20 +157,30 @@ app.post("/api/admin/formations", authAdmin, upload.single("image"), async (req,
     res.status(201).json({ ok: true, formation: newFormation });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message || "Erreur lors de l'ajout de la formation" });
+    const msg = process.env.NODE_ENV === 'production' ? "Erreur lors de l'ajout de la formation" : error.message;
+    res.status(500).json({ error: msg });
   }
 });
 
 app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    if (isNaN(id) || id < 1) {
+      return res.status(400).json({ error: "ID invalide" });
+    }
     const { titre, contenu } = req.body;
 
     if (!titre || !titre.trim()) {
       return res.status(400).json({ error: "Titre requis" });
     }
+    if (titre.trim().length > 200) {
+      return res.status(400).json({ error: "Le titre ne doit pas dépasser 200 caractères" });
+    }
     if (!contenu || !contenu.trim()) {
       return res.status(400).json({ error: "Contenu requis" });
+    }
+    if (contenu.trim().length > 10000) {
+      return res.status(400).json({ error: "Le contenu ne doit pas dépasser 10000 caractères" });
     }
 
     const existing = await getFormation(id);
@@ -171,13 +205,17 @@ app.put("/api/admin/formations/:id", authAdmin, upload.single("image"), async (r
     res.json({ ok: true, formation: updated });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message || "Erreur lors de la mise à jour" });
+    const msg = process.env.NODE_ENV === 'production' ? "Erreur lors de la mise à jour" : error.message;
+    res.status(500).json({ error: msg });
   }
 });
 
 app.delete("/api/admin/formations/:id", authAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    if (isNaN(id) || id < 1) {
+      return res.status(400).json({ error: "ID invalide" });
+    }
 
     const formation = await getFormation(id);
     if (!formation) {
@@ -192,7 +230,8 @@ app.delete("/api/admin/formations/:id", authAdmin, async (req, res) => {
     res.json({ ok: true, message: "Formation supprimée", id });
   } catch (error) {
     console.error("Erreur DELETE /api/admin/formations/:id:", error.message);
-    res.status(500).json({ error: error.message || "Erreur lors de la suppression" });
+    const msg = process.env.NODE_ENV === 'production' ? "Erreur lors de la suppression" : error.message;
+    res.status(500).json({ error: msg });
   }
 });
 
@@ -232,6 +271,15 @@ app.post("/send", contactLimiter, async (req, res) => {
     if (!name || !email || !message) {
       return res.status(400).json({ error: "Tous les champs sont requis" });
     }
+    if (name.trim().length > 100) {
+      return res.status(400).json({ error: "Le nom ne doit pas dépasser 100 caractères" });
+    }
+    if (email.trim().length > 200) {
+      return res.status(400).json({ error: "L'email ne doit pas dépasser 200 caractères" });
+    }
+    if (message.trim().length > 5000) {
+      return res.status(400).json({ error: "Le message ne doit pas dépasser 5000 caractères" });
+    }
 
     const safeMessage = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -256,13 +304,15 @@ app.post("/send", contactLimiter, async (req, res) => {
     res.json({ ok: true, message: "Message reçu! Nous vous répondrons bientôt." });
   } catch (error) {
     console.error("Erreur POST /send:", error.message);
-    res.status(500).json({ error: error.message || "Erreur lors de l'envoi" });
+    const msg = process.env.NODE_ENV === 'production' ? "Erreur lors de l'envoi" : error.message;
+    res.status(500).json({ error: msg });
   }
 });
 
 app.use((err, req, res, next) => {
   console.error("Erreur serveur:", err.message);
-  res.status(500).json({ error: err.message || "Erreur serveur interne" });
+  const message = process.env.NODE_ENV === 'production' ? "Erreur serveur interne" : err.message;
+  res.status(500).json({ error: message });
 });
 
 app.use((req, res) => {
