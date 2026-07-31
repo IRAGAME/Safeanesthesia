@@ -1,5 +1,6 @@
-.vercel
 .env
+backend/.env
+.dev.vars
 node_modules
 formations.sqlite
 *.sqlite

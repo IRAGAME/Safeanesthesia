@@ -3,4 +3,5 @@ main = "src/index.js"
 compatibility_date = "2025-01-01"
 
 [env.production]
-vars = { ENVIRONMENT = "production" }
+workers_dev = true
+vars = { ENVIRONMENT = "production", CONTACT_EMAIL = "info@spooapmafrica.com" }
