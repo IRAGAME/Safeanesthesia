@@ -319,17 +319,15 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route non trouvée" });
 });
 
-if (!process.env.VERCEL) {
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`\nSafeAnesthesia Server`);
-    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-    console.log(`URL: http://localhost:${PORT}`);
-    console.log(`Database: Supabase`);
-    console.log(`Storage: Supabase`);
-    console.log(`JWT: ${process.env.JWT_SECRET ? 'Configure' : 'Par defaut'}`);
-    console.log(`Email: ${process.env.SMTP_USER ? 'Configure' : 'Desactive'}`);
-    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
-  });
-}
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`\nSafeAnesthesia Server`);
+  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+  console.log(`URL: http://localhost:${PORT}`);
+  console.log(`Database: Supabase`);
+  console.log(`Storage: Supabase`);
+  console.log(`JWT: ${process.env.JWT_SECRET ? 'Configure' : 'Par defaut'}`);
+  console.log(`Email: ${process.env.SMTP_USER ? 'Configure' : 'Desactive'}`);
+  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+});
 
 export default app;

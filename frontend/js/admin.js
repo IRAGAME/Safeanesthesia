@@ -6,7 +6,8 @@ function showToast(message, type = 'success') {
   if (!toast) return;
   const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
   toast.className = `toast ${type}`;
-  toast.innerHTML = `<i class="fas ${icon}"></i><span class="toast-text">${message}</span>`;
+  toast.innerHTML = `<i class="fas ${icon}"></i><span class="toast-text"></span>`;
+  toast.querySelector('.toast-text').textContent = message;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
@@ -38,7 +39,10 @@ function escJS(str) {
 function createSafeButton(text, iconClass, className) {
   const btn = document.createElement('button');
   btn.className = className;
-  btn.innerHTML = `<i class="fas ${iconClass}"></i> ${text}`;
+  const icon = document.createElement('i');
+  icon.className = `fas ${iconClass}`;
+  btn.appendChild(icon);
+  btn.appendChild(document.createTextNode(text));
   return btn;
 }
 
@@ -196,7 +200,15 @@ async function chargerFormations() {
 
         if (currentImageDiv) {
           if (f.image) {
-            currentImageDiv.innerHTML = `<p><i class="fas fa-image"></i> Image actuelle</p><img src="${imageUrl(f.image)}" alt="Image actuelle" style="max-width:200px;border-radius:8px;">`;
+            currentImageDiv.innerHTML = '';
+            const label = document.createElement('p');
+            label.innerHTML = '<i class="fas fa-image"></i> Image actuelle';
+            const img = document.createElement('img');
+            img.src = imageUrl(f.image);
+            img.alt = 'Image actuelle';
+            img.style.cssText = 'max-width:200px;border-radius:8px;';
+            currentImageDiv.appendChild(label);
+            currentImageDiv.appendChild(img);
           } else {
             currentImageDiv.innerHTML = '<div class="no-image"><i class="fas fa-image"></i> Aucune image actuelle</div>';
           }

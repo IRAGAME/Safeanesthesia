@@ -86,7 +86,12 @@ async function chargerFormationsHome() {
   } catch (err) {
     console.error("Erreur chargement formations:", err);
     const container = document.querySelector("#formations");
-    if (container) container.innerHTML = `<p>Erreur : ${err.message}</p>`;
+    if (container) {
+      const p = document.createElement('p');
+      p.textContent = `Erreur : ${err.message}`;
+      container.innerHTML = '';
+      container.appendChild(p);
+    }
   }
 }
 

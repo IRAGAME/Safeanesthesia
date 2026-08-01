@@ -1,12 +1,14 @@
 // Cloudflare Worker — SafeAnesthesia API
 // Environnements requis (Cloudflare Dashboard > Workers > Variables) :
-//   SUPABASE_URL, SUPABASE_ANON_KEY, JWT_SECRET, ADMIN_PASSWORD
-//   RESEND_API_KEY (optionnel, pour l'envoi d'email)
-//   CONTACT_EMAIL (destination du formulaire de contact)
+//   SUPABASE_URL, SUPABASE_ANON_KEY (lecture publique)
+//   SUPABASE_SERVICE_ROLE_KEY (écritures admin — à garder strictement secrète)
+//   JWT_SECRET, ADMIN_PASSWORD
+//   RESEND_API_KEY  (gratuit sur resend.com — 100 emails/jour)
+//   CONTACT_EMAIL   (destination du formulaire de contact)
 
 const ALLOWED_ORIGINS = [
-  "https://safe-anesthesia.vercel.app",
-  "https://safeanesthesia.onrender.com",
+  "https://spooapmafrica.com",
+  "https://www.spooapmafrica.com",
   "http://localhost:3000",
 ];
 
@@ -123,11 +125,17 @@ async function authGuard(request, env) {
 }
 
 // ─── SUPABASE (via REST) ──────────────────────────────────────────────────
-function supabase(env) {
+function supabase(env, { admin = false } = {}) {
+  // Lectures publiques : clé anon (accès limité par RLS).
+  // Écritures admin : clé service_role (bypass RLS, réservée au worker).
+  const key = admin ? env.SUPABASE_SERVICE_ROLE_KEY : env.SUPABASE_ANON_KEY;
+  if (admin && !key) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY non configurée");
+  }
   const headers = {
     "Content-Type": "application/json",
-    apikey: env.SUPABASE_ANON_KEY,
-    Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+    apikey: key,
+    Authorization: `Bearer ${key}`,
     Prefer: "return=representation",
   };
   return {
@@ -187,13 +195,16 @@ function supabase(env) {
       if (!imageUrl) return;
       const fileName = imageUrl.split("/").pop();
       const url = `${env.SUPABASE_URL}/storage/v1/object/formations/${fileName}`;
-      await fetch(url, {
+      const res = await fetch(url, {
         method: "DELETE",
         headers: {
-          apikey: env.SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`,
+          apikey: key,
+          Authorization: `Bearer ${key}`,
         },
       });
+      if (!res.ok && res.status !== 404) {
+        console.warn("Suppression image échouée:", await res.text());
+      }
     },
   };
 }
@@ -217,8 +228,8 @@ async function sendEmail(env, { name, email, message }) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "contact@votre-domaine.com",
-      to: env.CONTACT_EMAIL || env.ADMIN_EMAIL,
+      from: "info@spooapmafrica.com",
+      to: env.CONTACT_EMAIL || "info@spooapmafrica.com",
       reply_to: email,
       subject: `[Contact] ${name}`,
       html,
@@ -281,8 +292,18 @@ function rateLimit(key, max = 5, windowMs = 60000) {
 // ─── ROUTER ────────────────────────────────────────────────────────────────
 export default {
   async fetch(request, env) {
-    requestRef = request;
     const url = new URL(request.url);
+    const hostname = url.hostname;
+
+    // Rediriger l'apex vers www
+    if (hostname === "spooapmafrica.com") {
+      return Response.redirect(
+        `https://www.spooapmafrica.com${url.pathname}${url.search}`,
+        301
+      );
+    }
+
+    requestRef = request;
     const path = url.pathname;
     const method = request.method;
 
@@ -329,7 +350,7 @@ export default {
         const fileError = validateImageFile(file);
         if (fileError) return json({ error: fileError }, 400);
 
-        const db = supabase(env);
+        const db = supabase(env, { admin: true });
         let imageUrl = null;
         if (file) {
           const ext = file.name.split(".").pop();
@@ -366,7 +387,7 @@ export default {
         const fileError = validateImageFile(file);
         if (fileError) return json({ error: fileError }, 400);
 
-        const db = supabase(env);
+        const db = supabase(env, { admin: true });
         const existing = await db.getFormation(id);
         if (!existing) return json({ error: "Formation introuvable" }, 404);
 
@@ -394,7 +415,7 @@ export default {
 
         const id = path.split("/").pop();
         if (!/^\d+$/.test(id)) return json({ error: "ID invalide" }, 400);
-        const db = supabase(env);
+        const db = supabase(env, { admin: true });
         const existing = await db.getFormation(id);
         if (!existing) return json({ error: "Formation introuvable" }, 404);
 
@@ -460,7 +481,9 @@ export default {
       return json({ error: "Route non trouvée" }, 404);
     } catch (err) {
       console.error("Erreur:", err.message);
-      return json({ error: err.message || "Erreur serveur interne" }, 500);
+      const message =
+        env.ENVIRONMENT === "production" ? "Erreur serveur interne" : err.message;
+      return json({ error: message }, 500);
     }
   },
 };
