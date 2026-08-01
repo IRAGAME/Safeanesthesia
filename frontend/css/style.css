@@ -2367,53 +2367,53 @@ footer {
 }
 
 /* Boutons d'action (Edit/Delete) */
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
 .action-btn {
+  font-family: var(--font-accent);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
-  font-weight: 600;
   gap: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  color: #fff;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
 }
 
 .btn-edit {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: #fff;
-  padding: 10px 18px;
+  background: linear-gradient(135deg, var(--secondary) 0%, #0062cc 100%);
 }
 
-.btn-edit:hover { 
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5);
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-}
-
-.btn-edit:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+.btn-edit:hover {
+  box-shadow: 0 10px 25px rgba(0, 123, 255, 0.35);
 }
 
 .btn-delete {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: #fff;
-  padding: 10px 18px;
+  background: linear-gradient(135deg, var(--accent) 0%, #e8483d 100%);
 }
 
-.btn-delete:hover { 
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-}
-
-.btn-delete:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+.btn-delete:hover {
+  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.35);
 }
 
 /* =========================
@@ -2736,6 +2736,55 @@ footer {
   gap: 25px;
   width: 100%;
   margin-top: 30px;
+}
+
+.admin-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  height: 100%;
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.admin-card-content {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-card-content h3.card-title-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: var(--lh-tight);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-card-content p.card-desc-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.admin-card-content .admin-actions {
+  margin-top: auto;
 }
 
 /* Toast notification */

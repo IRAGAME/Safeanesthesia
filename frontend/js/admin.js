@@ -183,7 +183,7 @@ async function chargerFormations() {
       const actionsDiv = document.createElement('div');
       actionsDiv.className = 'admin-actions';
 
-      const editBtn = createSafeButton('', 'fa-pen', 'action-btn btn-edit');
+      const editBtn = createSafeButton(' Modifier', 'fa-pen', 'action-btn btn-edit');
       editBtn.addEventListener('click', () => {
         currentEditId = f.id;
         const editTitre = document.getElementById('editTitre');
